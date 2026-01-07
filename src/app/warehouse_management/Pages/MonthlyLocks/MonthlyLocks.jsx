@@ -1,0 +1,209 @@
+import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'react-toastify';
+import {
+    Box,
+    Typography,
+    Paper,
+    Grid,
+    Card,
+    CardContent,
+    CardActions,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Chip,
+    CircularProgress,
+} from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import PersonIcon from '@mui/icons-material/Person';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import useGetAllWarehouse from '../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse';
+import MonthlyLockForm from './MonthLockForm';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllMonthlyLocksEntityId } from '../../../../redux/MonthLockState/monthLock';
+import { getUserInformation } from '../../../../utils/handelCookie';
+import { ButtonTheme } from '../../../../style/ButtomStyle';
+import Loader from '../../../../components/reusableComponent/Loader';
+const MonthlyLocks = () => {
+    const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+    const { wareHouseData } = useGetAllWarehouse();
+    const { lockData, isLoading } = useSelector((state) => state?.monthLock);
+    const userInformation = getUserInformation()
+    const dispatch = useDispatch();
+    const fetchInformation = useCallback(() => {
+        const entity_id = userInformation?.entity_id
+        dispatch(getAllMonthlyLocksEntityId(entity_id));
+    }, [dispatch]);
+    useEffect(() => {
+        fetchInformation();
+    }, [fetchInformation]);
+    const handleUnlockMonth = async (lockId) => {
+        if (!window.confirm('هل أنت متأكد من فتح هذا الشهر؟')) {
+            return;
+        }
+        try {
+            toast.success('تم فتح الشهر بنجاح');
+        } catch (error) {
+            console.error('Error unlocking month:', error);
+            toast.error('فشل في فتح الشهر');
+        }
+    };
+
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ar-EG', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    return (
+        <Box sx={{ p: 3 }} dir="rtl">
+            {isLoading && (
+                <Loader />
+            )}
+            {/* Header */}
+            <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <CalendarMonthIcon sx={{ fontSize: 32, color: 'primary.main' }} />
+                    <Typography variant="h4" fontWeight={600}>
+                        إغلاق الأشهر المحاسبية
+                    </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                    إدارة إغلاق الفترات المحاسبية الشهرية للمخازن
+                </Typography>
+            </Box>
+
+            {/* Filters */}
+            <MonthlyLockForm wareHouseData={wareHouseData} dispatch={dispatch} userInformation={userInformation} />
+            <Box mt={2} />
+            <Paper sx={{ p: 3, mb: 3 }}>
+                <Grid container spacing={2} alignItems="center">
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <FormControl fullWidth>
+                            <InputLabel>المخزن</InputLabel>
+                            <Select
+                                value={selectedWarehouse || ''}
+                                onChange={(e) => setSelectedWarehouse(e.target.value || null)}
+                                label="المخزن"
+                            >
+                                {wareHouseData?.map((warehouse) => (
+                                    <MenuItem key={warehouse.id} value={warehouse.id}>
+                                        {warehouse.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </Paper>
+            <>
+
+                {/* Months Grid */}
+                <Grid container spacing={2}>
+                    {lockData?.map((lockItem) => (
+                        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4 }} key={lockItem.id}>
+                            <Card
+                                sx={{
+                                    height: '100%',
+                                    borderRight: 4,
+                                    borderColor: lockItem?.is_locked ? 'error.main' : 'success.main',
+                                    transition: 'all 0.3s',
+                                    '&:hover': {
+                                        transform: 'translateY(-4px)',
+                                        boxShadow: 4
+                                    }
+                                }}
+                            >
+                                <CardContent>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                        <Typography variant="h6" fontWeight={600}>
+                                            {lockItem.month}
+                                        </Typography>
+                                        <Chip
+                                            icon={lockItem?.is_locked ? <LockIcon /> : <LockOpenIcon />}
+                                            label={lockItem?.is_locked ? 'مغلق' : 'مفتوح'}
+                                            color={lockItem?.is_locked ? 'error' : 'success'}
+                                            size="small"
+                                        />
+                                    </Box>
+
+                                    {/* Warehouse Info */}
+                                    <Box sx={{ mb: 2, p: 1.5, bgcolor: 'background.default', borderRadius: 1 }}>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                                            المخزن
+                                        </Typography>
+                                        <Typography variant="body1" fontWeight={600}>
+                                            {lockItem?.warehouse_name}
+                                        </Typography>
+                                    </Box>
+
+                                    {lockItem?.is_locked && (
+                                        <Box sx={{ mb: 2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                <PersonIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {lockItem?.locked_by_name || 'غير محدد'}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                <AccessTimeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {formatDate(lockItem?.locked_at)}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    )}
+                                </CardContent>
+
+                                <CardActions>
+                                    <ButtonTheme
+                                        endIcon={<LockOpenIcon />}
+                                        onClick={() => handleUnlockMonth(lockItem?.id)}
+                                    >
+                                        فتح الشهر
+                                    </ButtonTheme>
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    ))}
+
+                    {/* عرض رسالة عند عدم وجود بيانات */}
+                    {!isLoading && lockData?.filter(lock => {
+                        if (selectedWarehouse && lock.warehouse_id !== selectedWarehouse) return false;
+                        return true;
+                    }).length === 0 && (
+                            <Grid size={{ xs: 12 }}>
+                                <Paper sx={{ p: 4, textAlign: 'center' }}>
+                                    <Typography variant="h6" color="text.secondary">
+                                        {selectedWarehouse && ' والمخزن المحدد'}
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                        )}
+
+                    {/* عرض حالة التحميل */}
+                    {isLoading && (
+                        <Grid size={{ xs: 12 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                                <CircularProgress />
+                            </Box>
+                        </Grid>
+                    )}
+                </Grid>
+            </>
+
+        </Box>
+    );
+};
+
+export default MonthlyLocks;

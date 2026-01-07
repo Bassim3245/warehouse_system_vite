@@ -1,0 +1,354 @@
+/* Print-specific styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 0.5cm;
+  }
+  .print-content {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Ensure page breaks don't occur within elements */
+  .material-details li,
+  .document-section,
+  .signature-block {
+    page-break-inside: avoid;
+  }
+
+  /* Force background colors and images to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Hide the watermark in print to make it subtle */
+  .watermark {
+    opacity: 0.05;
+  }
+}
+
+/* General styles */
+.print-document {
+  font-family: "Arial", "Helvetica", sans-serif;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 210mm; /* A4 width */
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styles */
+.official-header {
+  margin-bottom: 30px;
+}
+
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header-logo {
+  max-width: 100px;
+  height: auto;
+}
+
+.header-text {
+  text-align: center;
+  flex: 1;
+}
+
+.organization-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #1a237e;
+}
+
+.department-name {
+  font-size: 16px;
+  margin: 5px 0 0;
+  color: #283593;
+}
+
+.document-id {
+  text-align: left;
+  min-width: 150px;
+}
+
+.barcode {
+  height: 40px;
+  background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 4px);
+  margin-bottom: 5px;
+}
+
+.reference-number {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: #555;
+}
+
+.header-divider {
+  margin: 10px 0 20px;
+  border-color: #1a237e;
+  opacity: 0.5;
+}
+
+.document-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin: 20px 0;
+  color: #1a237e;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.document-title:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background-color: #1a237e;
+}
+
+/* Section Styles */
+.document-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background-color: #fafafa;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a237e;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-right: 10px;
+  border-right: 4px solid #1a237e;
+}
+
+/* Material Details */
+.material-details {
+  margin: 15px 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.detail-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: bold;
+  color: #333;
+  min-width: 150px;
+}
+
+.detail-value {
+  color: #555;
+  flex: 1;
+  text-align: right;
+}
+
+/* Images Section */
+.images-section {
+  margin-top: 30px;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.image-container {
+  border: 1px solid #ddd;
+  padding: 10px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.image-container:hover {
+  transform: scale(1.02);
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 3px;
+}
+
+.image-caption {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+/* Footer Styles */
+.document-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #1a237e;
+}
+
+.signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.signature-block {
+  width: 45%;
+}
+
+.signature-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.signature-line {
+  display: inline-block;
+  width: 100%;
+  border-bottom: 1px solid #000;
+  margin: 15px 0;
+}
+
+.signature-name {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.date {
+  font-size: 14px;
+}
+
+.page-number {
+  font-size: 12px;
+  color: #777;
+}
+
+/* Official stamp */
+.official-stamp {
+  width: 100px;
+  height: 100px;
+  border: 2px solid #1a237e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #1a237e;
+  transform: rotate(-15deg);
+  position: relative;
+}
+
+.official-stamp:before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 1px dashed #1a237e;
+  border-radius: 50%;
+}
+
+/* Watermark for official documents */
+.watermark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 80px;
+  opacity: 0.07;
+  pointer-events: none;
+  z-index: 1000;
+  color: #1a237e;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* RTL support */
+[dir="rtl"] .material-details {
+  text-align: right;
+}
+
+[dir="rtl"] .detail-label {
+  margin-left: 10px;
+}
+
+[dir="rtl"] .section-title {
+  border-right: 4px solid #1a237e;
+  border-left: none;
+  padding-right: 10px;
+  padding-left: 0;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .header-flex {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .document-id {
+    text-align: center;
+    margin-top: 15px;
+  }
+  
+  .signatures {
+    flex-direction: column;
+  }
+  
+  .signature-block {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .official-stamp {
+    margin: 20px auto;
+  }
+  
+  .image-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}

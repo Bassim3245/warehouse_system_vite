@@ -1,0 +1,29 @@
+.banner-container {
+  white-space: nowrap;
+  width: 100vw;
+  position: relative;
+  overflow: hidden; /* Hide the overflow */
+  background-color: white; /* Correct syntax for background-color */
+}
+
+.banner-content {
+  display: flex;
+  animation: scroll-left 20s linear infinite; /* Looping animation */
+  white-space: nowrap;
+}
+
+.banner-slide {
+  flex: 0 0 auto; /* Prevent shrinking or growing */
+  padding: 10px;
+  color: white; 
+  box-sizing: border-box; 
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%); /* Start from outside the viewport (right side) */
+  }
+  100% {
+    transform: translateX(-100%); /* Move completely to the left (outside viewport) */
+  }
+}

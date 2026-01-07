@@ -1,0 +1,79 @@
+.positionReportData {
+  top: 100%;
+  right: 0px;
+}
+.boxContainerReportForm {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  background-color: white;
+  border-radius: 5px;
+  border-width: 0;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 20px;
+  /* width: 75%; */
+}
+.PageReportList {
+  width: 310mm;
+  /* height: 297mm; */
+  margin: auto;
+  padding: 3mm;
+  /* Optional: Add padding if needed */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Optional: Add a shadow for better visualization */
+  background: white;
+  /* Optional: Set background to white */
+}
+/* Start Project */
+.mobileWidth {
+  width: 70%;
+}
+@media (max-width: 768px) {
+  .Project .boxContainer {
+    /* top: 20%; */
+    margin-top: 100px;
+    margin-bottom: 80px;
+    height: 100%;
+    overflow: auto;
+  }
+  .mobileWidth {
+    width: 100%;
+  }
+  .mobilDisplay {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .boxContainerReport {
+    padding: 0px;
+  }
+
+  .Project .ImageLogoButton {
+    width: 50px;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    left: -100%;
+  }
+
+  to {
+    opacity: 1;
+    left: 0;
+  }
+}
+
+@keyframes borderAnimation {
+  0% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.Project .ImageLogoButton {
+  width: 75px;
+  max-width: 100%;
+}

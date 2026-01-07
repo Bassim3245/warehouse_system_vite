@@ -1,0 +1,244 @@
+/* 
+ * Tailwind CSS Styles - Landing Page (src/main)
+ * Design matching: traeg87r6bkw.vercel.app reference
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+/* Import Tailwind */
+@import "tailwindcss/theme.css";
+@import "tailwindcss/utilities.css";
+
+
+
+/* ========== Custom Animations ========== */
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatReverse {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(10px); }
+}
+
+/* ========== Animation Classes ========== */
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 4s ease-in-out infinite;
+}
+
+/* Animation Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-800 { animation-delay: 800ms; }
+
+/* ========== Layout Classes ========== */
+
+.section-padding {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+
+
+@media (min-width: 640px) {
+  .container-max {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-max {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* ========== Background Colors ========== */
+
+.bg-primary-900 { background-color: #1e6a99; }
+.bg-primary-800 { background-color: #1e40af; }
+.bg-primary-600 { background-color: #2563eb; }
+.bg-secondary-50 { background-color: #f8fafc; }
+
+/* ========== Gradient Backgrounds ========== */
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #1e6a99 0%, #1e6a99 50%, #2563eb 100%);
+}
+
+.bg-gradient-cta {
+  background: linear-gradient(to right, #2563eb, #1e40af);
+}
+
+/* ========== Cards ========== */
+
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* ========== Buttons ========== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: white;
+  color: #1e3a8a;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #f8fafc;
+  transform: scale(1.05);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: 2px solid white;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #1e3a8a;
+}
+
+/* ========== Glass/Badge Styles ========== */
+
+.badge-glass {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ========== Orb Decorations ========== */
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.orb-white {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.orb-success {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+/* ========== RTL Support ========== */
+
+[dir="rtl"] .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+/* Arabic Font */
+.font-arabic {
+  font-family: "Cairo", sans-serif;
+}
+
+.font-english {
+  font-family: "Inter", sans-serif;
+}
+
+/* ========== Text Colors ========== */
+
+.text-primary-900 { color: #1e3a8a; }
+.text-secondary-300 { color: #cbd5e1; }
+
+/* ========== Scrollbar ========== */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

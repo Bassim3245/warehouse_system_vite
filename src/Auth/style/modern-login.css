@@ -1,0 +1,453 @@
+/* Modern Login Styles */
+
+/* Base Styles */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+:root {
+  --primary-color: #4A148C;
+  --secondary-color: #EEBA0B;
+  --accent-color: #7F6AD2;
+  --light-accent: #FFEB3B;
+  --text-color: #333;
+  --light-text: #fff;
+  --border-radius: 8px;
+  --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Enhanced Login Wrapper */
+.login-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%;
+  max-width: 1200px;
+  background: linear-gradient(135deg, #49158C 0%, #EEBA0B 100%);
+  padding: 30px;
+  height: 85%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+/* Container Styles */
+.login-container {
+  position: absolute;
+  width: 100%;
+  height: 60em;
+  left: -100px;
+  top: -60px;
+  max-width: 100%;
+  padding: 40px;
+  background-color: white;
+  border-radius: 20px;
+  transform: rotate(40deg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.login-background {
+  transform: rotate(-40deg);
+}
+
+.login-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* Login Box */
+.login-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.logo-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-left: 15px;
+  letter-spacing: 1px;
+}
+
+/* Form Styles */
+.login-form {
+  text-align: right;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+}
+
+.form-title {
+  font-size: 28px;
+  color: var(--primary-color);
+  margin-bottom: 30px;
+  font-weight: 700;
+  position: relative;
+}
+
+.form-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+  width: 50px;
+  height: 3px;
+  background: var(--secondary-color);
+  border-radius: 3px;
+}
+
+/* Input Container */
+.input-container {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+.input-wrapper.focused {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 20, 140, 0.1);
+  background-color: #fff;
+}
+
+.input-icon {
+  padding: 0 15px;
+  color: #999;
+  font-size: 16px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 15px 15px 15px 0;
+  border: none;
+  border-radius: 0;
+  font-size: 16px;
+  background: transparent;
+  outline: none;
+  direction: rtl;
+}
+
+.password-toggle {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 0 15px;
+  font-size: 16px;
+  transition: var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--primary-color);
+}
+
+/* Button Styles */
+.submit-button {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.submit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+  transition: var(--transition);
+  opacity: 0;
+  z-index: -1;
+}
+
+.submit-button:hover::before {
+  opacity: 1;
+}
+
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo Login */
+.LogoLogin {
+  background: white;
+  border-radius: 50%;
+  padding: 30px;
+  height: 320px;
+  width: 320px;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.LogoLogin:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.right-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 100%;
+}
+
+.logo-circle {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  height: 100%;
+  margin-bottom: 20px;
+}
+
+.circleLogo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: var(--transition);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.circleLogo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.yellow {
+  background-color: #FFC107;
+}
+
+.purple {
+  background-color: #6A1B9A;
+}
+
+.light-purple {
+  background-color: #7F6AD2;
+}
+
+.light-yellow {
+  background-color: #FFEB3B;
+}
+
+/* Text Styles */
+.text {
+  text-align: center;
+  padding: 0 15px;
+}
+
+.bank-name {
+  color: #FFD600;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bank-description {
+  color: #333;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Border Lines */
+.lineDisplay {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  align-items: center;
+  height: 100%;
+  margin-bottom: 20px;
+  position: absolute;
+}
+
+.linBorder {
+  width: 4px;
+  height: 50px;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+  transition: height 0.5s ease;
+}
+
+.leftBorder {
+  left: -90px;
+}
+
+.rightBorder {
+  top: -106px;
+  right: 350px;
+}
+
+.BottomBorder {
+  bottom: -25em;
+}
+
+.rightBorderBlack {
+  top: -106px;
+  right: 350px;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .login-wrapper {
+    width: 90%;
+    height: 90%;
+  }
+}
+
+@media (max-width: 992px) {
+  .login-content {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  .LogoLogin {
+    height: 280px;
+    width: 280px;
+  }
+  
+  .circleLogo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .bank-name {
+    font-size: 24px;
+  }
+  
+  .bank-description {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    padding: 20px;
+  }
+  
+  .login-container {
+    left: -80px;
+  }
+  
+  .displayNone {
+    display: none;
+  }
+  
+  .login-form {
+    max-width: 320px;
+  }
+  
+  .form-title {
+    font-size: 24px;
+  }
+  
+  .input-field {
+    padding: 12px 12px 12px 0;
+    font-size: 14px;
+  }
+  
+  .submit-button {
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  .LogoLogin {
+    height: 240px;
+    width: 240px;
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-container {
+    left: -60px;
+    padding: 20px;
+  }
+  
+  .LogoLogin {
+    height: 200px;
+    width: 200px;
+  }
+  
+  .circleLogo {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .bank-name {
+    font-size: 20px;
+  }
+  
+  .bank-description {
+    font-size: 14px;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover Effects */
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
