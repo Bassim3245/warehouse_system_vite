@@ -70,7 +70,6 @@ export default function ModelEdit({ aboutSystem }) {
           value={title}
           required
           onChange={(e) => setTitle(e.target.value)}
-          onClearClick={() => setTitle("")}
         />
         <TextField
           label={t("text")}
@@ -78,7 +77,6 @@ export default function ModelEdit({ aboutSystem }) {
           value={dataEdit}
           required
           onChange={(e) => setDataEdit(e.target.value)}
-          onClearClick={() => setDataEdit("")}
         />
       </Box>
     </Box>

@@ -107,9 +107,9 @@ export default function ModelEdit(props) {
         BackdropProps={{
           style: {
             background:
-              theme.MuiDialog.defaultProps.BackdropProps.style.background,
+              theme.components.MuiDialog.defaultProps.BackdropProps.style.background,
             backdropFilter:
-              theme.MuiDialog.defaultProps.BackdropProps.style.backdropFilter,
+              theme.components.MuiDialog.defaultProps.BackdropProps.style.backdropFilter,
           },
         }}
       >
@@ -131,7 +131,6 @@ export default function ModelEdit(props) {
                   label={t("ministry_name")}
                   value={dataEdit}
                   onChange={(e) => setDataEdit(e.target.value)}
-                  onClearClick={() => setDataEdit("")}
                 />
               </Box>
             )}
@@ -163,7 +162,6 @@ export default function ModelEdit(props) {
                     label={props?.labelFelid}
                     value={dataEdit}
                     onChange={(e) => setDataEdit(e.target.value)}
-                    onClearClick={() => setDataEdit("")}
                   />
                 </Box>
                 <ButtonTheme
@@ -196,7 +194,6 @@ export default function ModelEdit(props) {
                     label={label === "Governorate" ? "محافظة" : "صلاحية"}
                     value={dataEdit}
                     onChange={(e) => setDataEdit(e.target.value)}
-                    onClearClick={() => setDataEdit("")}
                   />
                 </Box>
               ))}
@@ -206,7 +203,6 @@ export default function ModelEdit(props) {
                   label={"عنوان الاعلان"}
                   value={dataEdit}
                   onChange={(e) => setDataEdit(e.target.value)}
-                  onClearClick={() => setDataEdit("")}
                 />
                 <Box sx={{ mt: "15px" }}>
                   <TextField
@@ -214,7 +210,6 @@ export default function ModelEdit(props) {
                     label={"الوصف"}
                     value={dataEdit2}
                     onChange={(e) => setDataEdit2(e.target.value)}
-                    onClearClick={() => setDataEdit2("")}
                   />
                 </Box>
               </Box>

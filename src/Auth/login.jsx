@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { Slide, ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/userSlice/authActions";
@@ -121,9 +121,9 @@ function Login() {
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#3b82a0] transition-colors bg-transparent border-none cursor-pointer focus:outline-none"
                   >
                     {showPassword ? (
-                      <VisibilityOffIcon/>
+                      <VisibilityOffIcon />
                     ) : (
-                      <VisibilityIcon/>
+                      <VisibilityIcon />
                     )}
                   </button>
                 </div>
@@ -240,7 +240,18 @@ function Login() {
           </div>
         </div>
       </div>
-      <ToastContainer />
+       <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        transition={Slide}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 }

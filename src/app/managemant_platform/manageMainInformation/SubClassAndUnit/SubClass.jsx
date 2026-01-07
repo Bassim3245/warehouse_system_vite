@@ -1,6 +1,6 @@
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, MenuItem } from "@mui/material";
 import axios from "axios";
-import  { useState, useCallback, useMemo, useEffect, memo } from "react";
+import { useState, useCallback, useMemo, useEffect, memo } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -16,55 +16,6 @@ const API_ENDPOINTS = {
   REGISTER: `${BackendUrl}/api/subClassRegister`,
   GET_MAIN_CLASS: `${BackendUrl}/api/getDataMainClass`,
 };
-
-const SubClassForm = memo(
-  ({
-    rtl,
-    t,
-    dataMainClass,
-    selectMainClass,
-    subClassName,
-    onMainClassChange,
-    onSubClassNameChange,
-    onSubmit,
-  }) => (
-    <form onSubmit={onSubmit}>
-      <Header title={t("Subclass of the main class")} dir={rtl?.dir} />
-
-      <Box sx={{ mb: "15px" }}>
-        <TextField
-          label="أختيار الصنف الرئيسي"
-          select
-          fullWidth
-          haswidth={true}
-          value={selectMainClass}
-          required
-          readOnly={false}
-          onChange={onMainClassChange}
-        />
-        {dataMainClass?.map((option) => (
-          <MenuItem key={option?.mainClass_id} value={option?.mainClass_id}>
-            {option?.main_Class_name}
-          </MenuItem>
-        ))}
-      </Box>
-
-      <Box sx={{ mb: "15px" }}>
-        <TextField
-          label="الصنف الخاص بالرئيسي"
-          fullWidth
-          haswidth={true}
-          value={subClassName}
-          required
-          readOnly={false}
-          onChange={onSubClassNameChange}
-        />
-      </Box>
-    </form>
-  )
-);
-
-SubClassForm.displayName = "SubClassForm";
 
 function SubClass({ dataSubClass, setRefreshButton }) {
   // Selectors
@@ -136,7 +87,7 @@ function SubClass({ dataSubClass, setRefreshButton }) {
       e.preventDefault();
 
       // Validation
-      if (!selectMainClass?.mainClass_id) {
+      if (!selectMainClass) {
         toast.error("الرجاء اختيار الصنف الرئيسي");
         return;
       }
@@ -152,7 +103,7 @@ function SubClass({ dataSubClass, setRefreshButton }) {
       const formData = new FormData();
       formData.append("subClassName", subClassName.trim());
       formData.append("entities_id", dataUserById?.entity_id);
-      formData.append("mainClass_id", selectMainClass.mainClass_id);
+      formData.append("mainClass_id", selectMainClass);
 
       try {
         const response = await axios.post(
@@ -186,20 +137,12 @@ function SubClass({ dataSubClass, setRefreshButton }) {
   );
 
   // Memoized event handlers
-  const handleMainClassChange = useCallback((e, newValue) => {
-    setSelectMainClass(newValue);
-  }, []);
-
-  const handleMainClassClear = useCallback(() => {
-    setSelectMainClass("");
+  const handleMainClassChange = useCallback((e) => {
+    setSelectMainClass(e.target.value);
   }, []);
 
   const handleSubClassNameChange = useCallback((e) => {
     setSubClassName(e.target.value);
-  }, []);
-
-  const handleSubClassNameClear = useCallback(() => {
-    setSubClassName("");
   }, []);
 
   // Memoized button handler
@@ -223,19 +166,51 @@ function SubClass({ dataSubClass, setRefreshButton }) {
         }}
       >
         <div className="form-outline mb-3 w-100" dir={rtl?.dir}>
-          <SubClassForm
-            rtl={rtl}
-            t={t}
-            dataMainClass={dataMainClass}
-            selectMainClass={selectMainClass}
-            subClassName={subClassName}
-            onMainClassChange={handleMainClassChange}
-            onMainClassClear={handleMainClassClear}
-            onSubClassNameChange={handleSubClassNameChange}
-            onSubClassNameClear={handleSubClassNameClear}
-            onSubmit={handleSubmitSubClass}
-          />
+          <form onSubmit={handleSubmitSubClass}>
+            <Header title={t("Subclass of the main class")} dir={rtl?.dir} />
+            
+            {/* ===== Main Class Select Field ===== */}
+            <Box sx={{ mb: "15px" }}>
+              <TextField
+                label="اختيار الصنف الرئيسي"
+                select
+                fullWidth
+                value={selectMainClass}
+                required
+                onChange={handleMainClassChange}
+                SelectProps={{
+                  native: false,
+                }}
+              >
+                {dataMainClass?.length > 0 ? (
+                  dataMainClass.map((option) => (
+                    <MenuItem 
+                      key={option?.mainClass_id} 
+                      value={option?.mainClass_id}
+                    >
+                      {option?.main_Class_name}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="" disabled>
+                    لا توجد أصناف رئيسية
+                  </MenuItem>
+                )}
+              </TextField>
+            </Box>
 
+            {/* ===== Sub Class Name Field ===== */}
+            <Box sx={{ mb: "15px" }}>
+              <TextField
+                label="الصنف الخاص بالرئيسي"
+                fullWidth
+                value={subClassName}
+                required
+                onChange={handleSubClassNameChange}
+              />
+            </Box>
+          </form>
+          
           <div className="d-flex justify-content-center gap-4">
             <ButtonTheme onClick={handleSaveClick}>حفظ البيانات</ButtonTheme>
 
