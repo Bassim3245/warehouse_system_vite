@@ -347,9 +347,22 @@ function UserMangeForm({
                       fullWidth
                       label={t("userManager.Phone number")}
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      onClearClick={() => setPhone("")}
-                      startIcon={<Phone fontSize="small" />}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '');
+                        if (value.length <= 11) {
+                          setPhone(value);
+                        }
+                      }}
+                      required
+                      error={phone.length > 0 && phone.length !== 11}
+                      helperText={
+                        phone.length > 0 && phone.length !== 11
+                          ? `رقم الهاتف يجب أن يتكون من 11 رقم (${phone.length}/11)`
+                          : ''
+                      }
+                      inputProps={{
+                        maxLength: 11
+                      }}
                     />
                   </Grid>
                 </Grid>

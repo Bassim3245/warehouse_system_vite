@@ -80,7 +80,7 @@ const getAllDataUser = createAsyncThunk(
   }
 );
 const getDataUserById = createAsyncThunk(
-  "auth/getAllUserByIdToShow",
+  "auth/getDataUserById",
   async (token, { rejectWithValue }) => {
     try {
       const response = await axios({
@@ -91,7 +91,8 @@ const getDataUserById = createAsyncThunk(
         },
       });
       if (response || response?.data) {
-        return response?.data?.response;
+
+        return response?.data?.data;
       }
     } catch (error) {
       if (error.response && error.response.data.message) {

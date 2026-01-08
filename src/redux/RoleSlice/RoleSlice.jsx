@@ -172,7 +172,6 @@ const initialState = {
       _id: 42,
     },
     get_all_report_for_factory_lab_warehouse: {
-      //  مدير الشركة او المسؤ يمكنه الطلاعى على كافة المعلوات  اللمازن  وامعامل المصانع
       value: false,
       _id: 44,
     },
@@ -212,6 +211,16 @@ const initialState = {
       value: false,
       _id: 58,
     },
+    show_page_monthly_lock: {
+      value: false,
+      _id: 59,
+    },
+    show_pag_auditLog: {
+      value: false,
+      _id: 60,
+    },
+
+
   },
 };
 export const RolesReducer = createSlice({

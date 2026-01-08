@@ -51,12 +51,12 @@ export default function RootWarehouse() {
         path: "management-data-store",
         checkPermission: roles?.warehouse_page?._id,
       },
-      // {
-      //   text: t("إغلاق الأشهر"),
-      //   icon: <LockClockIcon sx={{ transition: "transform 0.2s" }} />,
-      //   path: "monthly-locks",
-      //   checkPermission: roles?.show_main_page?._id,
-      // },
+      {
+        text: t("إغلاق الأشهر"),
+        icon: <LockClockIcon sx={{ transition: "transform 0.2s" }} />,
+        path: "monthly-locks",
+        checkPermission: roles?.show_page_monthly_lock?._id,
+      },
       {
         text: t("الارشفة الشهرية"),
         icon: <CalendarTodayIcon sx={{ transition: "transform 0.2s" }} />,
@@ -163,7 +163,7 @@ export default function RootWarehouse() {
         text: t("سجل التدقيق"),
         icon: <HistoryIcon sx={{ transition: "transform 0.2s" }} />,
         path: "audit-log",
-        checkPermission: roles?.show_log_entity?._id,
+        checkPermission: roles?.show_pag_auditLog?._id,
       },
       {
         text: t("layout.companyInformation"),

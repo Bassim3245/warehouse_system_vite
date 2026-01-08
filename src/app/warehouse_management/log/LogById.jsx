@@ -25,7 +25,6 @@ const LogWarehouseById = () => {
           category_id: 2,
         },
         onSuccess: (data) => {
-          console.log("Data fetched successfully in AllLog:", data);
           if (data?.logs && Array.isArray(data.logs)) {
             setDataLog(data.logs);
             setTotalPages(data?.pagination?.totalPages);

@@ -31,12 +31,12 @@ export default function Root4() {
       path: "Notification", // Fixed path to include a leading slash
       checkPermission: roles?.management_Nonfiction?._id,
     },
-    {
-      text: t("layout.logEntity"),
-      icon: <EventAvailable />,
-      path: "Log-stagnant-entity", // Fixed path to include a leading slash
-      checkPermission: roles?.show_log_entity?._id,
-    },
+    // {
+    //   text: t("layout.logEntity"),
+    //   icon: <EventAvailable />,
+    //   path: "Log-stagnant-entity", // Fixed path to include a leading slash
+    //   checkPermission: roles?.show_log_entity?._id,
+    // },
     {
       text: t("layout.User Manual"),
       icon: <Info />,

@@ -220,20 +220,17 @@ export default function useInventoryDocuments({
         confirmButtonText: "موافق",
         cancelButtonText: "تراجع",
       });
-
       if (!result.isConfirmed) return;
-
       try {
         await axiosInstance.post(
           `${BackendUrl}/api/warehouse/documentLock`,
           { document_id: id, is_complete: !isComplete },
           { headers: { authorization: token } }
         );
-
         toast.success("تم تحديث حالة المستند بنجاح");
         fetchDocuments();
       } catch (error) {
-        toast.error(error.response?.data?.message || "حدث خطأ");
+        toast.error(error?.response?.data?.message );
       }
     },
     [token, fetchDocuments]

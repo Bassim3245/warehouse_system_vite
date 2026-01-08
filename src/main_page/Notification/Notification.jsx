@@ -237,7 +237,7 @@ export default function Notification({ urlApi, permission, category_id }) {
 
             {/* Action buttons */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Button
                   fullWidth
                   variant="contained"
@@ -263,7 +263,7 @@ export default function Notification({ urlApi, permission, category_id }) {
                   {t("Notification.Delete all read notifications")}
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Button
                   fullWidth
                   variant="contained"
@@ -317,7 +317,7 @@ export default function Notification({ urlApi, permission, category_id }) {
             {!apiLoading && displayedNotifications.length > 0 && (
               <Grid container spacing={2}>
                 {displayedNotifications.map((item, index) => (
-                  <Grid item xs={12} key={index}>
+                  <Grid size={{ xs: 12, sm: 6 }} key={index}>
                     <Card
                       elevation={item?.is_read ? 0 : 1}
                       sx={{

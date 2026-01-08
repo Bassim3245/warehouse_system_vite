@@ -16,7 +16,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Slide from "@mui/material/Slide";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Add from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
 import Email from "@mui/icons-material/Email";
@@ -40,6 +40,7 @@ import { getToken } from "../../../utils/handelCookie";
 import { ButtonTheme } from "../../../style/ButtomStyle";
 import { useWarehouseBaseTheRoleAndPermission } from "../../../hooks/useWarehouseBaseTheRoleAndPermission";
 import { usePermissionsStructure } from "../../../hooks/useStructureCompany";
+import { Autocomplete, TextField } from "@mui/material";
 
 // Constants
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -108,16 +109,15 @@ function EntityCreateUser({
       email: DataUsers.email || "",
       password: "",
       phone: DataUsers.phone_number || "",
-      roleId: findItemById(dataGroup, DataUsers.group_id),
-      address_id: findItemById(DataGovernorate, DataUsers.address_id),
-      jopTitle: findItemById(DataJobTitle, DataUsers.job_title_id),
-      lab_id: findItemById(labData, DataUsers.lab_id, "lab_id"),
-      factory_id: findItemById(factoryData, DataUsers.factory_id, "factory_id"),
-      warehouseType: findItemById(
-        SELECT_WAREHOUSE_TYPES,
-        DataUsers.warehouse_type,
-        "value"
-      ),
+      roleId: DataUsers.group_id || "",
+      address_id: DataUsers.address_id || "",
+      // Find job title object by id, or use the string value if not found
+      jopTitle: DataJobTitle?.find(j => j.id === DataUsers.job_title_id)
+        || DataUsers.job_title_name
+        || "",
+      lab_id: DataUsers.lab_id || "",
+      factory_id: DataUsers.factory_id || "",
+      warehouseType: DataUsers.warehouse_type,
       isMainWarehouseUser: DataUsers.is_main_warehouse_user || false,
       isEntityRegisterUser: true,
     };
@@ -176,22 +176,22 @@ function EntityCreateUser({
     data.append("isEntityRegisterUser", formData.isEntityRegisterUser);
 
     // Add lab_id if applicable
-    if (!formData.isMainWarehouseUser && has_lab && formData.lab_id?.lab_id) {
-      data.append("lab_id", formData.lab_id.lab_id);
+    if (!formData.isMainWarehouseUser && has_lab && formData.lab_id) {
+      data.append("lab_id", formData.lab_id);
     }
 
     // Add factory_id if applicable
     if (
       !formData.isMainWarehouseUser &&
       has_factory &&
-      formData.factory_id?.factory_id
+      formData.factory_id
     ) {
-      data.append("factory_id", formData.factory_id.factory_id);
+      data.append("factory_id", formData.factory_id);
     }
 
     // Add warehouse type if applicable
-    if (formData.warehouseType?.value && has_main_warehouse) {
-      data.append("warehouseType", formData.warehouseType.value);
+    if (formData.warehouseType && has_main_warehouse) {
+      data.append("warehouseType", formData.warehouseType);
     }
 
     return data;
@@ -367,108 +367,132 @@ function EntityCreateUser({
             <Box
               sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}
             >
-              <CustomTextField
+              <TextField
                 label={t("userManager.Username")}
                 value={formData.name}
                 onChange={(e) => updateFormField("name", e.target.value)}
-                onClearClick={() => updateFormField("name", "")}
-                haswidth={true}
                 required
-                startIcon={<Person fontSize="small" />}
               />
 
-              <CustomTextField
+              <TextField
                 label={t("userManager.Email")}
                 value={formData.email}
                 onChange={(e) => updateFormField("email", e.target.value)}
-                onClearClick={() => updateFormField("email", "")}
-                haswidth={true}
                 required
-                startIcon={<Email fontSize="small" />}
               />
 
-              <CustomTextField
+              <TextField
                 label={t("userManager.Password")}
                 value={formData.password}
                 onChange={(e) => updateFormField("password", e.target.value)}
-                hasePassswordEye={true}
-                onClearClick={() => updateFormField("password", "")}
-                haswidth={true}
+                required
                 type="password"
-                required={!editInfo}
-                startIcon={<Lock fontSize="small" />}
               />
 
-              <CustomTextField
+              <TextField
                 label={t("userManager.Phone number")}
                 value={formData.phone}
-                onChange={(e) => updateFormField("phone", e.target.value)}
-                onClearClick={() => updateFormField("phone", "")}
-                haswidth={true}
-                startIcon={<Phone fontSize="small" />}
-              />
-
-              <CustomeSelectField
-                label={t("userManager.Job title")}
-                value={formData.jopTitle}
-                list={DataJobTitle || []}
-                customGetOptionLabel={(option) => option?.job_name || ""}
-                onChange={(e, newValue) =>
-                  updateFormField("jopTitle", newValue)
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, '');
+                  if (value.length <= 11) {
+                    updateFormField("phone", value);
+                  }
+                }}
+                required
+                error={formData.phone.length > 0 && formData.phone.length !== 11}
+                helperText={
+                  formData.phone.length > 0 && formData.phone.length !== 11
+                    ? `رقم الهاتف يجب أن يتكون من 11 رقم (${formData.phone.length}/11)`
+                    : ''
                 }
-                onClearClick={() => updateFormField("jopTitle", "")}
-                haswidth={true}
-                freeSolo={true}
-                startIcon={<Work fontSize="small" />}
+                inputProps={{
+                  maxLength: 11
+                }}
+              />
+              <Autocomplete
+                freeSolo
+                options={DataJobTitle || []}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option?.job_name || ""
+                }
+                value={formData.jopTitle || ""}
+                onChange={(event, newValue) => {
+                  // When selecting from dropdown (object) or clearing
+                  updateFormField("jopTitle", newValue);
+                }}
+                onInputChange={(event, newInputValue, reason) => {
+                  // When typing custom text (freeSolo)
+                  if (reason === "input") {
+                    updateFormField("jopTitle", newInputValue);
+                  }
+                }}
+                isOptionEqualToValue={(option, value) => {
+                  if (!value) return false;
+                  if (typeof value === "string") return option?.job_name === value;
+                  return option?.id === value?.id;
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t("userManager.Job title")}
+                    required
+                    helperText="اختر من القائمة أو اكتب عنوان وظيفي جديد"
+                  />
+                )}
               />
 
               {has_main_warehouse ? (
-                <CustomeSelectField
+                <TextField
+                  fullWidth
+                  select
                   label={t("اختر نوع المخزن")}
                   value={formData.warehouseType}
-                  list={SELECT_WAREHOUSE_TYPES}
-                  customGetOptionLabel={(option) => option?.label || ""}
-                  onChange={(e, newValue) =>
-                    updateFormField("warehouseType", newValue)
+                  onChange={(e) =>
+                    updateFormField("warehouseType", e.target.value)
                   }
-                  onClearClick={() => updateFormField("warehouseType", "")}
-                  haswidth={true}
-                  startIcon={<Work fontSize="small" />}
-                />
+                >
+                  {SELECT_WAREHOUSE_TYPES?.map((option) => (
+                    <MenuItem key={option?.id} value={option?.id}>
+                      {option?.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               ) : null}
 
               {has_lab && !formData.isMainWarehouseUser ? (
-                <CustomeSelectField
+                <TextField
+                  fullWidth
+                  select
                   label={t("اختر المعمل")}
                   value={formData.lab_id}
-                  list={labData || []}
-                  customGetOptionLabel={(option) =>
-                    option?.Laboratory_name || ""
+                  onChange={(e) =>
+                    updateFormField("lab_id", e.target.value)
                   }
-                  onChange={(e, newValue) =>
-                    updateFormField("lab_id", newValue)
-                  }
-                  onClearClick={() => updateFormField("lab_id", "")}
-                  haswidth={true}
-                  startIcon={<Work fontSize="small" />}
-                />
+                >
+                  {labData?.map((option) => (
+                    <MenuItem key={option?.id} value={option?.id}>
+                      {option?.Laboratory_name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               ) : null}
 
               {has_factory && !formData.isMainWarehouseUser ? (
-                <CustomeSelectField
+                <TextField
+                  fullWidth
+                  select
                   label={t("اختر المصنع")}
                   value={formData.factory_id}
-                  list={factoryData || []}
-                  customGetOptionLabel={(option) =>
-                    option?.Factories_name || ""
+                  onChange={(e) =>
+                    updateFormField("factory_id", e.target.value)
                   }
-                  onChange={(e, newValue) =>
-                    updateFormField("factory_id", newValue)
-                  }
-                  onClearClick={() => updateFormField("factory_id", "")}
-                  haswidth={true}
-                  startIcon={<Work fontSize="small" />}
-                />
+                >
+                  {factoryData?.map((option) => (
+                    <MenuItem key={option?.id} value={option?.id}>
+                      {option?.Factories_name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               ) : null}
 
               <Box sx={{ display: "flex", gap: 2, mt: 2 }}>

@@ -42,19 +42,10 @@ const PersonalProfile = () => {
     [oldPassword, setOldPassword] = useState(""),
     [newPassword, setNewPassword] = useState("");
   useEffect(() => {
-    const getDataById = async () => {
-      try {
-        setLoading(true);
-        dispatch(getDataUserById(token));
-      } catch (error) {
-        console.error("Error fetching data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getDataById();
+    dispatch(getDataUserById(token));
   }, [dispatch, dataUserById?.user_id, token, refresh]);
   useEffect(() => {
+    console.log("dataUserById", dataUserById);
     if (dataUserById) {
       setMinistry(dataUserById?.ministries);
       setEntities(dataUserById?.Entities_name);
@@ -182,7 +173,7 @@ const PersonalProfile = () => {
                   <Box>
                     {renderListItem(
                       "أسم الوزارة",
-                      dataUserById?.ministries || "غير متوفر", theme
+                      dataUserById?.ministry_name || "غير متوفر", theme
                     )}
                     {renderListItem(
                       "أسم الجهة",

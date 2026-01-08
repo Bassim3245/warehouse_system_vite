@@ -11,7 +11,7 @@ const StyledDataGrid = styled(DataGrid, {
     !["rowCount", "containerHasDirection", "direction", "gridTheme"].includes(
       prop
     ),
-})(({ theme, rowCount, direction, gridTheme }) => {
+})(({ theme, rowCount, direction, gridTheme  }) => {
   const mainColor = gridTheme?.mainColor || theme.palette.primary.main;
   const isDark = theme?.palette?.mode === "dark";
 

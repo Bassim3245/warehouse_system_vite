@@ -10,7 +10,6 @@ import CostumePagination from "./CostumPagination";
 import { useSelector } from "react-redux";
 import { getRowClassName } from "../../style/ButtomStyle";
 import MobileCardView from "./MobileCardView";
-import { DataGrid } from "@mui/x-data-grid";
 
 const GridTemplate = ({
   columns,
@@ -155,7 +154,7 @@ const GridTemplate = ({
   );
 
   return (
-    <Box sx={{ mt: 1 }}>
+    <Box sx={{ mt: 1 }} >
       <Paper sx={paperStyles}>
         <Box sx={{ width: "100%", p: isMobileView ? 1 : 0 }}>
           {isMobileView ? (

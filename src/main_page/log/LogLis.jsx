@@ -69,7 +69,7 @@ const LogList = ({
   return (
     <Box sx={{ ...layoutStyle }}>
       {loading && <Loader />}
-      <Box dir={rtl?.dir}>
+      <Box dir={"rtl"}>
         <Header title={title} dir={rtl?.dir} typeHeader={null} />
         <UseFullScreen
           setRefreshButton={setRefreshButton}

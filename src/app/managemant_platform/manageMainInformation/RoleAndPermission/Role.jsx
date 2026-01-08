@@ -75,9 +75,7 @@ function RoleSystem({BackendUrl,roles , applicationPermission}) {
             onChange={(e) => {
               setRoleName(e.target.value);
             }}
-            onClearClick={() => {
-              setRoleName("");
-            }}
+          
           />
         <div className="mt-3" style={{ display:"flex",justifyContent:"center" ,gap:"10px"}}>
           <ButtonTheme className="me-3" onClick={handleSubmit}>
