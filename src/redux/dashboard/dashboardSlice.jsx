@@ -7,6 +7,7 @@ const DashboardState = createSlice({
     chartDocumentData: [],
     chartDataMaterialImport: [],
     chartDataMaterialExport: [],
+    materialExportInternal: [],
     isError: false,
     isSuccess: false,
     isLoading: null,
@@ -23,6 +24,7 @@ const DashboardState = createSlice({
         state.chartDocumentData = payload?.chartDocumentData;
         state.chartDataMaterialImport = payload?.chartDataMaterialImport;
         state.chartDataMaterialExport = payload?.chartDataMaterialExport;
+        state.materialExportInternal = payload?.chartDataMaterialExportInternal;
         state.isLoading = false;
       })
       .addCase(getDataStatistic.rejected, (state, { payload }) => {
@@ -31,6 +33,7 @@ const DashboardState = createSlice({
         state.chartDocumentData = null;
         state.chartDataMaterialImport = null;
         state.chartDataMaterialExport = null;
+        state.materialExportInternal = null;
       });
   },
 });

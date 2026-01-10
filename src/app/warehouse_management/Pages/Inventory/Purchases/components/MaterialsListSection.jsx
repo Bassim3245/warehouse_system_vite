@@ -22,7 +22,7 @@ const MaterialsListSection = ({
   }
 
   return (
-    <Grid item xs={12}>
+    <Grid size={12}>
       <Paper sx={{ p: 3, mt: 2 }}>
         <Typography
           variant="h6"

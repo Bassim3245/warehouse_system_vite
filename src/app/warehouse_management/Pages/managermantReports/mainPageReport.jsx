@@ -67,6 +67,7 @@ export default function MainPageReport() {
     chartDataMaterialImport,
     chartDataMaterialExport,
   } = useDashboard();
+  console.log("chartDocumentData", chartDocumentData , "chartDataMaterialImport", chartDataMaterialImport , "chartDataMaterialExport", chartDataMaterialExport);
 
   // Memoize callback handlers to prevent recreation on every render
   const onOpenInfoDialog = useCallback(
@@ -95,8 +96,8 @@ export default function MainPageReport() {
   const transformedChartData = useMemo(() => {
     if (
       !chartDocumentData ||
-      !chartDocumentData.data ||
-      !Array.isArray(chartDocumentData.data)
+      !chartDocumentData?.data ||
+      !Array.isArray(chartDocumentData?.data)
     ) {
       return [];
     }
@@ -109,13 +110,15 @@ export default function MainPageReport() {
           monthNumber: item.month,
           inValue: 0,
           outValue: 0,
+          internalValue: 0,
           inCount: 0,
           outCount: 0,
+          internalCount: 0,
         };
       }
 
-      const amount = parseFloat(item.total_amount) || 0;
-      const count = parseInt(item.count) || 0;
+      const amount = parseFloat(item?.total_amount) || 0;
+      const count = parseInt(item?.count) || 0;
 
       if (item.document_type === "in") {
         monthlyData[monthKey].inValue += amount;
@@ -123,6 +126,9 @@ export default function MainPageReport() {
       } else if (item.document_type === "out") {
         monthlyData[monthKey].outValue += amount;
         monthlyData[monthKey].outCount += count;
+      } else if (item.document_type === "internal_consumption") {
+        monthlyData[monthKey].internalValue += amount;
+        monthlyData[monthKey].internalCount += count;
       }
     });
 
@@ -132,6 +138,7 @@ export default function MainPageReport() {
         ...item,
         inValue: Math.round(item.inValue / 1000),
         outValue: Math.round(item.outValue / 1000),
+        internalValue: Math.round(item.internalValue / 1000),
         totalValue: Math.round((item.inValue + item.outValue) / 1000),
       }));
   }, [chartDocumentData]);
@@ -148,6 +155,7 @@ export default function MainPageReport() {
 
     let totalIn = 0;
     let totalOut = 0;
+    let totalInternal = 0;
 
     chartDocumentData.data.forEach((item) => {
       const amount = parseFloat(item.total_amount) || 0;
@@ -155,6 +163,8 @@ export default function MainPageReport() {
         totalIn += amount;
       } else if (item.document_type === "out") {
         totalOut += amount;
+      } else if (item.document_type === "internal_consumption") {
+        totalInternal += amount;
       }
     });
 
@@ -175,6 +185,15 @@ export default function MainPageReport() {
         percentage:
           totalIn + totalOut > 0
             ? ((totalOut / (totalIn + totalOut)) * 100).toFixed(1)
+            : 0,
+      },
+      {
+        name: "الصرف الداخلي",
+        value: Math.round(totalInternal / 1000),
+        color: softColors.warning,
+        percentage:
+          totalIn + totalOut > 0
+            ? ((totalInternal / (totalIn + totalOut)) * 100).toFixed(1)
             : 0,
       },
     ];

@@ -23,7 +23,6 @@ export const useReportLogic = () => {
   const [timeRange, setTimeRange] = useState("month");
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [reportStatistic, setReportStatistic] = useState({});
   const [selectedReportType, setSelectedReportType] = useState("general");
 
   const dispatch = useDispatch();
@@ -89,21 +88,8 @@ export const useReportLogic = () => {
     [roles?.get_all_report_for_factory_lab_warehouse?._id, permissionData]
   );
 
-  // Memoize API URLs
-  const apiUrls = useMemo(
-    () => ({
-      factories: `${BackendUrl}/api/warehouse/getFactoriesData?entity_id=${dataUserById?.entity_id}&checkPermissionUser=${roles?.get_all_report_for_factory_lab_warehouse?._id}&applicationPermission=${applicationPermission?.warehouseSystem?._id}`,
-      labs: `${BackendUrl}/api/warehouse/getLabDataByEntity_id?entity_id=${dataUserById?.entity_id}&checkPermissionUser=${roles?.get_all_report_for_factory_lab_warehouse?._id}&applicationPermission=${applicationPermission?.warehouseSystem?._id}`,
-    }),
-    [
-      dataUserById?.entity_id,
-      roles?.get_all_report_for_factory_lab_warehouse?._id,
-      applicationPermission?.warehouseSystem?._id,
-    ]
-  );
 
 
-  // Second useEffect - Fetch warehouse data
   useEffect(() => {
     const entity_id = dataUserById?.entity_id;
     const user_id = dataUserById?.user_id;
@@ -165,7 +151,6 @@ export const useReportLogic = () => {
       dataUserById,
       dataUserLab,
       roles,
-      reportStatistic,
       token,
       applicationPermission,
       selectedReportType,
@@ -189,7 +174,6 @@ export const useReportLogic = () => {
       dataUserById,
       dataUserLab,
       roles,
-      reportStatistic,
       token,
       applicationPermission,
       selectedReportType,

@@ -14,11 +14,11 @@ export default function useDashboard() {
 
   const { dataUserById } = usePermissionUser();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectMonth] = useState(new Date().getMonth());
+  const [selectedMonth, setSelectMonth] = useState(new Date().getMonth()+1);
   const dispatchDataStatistic = useCallback(() => {
     const { entity_id } = dataUserById;
-    dispatch(getDataStatistic({ entity_id, selectedYear }));
-  }, [selectedYear])
+    dispatch(getDataStatistic({ entity_id, selectedYear,selectedMonth }));
+  }, [selectedYear,selectedMonth])
   useEffect(() => {
     dispatchDataStatistic()
   }, [dispatchDataStatistic]);

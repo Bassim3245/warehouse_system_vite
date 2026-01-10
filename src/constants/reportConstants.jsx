@@ -321,14 +321,14 @@ export const softColors = {
 export const statisticDataBox = (statisticData) => [
   {
     icon: DateRange,
-    value: statisticData?.totalMonths || 0,
+    value: statisticData?.totalCountMonthlyLocks || 0,
     label: "الأشهر المكتملة",
     subtitle: "من أصل 12 شهر",
     color: softColors.primary,
   },
   {
     icon: Inventory,
-    value: statisticData?.total_count || 0,
+    value: statisticData?.totalCount || 0,
     label: "إجمالي المواد",
     subtitle: "شهرياً",
     color: softColors.secondary,
@@ -351,6 +351,13 @@ export const statisticDataBox = (statisticData) => [
     icon: FileDownload,
     value: statisticData?.totalCountDocumentImport || 0,
     label: "المستندات الواردة",
+    subtitle: "الشهرية",
+    color: softColors.success,
+  },
+  {
+    icon: FileUpload,
+    value: statisticData?.totalCountDocumentExportInternal || 0,
+    label: "المستندات الصرف الداخلي",
     subtitle: "الشهرية",
     color: softColors.success,
   },

@@ -4,11 +4,11 @@ import { axiosInstance } from "../api/axiosConfig";
 import { getToken } from "../../utils/handelCookie";
 export const getDataStatistic = createAsyncThunk(
   "Admin/getDataStatistic",
-  async ({ entity_id, selectedYear }, thunkAPI) => {
+  async ({ entity_id, selectedYear, selectedMonth }, thunkAPI) => {
     try {
       const response = await axiosInstance({
         method: "get",
-        url: `${BackendUrl}/api/warehouse/getStatisticReport?entity_id=${entity_id}&selectYear=${selectedYear}`,
+        url: `${BackendUrl}/api/warehouse/getStatisticReport?entity_id=${entity_id}&selectYear=${selectedYear}&selectMonth=${selectedMonth}`,
         headers: {
           authorization: getToken(),
         },

@@ -14,12 +14,11 @@ import Assessment from "@mui/icons-material/Assessment";
 import { softColors } from "../../../../../constants/reportConstants";
 
 const ImportExportPieChart = ({ data, title = "نسبة الوارد والصادر" }) => {
-  const COLORS = [softColors.success, softColors.danger];
+  const COLORS = [softColors.success, softColors.danger ,softColors.warning];
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      const data = payload[0];
       return (
         <Box
           sx={{
@@ -34,7 +33,7 @@ const ImportExportPieChart = ({ data, title = "نسبة الوارد والصا�
             {data.payload.name}
           </Typography>
           <Typography variant="body2" sx={{ color: data.payload.fill }}>
-            {`القيمة: ${data.value.toLocaleString()} ألف IQD`}
+            {`القيمة: ${data.payload.value.toLocaleString()} ألف IQD`}
           </Typography>
           <Typography variant="body2" sx={{ color: data.payload.fill }}>
             {`النسبة: ${data.payload.percentage}%`}
@@ -112,8 +111,8 @@ const ImportExportPieChart = ({ data, title = "نسبة الوارد والصا�
             <Tooltip content={<CustomTooltip />} />
             <Legend
               formatter={(value, entry) => (
-                <span style={{ color: entry.color, fontWeight: "600" }}>
-                  {entry.payload.name}
+                <span style={{ color: entry?.color, fontWeight: "600" }}>
+                  {entry?.payload?.name}
                 </span>
               )}
               wrapperStyle={{ paddingTop: "20px" }}

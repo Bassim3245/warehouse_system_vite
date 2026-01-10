@@ -218,7 +218,7 @@ const MonthlyQuantityChart = ({
                   {totals.netBalance.toLocaleString()}
                 </Typography>
                 <Typography variant="body2" color={softColors.neutral}>
-                  الرصيد الصافي
+                  الصرف الداخلي 
                 </Typography>
               </Box>
             </Box>

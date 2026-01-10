@@ -17,9 +17,11 @@ import { Analytics } from '@mui/icons-material';
 import { softColors } from '../../../../../constants/reportConstants';
 
 const ImportExportBarChart = ({ data, title = "القيمة الشهرية للوارد والصادر (بالآلاف IQD)" }) => {
+  console.log("data", data)
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }) => {
+    console.log("payload", payload)
     if (active && payload && payload.length) {
       return (
         <Box
@@ -34,13 +36,13 @@ const ImportExportBarChart = ({ data, title = "القيمة الشهرية لل�
           <Typography variant="body2" fontWeight="600" sx={{ mb: 1 }}>
             {`الشهر: ${label}`}
           </Typography>
-          {payload.map((entry, index) => (
+          {payload?.map((entry, index) => (
             <Typography
               key={index}
               variant="body2"
-              sx={{ color: entry.color, mb: 0.5 }}
+              sx={{ color: entry?.color, mb: 0.5 }}
             >
-              {`${entry.name}: ${entry.value.toLocaleString()} ألف IQD`}
+              {`${entry?.name}: ${entry?.value.toLocaleString()} ألف IQD`}
             </Typography>
           ))}
         </Box>
@@ -68,7 +70,7 @@ const ImportExportBarChart = ({ data, title = "القيمة الشهرية لل�
             {title}
           </Typography>
         </Box>
-        
+
         <ResponsiveContainer width="100%" height={400}>
           <RechartsBarChart
             data={data}
@@ -99,7 +101,12 @@ const ImportExportBarChart = ({ data, title = "القيمة الشهرية لل�
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend
-              formatter={(value) => value === 'inValue' ? 'الوارد' : 'الصادر'}
+              formatter={(value) => {
+                if (value === 'inValue') return 'الوارد';
+                if (value === 'outValue') return 'الصادر';
+                if (value === 'internalValue') return 'الصرف الداخلي';
+                return value;
+              }}
               wrapperStyle={{ paddingTop: '20px' }}
             />
             <Bar
@@ -112,6 +119,12 @@ const ImportExportBarChart = ({ data, title = "القيمة الشهرية لل�
               dataKey="outValue"
               fill={softColors.danger}
               name="الصادر"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="internalValue"
+              fill={softColors.warning}
+              name="الصرف الداخلي"
               radius={[4, 4, 0, 0]}
             />
           </RechartsBarChart>

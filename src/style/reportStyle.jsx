@@ -147,7 +147,7 @@ export const ReportTypeOption = memo(({ option, selected, onChange, theme, t }) 
 
 // Memoized StatCard component to prevent unnecessary re-renders
 export const StatCard = React.memo(({ stat, index }) => (
-    <Grid size={{ xs: 12, sm: 6, md: 2.4 }} key={index}>
+    <Grid size={{ xs: 12, sm: 6, md: 2 }} key={index}>
         <Card
             elevation={0}
             sx={{
@@ -212,10 +212,10 @@ export const QuickStat = React.memo(({ stat }) => (
                 fontWeight="600"
                 sx={{ mb: 0.5 }}
             >
-                {stat.value}
+                {stat?.value}
             </Typography>
             <Typography variant="body2" color={softColors.neutral} opacity={0.8}>
-                {stat.label}
+                {stat?.label}
             </Typography>
         </Box>
     </Grid>
