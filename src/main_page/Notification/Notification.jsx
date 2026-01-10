@@ -446,7 +446,7 @@ export default function Notification({ urlApi, permission, category_id }) {
                                   : t("Notification.open")}
                               </Button>
 
-                              {item?.is_read && (
+                              {item?.is_read? (
                                 <Button
                                   size="small"
                                   variant="text"
@@ -460,7 +460,7 @@ export default function Notification({ urlApi, permission, category_id }) {
                                 >
                                   {t("delete")}
                                 </Button>
-                              )}
+                              ):null}
                             </Box>
                           </Box>
                         </Box>
