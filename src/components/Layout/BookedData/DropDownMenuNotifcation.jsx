@@ -14,13 +14,13 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 import { BackendUrl } from "../../../redux/api/axios";
 import { getToken, getUserInformation } from "../../../utils/handelCookie";
-import NotificationCard from "../../../components/reusableComponent/CustomNotifictionCardComponent";
+import NotificationCard from "../../reusableComponent/CustomNotifictionCardComponent";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../../../hooks/useApi";
 
-export default function AccountMenu(props) {
+export default function DropDownMenuNotifcation(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [notification, setNotification] = React.useState([]); // Initialize as empty array
@@ -29,18 +29,24 @@ export default function AccountMenu(props) {
   const theme = useSelector((state) => state?.ThemeData?.maintheme);
   const dataUserById = getUserInformation();
 
-  const { loading: apiLoading, error, fetchData } = useApi();
+  const { loading: apiLoading, fetchData } = useApi();
 
   const fetchDataByProjectId = React.useCallback(async () => {
     try {
+      let params = {
+        checkPermissionUser: props?.permission,
+        category_id: props?.category_id,
+      };
+      console.log("params", dataUserById?.group_name !== "Admin");
+      if (dataUserById?.group_name === "Admin") {
+        params.entity_id = dataUserById?.entity_id;
+      } else {
+        params.user_id = dataUserById?.user_id;
+      }
       await fetchData({
         endpoint: `/api/${props?.urlApi}`,
         method: "GET",
-        params: {
-          entity_id: dataUserById?.entity_id,
-          checkPermissionUser: props?.permission,
-          category_id: props?.category_id,
-        },
+        params: params,
         onSuccess: (data) => {
           console.log("Notification data:", data);
 

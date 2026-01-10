@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback, memo } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +17,7 @@ import Pusher from "pusher-js";
 import DropDownMenu from "./DrobMenue";
 import DrobMenueAuth from "./DrobMenueAuth";
 import { setLanguage } from "../../redux/LanguageState";
-import AccountMenu from "./BookedData/DropDownMenu";
+import DropDownMenuNotifcation from "./BookedData/DropDownMenuNotifcation";
 import { StyledAppBar, StyledIconBtn, StyledUserName } from "../../style/AppbarStyle";
 
 const Appbar = ({
@@ -130,6 +130,7 @@ const Appbar = ({
         eventData?.entity_id === dataUserById?.entity_id
       ) {
         setVotes((prevVotes) => prevVotes + 1);
+        console.log("eventData", eventData);
 
         const notificationTitle = "تنبيه: إشعار جديد!";
         const notificationBody = eventData?.message || "You have received a new vote!";
@@ -170,7 +171,7 @@ const Appbar = ({
     setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   }, [theme.palette.mode, setMode]);
 
- 
+
   return (
     <StyledAppBar
       position="fixed"
@@ -216,7 +217,7 @@ const Appbar = ({
           )}
 
           {hasToken && (
-            <AccountMenu
+            <DropDownMenuNotifcation
               votes={votes}
               info={dataUserById}
               setVotes={setVotes}

@@ -16,7 +16,7 @@ import CardContent from "@mui/material/CardContent";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 import { BackendUrl } from "../../redux/api/axios";
 import { getToken, getUserInformation } from "../../utils/handelCookie";
@@ -63,14 +63,20 @@ export default function Notification({ urlApi, permission, category_id }) {
     if (!dataUserById?.entity_id) return;
 
     try {
+      let params = {
+        entity_id: dataUserById?.entity_id,
+        checkPermissionUser: permission,
+        category_id: category_id,
+      };
+      if (dataUserById.group_name === "Admin") {
+        params.entity_id = dataUserById?.entity_id;
+      } else {
+        params.user_id = dataUserById?.user_id;
+      }
       await fetchData({
         endpoint: `/api/${urlApi}`,
         method: "GET",
-        params: {
-          entity_id: dataUserById?.entity_id,
-          checkPermissionUser: permission,
-          category_id: category_id,
-        },
+        params: params,
         onSuccess: (data) => {
           // Ensure we're setting an array, use empty array as fallback
           const notificationData = Array.isArray(data?.response)
@@ -341,8 +347,8 @@ export default function Notification({ urlApi, permission, category_id }) {
                               bgcolor: item?.is_read
                                 ? "#e0e0e0"
                                 : theme.palette.primary.main
-                                ? `${theme.palette.primary.main}20`
-                                : "#e3f2fd",
+                                  ? `${theme.palette.primary.main}20`
+                                  : "#e3f2fd",
                               color: item?.is_read
                                 ? "#9e9e9e"
                                 : theme.palette.primary.main || "#1976d2",
