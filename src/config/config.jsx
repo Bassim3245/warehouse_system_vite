@@ -16,9 +16,10 @@
 // const apiUrl = "http://192.168.0.192:5000";
 // const apiUrlFile = "http://192.168.0.192:5000";
 // PRODUCTION LIVE
-const apiUrl = import.meta.env.REACT_APP_BACKEND_URL_PRODUCTION;
-const apiUrlFile = import.meta.env.REACT_APP_BACKEND_URL_FILE_PRODUCTION;
-const apiUrlFileLog = import.meta.env.REACT_APP_BACKEND_URL_LOG_PRODUCTION;
+const apiUrl = import.meta.env.VITE_BACKEND_URL_PRODUCTION;
+const apiUrlFile = import.meta.env.VITE_BACKEND_URL_FILE_PRODUCTION;
+const apiUrlFileLog = import.meta.env.VITE_BACKEND_URL_LOG_PRODUCTION;
+
 
 const debug = import.meta.env.VITE_APP_DEBUG === "true";
 const Cluster = import.meta.env.VITE_APP_CLUSTER;
