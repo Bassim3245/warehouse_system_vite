@@ -85,51 +85,59 @@ function Home({ BackendUrl }) {
         <div className="container-max relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-            {/* Content Side */}
-            <div className={`transition-all duration-800 ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
-              {/* Badge */}
+            {/* ===================== Content Side ===================== */}
+            <div
+              className={`transition-all duration-800 ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+                }`}
+            >
+              {/* ===== Badge ===== */}
               <div
-                className={`badge-glass mb-6 transition-all duration-500 delay-200 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                className={`badge-glass mb-6 transition-all duration-500 delay-200 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+                  }`}
               >
                 <Sparkles className="w-4 h-4 ml-2 text-yellow-300" />
-                <span>حلول تقنية متطورة</span>
+                <span>نظام خزن حكومي ذكي</span>
               </div>
 
-              {/* Title */}
+              {/* ===== Title ===== */}
               <h1
-                className={`text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 transition-all duration-500 delay-400 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                className={`text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 transition-all duration-500 delay-400 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+                  }`}
               >
                 نظام الخزين
-                <span className="block text-white/90 text-3xl md:text-4xl mt-2">
-                  للمواد الراكدة وبطيئة الحركة
-                </span>
               </h1>
 
-              {/* Description */}
+              {/* ===== Description ===== */}
               <p
-                className={`text-xl text-white/90 mb-8 leading-relaxed transition-all duration-500 delay-600 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                className={`text-xl text-white/90 mb-8 leading-relaxed transition-all duration-500 delay-600 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+                  }`}
               >
-                منصة ذكية متكاملة لإدارة ومراقبة المواد الراكدة وبطيئة الحركة في المؤسسات الحكومية العراقية
+                منصة إلكترونية متكاملة لإدارة الخزن والمخازن الحكومية،
+                تُعنى بتنظيم ومتابعة المواد والموجودات داخل المستودعات،
+                وتدعم عمليات الإدخال والصرف وإعداد التقارير والتحليل الإحصائي،
+                بما يسهم في تحسين كفاءة إدارة المخزون ودعم اتخاذ القرار.
               </p>
 
-              {/* Buttons */}
+              {/* ===== Buttons ===== */}
               <div
-                className={`flex flex-col sm:flex-row gap-4 transition-all duration-500 delay-800 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                className={`flex flex-col sm:flex-row gap-4 transition-all duration-500 delay-800 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+                  }`}
               >
-                <Link
-                  to="/login"
-                  className=" bg-white  btn-primary gap-2"
-                >
-                  <span>ابدأ الآن</span>
+                <Link to="/login" className="bg-white btn-primary gap-2">
+                  <span>الدخول إلى النظام</span>
                   <ArrowLeft className="w-5 h-5" />
                 </Link>
 
-                <button onClick={() => navigate("/about-page")} className="btn-secondary gap-2">
+                <button
+                  onClick={() => navigate('/about-page')}
+                  className="btn-secondary gap-2"
+                >
                   <Play className="w-5 h-5" />
-                  <span>تعرف علينا</span>
+                  <span>عن نظام الخزين</span>
                 </button>
               </div>
             </div>
+            {/* =================== End Content Side =================== */}
 
             {/* Image Side */}
             <div className={`relative transition-all duration-800 delay-400 ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>

@@ -97,8 +97,11 @@ const Footer = ({ homeRef, reportsRef, categoryRef }) => {
               <span className="text-xl font-bold">نظام الخزين</span>
             </div>
             <p className="text-[#cbd5e1] mb-6 max-w-md leading-relaxed">
-              منصة إلكترونية متكاملة لإدارة ومراقبة المواد الراكدة وبطيئة الحركة في المؤسسات الحكومية العراقية
+              منصة إلكترونية متكاملة لإدارة الخزن والمخازن الحكومية،
+              تتيح تنظيم ومتابعة المواد والموجودات داخل المستودعات
+              ودعم عمليات الإدخال والصرف وإعداد التقارير.
             </p>
+
             <div className="flex gap-3">
               {socialLinks.map((item) => (
                 <motion.a
