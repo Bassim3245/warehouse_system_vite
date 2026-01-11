@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Box,
-    Typography,
-    Paper,
-    Grid,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    TextField,
-    Button,
-    CircularProgress,
-    Pagination,
-    useTheme
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Pagination from '@mui/material/Pagination';
+import { useTheme } from '@mui/material/styles';
 import HistoryIcon from '@mui/icons-material/History';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -132,10 +130,8 @@ const AuditLog = () => {
             {/* Filters */}
             <Paper
                 sx={{
-                    p: 3,
-                    mb: 3,
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-                    color: 'white'
+                    p: 2,
+                    mb: 2,
                 }}
             >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -146,7 +142,7 @@ const AuditLog = () => {
                 </Box>
 
                 <Grid container spacing={2} sx={{ mb: 2 }}>
-                    <Grid item xs={12} md={3}>
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <FormControl fullWidth>
                             <InputLabel sx={{ color: 'white' }}>نوع العملية</InputLabel>
                             <Select
@@ -165,7 +161,7 @@ const AuditLog = () => {
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} md={3}>
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <FormControl fullWidth>
                             <InputLabel sx={{ color: 'white' }}>الجدول</InputLabel>
                             <Select
@@ -183,7 +179,7 @@ const AuditLog = () => {
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} md={3}>
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <TextField
                             fullWidth
                             type="date"
@@ -195,7 +191,7 @@ const AuditLog = () => {
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={3}>
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <TextField
                             fullWidth
                             type="date"
