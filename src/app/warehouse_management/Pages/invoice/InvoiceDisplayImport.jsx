@@ -89,7 +89,7 @@ const InvoiceDisplayImport = ({
           <Grid container spacing={2} sx={{ mt: 1 }}>
             {" "}
             {/* تقليل spacing من 3 إلى 2 ومن mt: 3 إلى 1 */}
-            <Grid item xs={4}>
+            <Grid size={{ xs: 4 }}>
               <Box
                 sx={{
                   textAlign: "center",
@@ -119,7 +119,7 @@ const InvoiceDisplayImport = ({
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={{ xs: 4 }}>
               <Box
                 sx={{
                   textAlign: "center",
@@ -149,7 +149,7 @@ const InvoiceDisplayImport = ({
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={{ xs: 4 }}>
               <Box
                 sx={{
                   textAlign: "center",
@@ -355,7 +355,7 @@ const InvoiceDisplayImport = ({
             {" "}
             {signauterData && signauterData.length > 0 ? (
               signauterData?.map((item, index) => (
-                <Grid item xs key={index}>
+                <Grid size key={index}>
                   <Box sx={{ textAlign: "center" }}>
                     <Box
                       sx={{

@@ -82,10 +82,10 @@ export default function OfficialSalesInvoice({
             </Typography>
           </Box>
           {/* Document Information Grid */}
-          <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid container spacing={2} size={{ mt: 1 }}>
             {" "}
             {/* تقليل spacing من 3 إلى 2 ومن mt: 3 إلى 1 */}
-            <Grid item xs={4}>
+            <Grid size={4}>
               <Box
                 sx={{
                   textAlign: "center",
@@ -114,17 +114,21 @@ export default function OfficialSalesInvoice({
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={4}>
               <Box
                 sx={{
                   textAlign: "center",
                   p: 1, // تقليل من 2 إلى 1
+
+                  border: "1px solid #2c3e50", // تقليل من 2px إلى 1px
+
                 }}
               >
                 <Typography
                   sx={{
                     fontSize: "10px", // تقليل من 12px إلى 10px
                     mb: 0.5, // تقليل من 1 إلى 0.5
+
                     textTransform: "uppercase",
                   }}
                 >
@@ -140,7 +144,7 @@ export default function OfficialSalesInvoice({
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={4}>
               <Box
                 sx={{
                   textAlign: "center",
@@ -468,7 +472,7 @@ export default function OfficialSalesInvoice({
           <Grid container spacing={2} dir="rtl">
             {signauterData && signauterData.length > 0 ? (
               signauterData?.map((item, index) => (
-                <Grid item xs key={index}>
+                <Grid size key={index}>
                   <Box sx={{ textAlign: "center" }}>
                     <Box
                       sx={{
@@ -486,7 +490,6 @@ export default function OfficialSalesInvoice({
                         sx={{
                           fontSize: "10px", // تقليل من 12px إلى 10px
                           color: "#95a5a6",
-                          fontStyle: "italic",
                         }}
                       >
                         منطقة التوقيع
@@ -528,7 +531,7 @@ export default function OfficialSalesInvoice({
                 </Grid>
               ))
             ) : (
-              <Grid item xs>
+              <Grid size>
                 <Box sx={{ textAlign: "center" }}>
                   <Typography sx={{ fontSize: "12px", color: "#2c3e50" }}>
                     لا توجد توقيعات مسجلة
