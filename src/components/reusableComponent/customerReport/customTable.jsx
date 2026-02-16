@@ -11,6 +11,7 @@ import CardContent from "./customCardContent";
 import ImportColumn from "./column/ImportCulomn";
 import ExportColumn from "./column/ExportCulomn";
 import InvoiceImportColumn from "./column/InvoiceImportCulomn";
+import InvoiceExportColumn from "./column/InvoiceExportCulomn";
 
 function CostumeTable({
   tableHeader,
@@ -21,7 +22,7 @@ function CostumeTable({
   ColumnKey,
 }) {
   return (
-    <Card elevation={0} sx={{ mb: 3, border: "1px solid #000" }}>
+    <Card elevation={0} sx={{ mb: 3, }}>
       <TableContainer >
         <Table size="small" sx={{ border: "1px solid #000" }}>
           <TableHead>
@@ -39,7 +40,7 @@ function CostumeTable({
                       WebkitPrintColorAdjust: "exact",
                       printColorAdjust: "exact",
                     },
-                  
+
                   }}
                 >
                   {header}
@@ -51,6 +52,9 @@ function CostumeTable({
           {ColumnKey === "exports" && <ExportColumn tableBody={tableBody} />}
           {ColumnKey === "InvoiceImport" && (
             <InvoiceImportColumn tableBody={tableBody} />
+          )}
+          {ColumnKey === "InvoiceExport" && (
+            <InvoiceExportColumn tableBody={tableBody} />
           )}
         </Table>
       </TableContainer>

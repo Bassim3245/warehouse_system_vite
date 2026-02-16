@@ -85,7 +85,7 @@ const PrintSales = ({ document_id, document, document_type }) => {
   // ---------------------------
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
-    documentTitle: `فاتورة_توريد_${summary.documentNumber}_${formatDateYearsMonth(
+    documentTitle: `فاتورة_تصدير_${summary.documentNumber}_${formatDateYearsMonth(
       summary.invoiceDate
     )}`,
   });

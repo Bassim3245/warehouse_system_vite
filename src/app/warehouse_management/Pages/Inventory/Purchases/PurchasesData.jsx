@@ -218,6 +218,7 @@ const PurchasesData = () => {
           totalPrice={totalPrice}
           totalAmount={totalAmount}
           document_id={searchParams.get("id")}
+          documentInfo={document}
         />
 
         {!document?.is_complete && (

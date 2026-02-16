@@ -9,7 +9,6 @@ import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
 
-
 import PopupForm from "../../../../../components/reusableComponent/PopupForm";
 import CustomDatePicker from "../../../../../components/reusableComponent/CustomDatePicker";
 
@@ -49,16 +48,22 @@ function DocumentModel({
   /* ------------------------------
       FORM DATA (MEMO INITIAL)
    ------------------------------ */
-  const initialForm = useMemo(() => ({
-    document_number: 1,
-    document_date: dayjs(),
-    beneficiary: "",
-    description: "",
-    total_amount: 0,
-    status: "draft",
-    documentType: documentTypeValue,
-    warehouse_id: "",
-  }), [documentTypeValue]);
+  const initialForm = useMemo(
+    () => ({
+      document_number: 1,
+      document_date: dayjs(),
+      beneficiary: "",
+      description: "",
+      total_amount: 0,
+      status: "draft",
+      documentType: documentTypeValue,
+      warehouse_id: "",
+      account_number: "",
+      type_movement: "",
+      type_movement_code: "",
+    }),
+    [documentTypeValue],
+  );
 
   const [formData, setFormData] = useState(initialForm);
 
@@ -67,21 +72,21 @@ function DocumentModel({
    ------------------------------ */
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   }, []);
 
   const handleDateChange = useCallback((field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   }, []);
 
   const handleWarehouseChange = useCallback((event, newValue) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       warehouse_id: newValue ? newValue.id : "",
     }));
@@ -98,7 +103,7 @@ function DocumentModel({
    ------------------------------ */
   useEffect(() => {
     if (lastDocumentNumber && open && !editMode) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         document_number: parseInt(lastDocumentNumber) + 1,
       }));
@@ -119,6 +124,9 @@ function DocumentModel({
         status: documentData?.status,
         documentType: documentData?.document_type,
         warehouse_id: documentData?.warehouse_id,
+        account_number: documentData?.account_number,
+        type_movement: documentData?.type_movement,
+        type_movement_code: documentData?.type_movement_code,
       });
     }
   }, [editMode, open, documentData]);
@@ -128,7 +136,7 @@ function DocumentModel({
    ------------------------------ */
   useEffect(() => {
     if (!editMode && !isExport && documentType) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         documentType,
       }));
@@ -158,14 +166,13 @@ function DocumentModel({
             Authorization: getToken(),
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response) {
-        setRefreshButton(prev => !prev);
+        setRefreshButton((prev) => !prev);
         handleClose();
       }
-
     } catch (error) {
       toast.error(error?.response?.data?.message || "خطأ أثناء الحفظ");
     } finally {
@@ -180,147 +187,180 @@ function DocumentModel({
     labId,
     documentData,
     handleClose,
-    setRefreshButton
+    setRefreshButton,
   ]);
 
   /* ------------------------------
       FORM CONTENT (MEMOIZED)
    ------------------------------ */
-  const renderFormContent = useMemo(() => (
-    <Box>
-      <Grid container spacing={2} sx={{ mt: 1 }}>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            name="total_amount"
-            label="المبلغ الأجمالي"
-            type="number"
-            value={formData.total_amount}
-            fullWidth
-            disabled
-            InputProps={{
-              endAdornment: <InputAdornment position="end">دينار</InputAdornment>,
-            }}
-          />
-        </Grid>
-
-        {/* نوع المستند */}
-        {!(documentType === "in" && !isExport) && (
+  const renderFormContent = useMemo(
+    () => (
+      <Box>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
-              name="documentType"
-              label="نوع المستند"
+              name="total_amount"
+              label="المبلغ الأجمالي"
+              type="number"
+              value={formData.total_amount}
               fullWidth
-              select
-              value={formData.documentType}
-              onChange={handleInputChange}
-            >
-              {typeDocument
-                .filter(item => item.value !== "in")
-                .map(item => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-            </TextField>
+              disabled
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">دينار</InputAdornment>
+                ),
+              }}
+            />
           </Grid>
-        )}
-
-        {/* المستفيد */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            name="beneficiary"
-            label={filedLabel}
-            value={formData.beneficiary}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-        </Grid>
-
-        {/* المخزن */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Autocomplete
-            fullWidth
-            options={wareHouseData}
-            getOptionLabel={opt => opt?.name || ""}
-            value={wareHouseData.find(w => w.id === formData.warehouse_id) || null}
-            onChange={handleWarehouseChange}
-            renderInput={params => (
-              <TextField {...params} label="اختر المخزن" />
-            )}
-            renderOption={(props, option) => (
-              <Box {...props} sx={{ display: "flex", gap: 1, p: 1 }}>
-                <WarehouseIcon size={18} />
-                <Box>
-                  <Typography>{option.name}</Typography>
-                  <Typography variant="caption">
-                    {option.location} - {option.user_name}
-                  </Typography>
+          {/* نوع المستند */}
+          {!(documentType === "in" && !isExport) && (
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                name="documentType"
+                label="نوع المستند"
+                fullWidth
+                select
+                value={formData.documentType}
+                onChange={handleInputChange}
+              >
+                {typeDocument
+                  .filter((item) => item.value !== "in")
+                  .map((item) => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
+              </TextField>
+            </Grid>
+          )}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              name="account_number"
+              label={"رقم الحساب"}
+              value={formData.account_number}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>{" "}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              name="type_movement"
+              label={"نوع الحركة"}
+              value={formData.type_movement}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>{" "}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              name="type_movement_code"
+              label={"رمز نوع الحركة"}
+              value={formData.type_movement_code}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>
+          {/* المستفيد */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              name="beneficiary"
+              label={filedLabel}
+              value={formData.beneficiary}
+              onChange={handleInputChange}
+              fullWidth
+              required
+            />
+          </Grid>
+          {/* المخزن */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Autocomplete
+              fullWidth
+              options={wareHouseData}
+              getOptionLabel={(opt) => opt?.name || ""}
+              value={
+                wareHouseData.find((w) => w.id === formData.warehouse_id) ||
+                null
+              }
+              onChange={handleWarehouseChange}
+              renderInput={(params) => (
+                <TextField {...params} label="اختر المخزن" />
+              )}
+              renderOption={(props, option) => (
+                <Box {...props} sx={{ display: "flex", gap: 1, p: 1 }}>
+                  <WarehouseIcon size={18} />
+                  <Box>
+                    <Typography>{option.name}</Typography>
+                    <Typography variant="caption">
+                      {option.location} - {option.user_name}
+                    </Typography>
+                  </Box>
+                  <Chip
+                    label={option.status}
+                    color={option.status === "ممتلئ" ? "error" : "success"}
+                    size="small"
+                  />
                 </Box>
-                <Chip
-                  label={option.status}
-                  color={option.status === "ممتلئ" ? "error" : "success"}
-                  size="small"
-                />
-              </Box>
-            )}
-          />
+              )}
+            />
+          </Grid>
+          {/* تاريخ المستند */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <CustomDatePicker
+              label="تاريخ المستند"
+              value={formData.document_date}
+              setValue={(v) => handleDateChange("document_date", v)}
+              format="YYYY/MM/DD"
+              haswidth
+            />
+          </Grid>
+          {/* الملاحظات */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              name="description"
+              label="ملاحظات"
+              multiline
+              rows={4}
+              fullWidth
+              value={formData.description}
+              onChange={handleInputChange}
+            />
+          </Grid>
         </Grid>
-
-        {/* تاريخ المستند */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <CustomDatePicker
-            label="تاريخ المستند"
-            value={formData.document_date}
-            setValue={(v) => handleDateChange("document_date", v)}
-            format="YYYY/MM/DD"
-            haswidth
-          />
-        </Grid>
-
-        {/* الملاحظات */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            name="description"
-            label="ملاحظات"
-            multiline
-            rows={4}
-            fullWidth
-            value={formData.description}
-            onChange={handleInputChange}
-          />
-        </Grid>
-      </Grid>
-    </Box>
-  ), [
-    formData,
-    handleDateChange,
-    handleWarehouseChange,
-    wareHouseData,
-    documentType,
-    isExport,
-    filedLabel,
-  ]);
+      </Box>
+    ),
+    [
+      formData,
+      handleDateChange,
+      handleWarehouseChange,
+      wareHouseData,
+      documentType,
+      isExport,
+      filedLabel,
+    ],
+  );
 
   /* ------------------------------
       FORM ACTIONS (MEMOIZED)
    ------------------------------ */
-  const renderFormActions = useMemo(() => (
-    <>
-      <ButtonTheme
-        variant="contained"
-        startIcon={<SaveIcon />}
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {editMode ? t("saveChange") : t("save")}
-      </ButtonTheme>
+  const renderFormActions = useMemo(
+    () => (
+      <>
+        <ButtonTheme
+          variant="contained"
+          startIcon={<SaveIcon />}
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {editMode ? t("saveChange") : t("save")}
+        </ButtonTheme>
 
-      <Button onClick={handleClose} variant="outlined" disabled={loading}>
-        {t("close")}
-      </Button>
-    </>
-  ), [editMode, loading, handleSubmit, handleClose, t]);
+        <Button onClick={handleClose} variant="outlined" disabled={loading}>
+          {t("close")}
+        </Button>
+      </>
+    ),
+    [editMode, loading, handleSubmit, handleClose, t],
+  );
 
   return (
     <>

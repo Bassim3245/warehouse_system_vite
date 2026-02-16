@@ -81,3 +81,39 @@ export const totalImportQuantity = (dataItem) =>
   dataItem?.imports?.reduce((sum, item) => sum + parseFloat(item?.quantity), 0);
 export const totalImportValue = (dataItem) =>
   dataItem?.imports?.reduce((sum, item) => sum + parseFloat(item?.price), 0);
+
+export const tableHeaderInvoiceExport = [
+  "ت",
+  "رمز المادة",
+  "اسم المادة",
+  "المواصفات الفنية",
+  "الكمية",
+  "الوحدة",
+  "سعر الوحدة",
+  "المبلغ الاجمالي",
+];
+
+export const tableBodyInvoiceExport = (dataItem) =>
+  dataItem?.map((exportItem, index) => ({
+    index: index + 1,
+    item_code: exportItem?.cod_material || "---",
+    item_name: exportItem?.name_of_material || "غير محدد",
+    specification: exportItem?.specification || "غير محدد",
+    quantity: FormatDataNumber(exportItem?.total_quantity || 0),
+    measuring_unit: exportItem?.measuring_unit || "غير محدد",
+    price: exportItem?.price ? FormatDataNumber(exportItem?.price) : "---",
+    total_price:
+      exportItem?.price && exportItem?.total_quantity
+        ? FormatDataNumber(
+          parseFloat(exportItem?.price) *
+          parseFloat(exportItem?.total_quantity)
+        )
+        : "---",
+    style: {
+      textAlign: "center",
+      border: "1px solid #000",
+    },
+  }));
+
+export const totalExportQuantity = (dataItem) => dataItem;
+export const totalExportValue = (dataItem) => dataItem;

@@ -7,10 +7,9 @@ import {
 } from "../../../../constants/materialInfo";
 import { getUserInformation } from "../../../../utils/handelCookie";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-
+import { formatDateAr } from "../../../../utils/formatData";
 
 const InvoiceDisplayImport = ({
   invoiceData,
@@ -19,38 +18,42 @@ const InvoiceDisplayImport = ({
   totalPrice,
   printRef,
   signauterData,
+  documentInfo,
 }) => {
   const dataUserById = getUserInformation();
   return (
     <div ref={printRef}>
+      <style>{`
+        @media print {
+          @page {
+            size: landscape;
+            margin: 8mm;
+          }
+        }
+      `}</style>
       <Box
         sx={{
-          maxWidth: "210mm",
+          maxWidth: "297mm",
           mx: "auto",
-          p: 2, // تقليل من 4 إلى 2
-          fontFamily: "'Times New Roman', serif",
-          fontSize: "12px", // تقليل من 14px إلى 12px
-          lineHeight: 1.4, // تقليل من 1.6 إلى 1.4
-          boxShadow: "0 0 10px rgba(0,0,0,0.1)", // تقليل الظل
+          p: 2,
+          border: "1px solid #bdc3c7",
         }}
         dir="rtl"
       >
         {/* Official Government Header */}
-        <Paper
-          elevation={0}
+
+        {/* Government Letterhead */}
+        <Box
           sx={{
-            mb: 1, // تقليل من 5 إلى 2
-            p: 1, // تقليل من 4 إلى 2
-            border: "1px solid #2c3e50", // تقليل من 3px إلى 2px
-            borderRadius: 0,
-            backgroundColor: "#f8f9fa",
-            position: "relative",
+            textAlign: "center",
+            mb: 2,
+            display: "flex",
+            justifyContent: "space-between",
           }}
         >
-          {/* Government Letterhead */}
-          <Box sx={{ textAlign: "center", mb: 2 }}>
-            {" "}
-            {/* تقليل من 4 إلى 2 */}
+          {" "}
+          {/* تقليل من 4 إلى 2 */}
+          <Box>
             <Typography
               sx={{
                 fontSize: "16px", // تقليل من 20px إلى 16px
@@ -77,7 +80,6 @@ const InvoiceDisplayImport = ({
                 fontSize: "12px", // تقليل من 14px إلى 12px
                 color: "#34495e",
                 fontWeight: "600",
-                borderBottom: "1px solid #bdc3c7", // تقليل من 2px إلى 1px
                 pb: 1, // تقليل من 2 إلى 1
                 display: "inline-block",
               }}
@@ -85,105 +87,215 @@ const InvoiceDisplayImport = ({
               {dataUserById?.Entities_name}
             </Typography>
           </Box>
-          {/* Document Information Grid */}
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            {" "}
-            {/* تقليل spacing من 3 إلى 2 ومن mt: 3 إلى 1 */}
-            <Grid size={{ xs: 4 }}>
-              <Box
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "14px", // تقليل من 16px إلى 14px
+                color: "#34495e",
+                fontWeight: "bold",
+                mb: 0.5, // تقليل من 1 إلى 0.5
+              }}
+            >
+              مستند استلام مخزني
+            </Typography>
+          </Box>
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "14px", // تقليل من 16px إلى 14px
+                color: "#34495e",
+                fontWeight: "bold",
+                mb: 0.5, // تقليل من 1 إلى 0.5
+              }}
+            >
+              نظام ادارة الخزين في المخازن
+            </Typography>
+          </Box>
+        </Box>
+        {/* Document Information Grid */}
+        <hr />
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          {" "}
+          {/* تقليل spacing من 3 إلى 2 ومن mt: 3 إلى 1 */}
+          <Grid size={{ xs: 4 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1, // تقليل من 2 إلى 1
+
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
                 sx={{
-                  textAlign: "center",
-                  p: 1, // تقليل من 2 إلى 1
-                  border: "1px solid #2c3e50", // تقليل من 2px إلى 1px
-                  backgroundColor: "#ffffff",
+                  fontSize: "11px", // تقليل من 12px إلى 10px
+                  mb: 0.5, // تقليل من 1 إلى 0.5
+                  textTransform: "uppercase",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: "10px", // تقليل من 12px إلى 10px
-                    color: "#7f8c8d",
-                    mb: 0.5, // تقليل من 1 إلى 0.5
-                    textTransform: "uppercase",
-                  }}
-                >
-                  رقم المستند
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: "14px", // تقليل من 18px إلى 14px
-                    fontWeight: "bold",
-                    color: "#e74c3c",
-                  }}
-                >
-                  {documentNumber || "---"}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 4 }}>
-              <Box
+                رقم المستند
+              </Typography>
+              <Typography
                 sx={{
-                  textAlign: "center",
-                  p: 1, // تقليل من 2 إلى 1
-                  border: "1px solid #2c3e50", // تقليل من 2px إلى 1px
-                  backgroundColor: "#ffffff",
+                  fontSize: "14px", // تقليل من 18px إلى 14px
+                  fontWeight: "bold",
+                  color: "#e74c3c",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: "10px", // تقليل من 12px إلى 10px
-                    color: "#7f8c8d",
-                    mb: 0.5, // تقليل من 1 إلى 0.5
-                    textTransform: "uppercase",
-                  }}
-                >
-                  تاريخ الإصدار
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: "12px", // تقليل من 16px إلى 12px
-                    fontWeight: "bold",
-                    color: "#2c3e50",
-                  }}
-                >
-                  {new Date().toLocaleDateString("ar-EG")}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 4 }}>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  p: 1, // تقليل من 2 إلى 1
-                  border: "1px solid #2c3e50", // تقليل من 2px إلى 1px
-                  backgroundColor: "#ffffff",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "10px", // تقليل من 12px إلى 10px
-                    color: "#7f8c8d",
-                    mb: 0.5, // تقليل من 1 إلى 0.5
-                    textTransform: "uppercase",
-                  }}
-                >
-                  وقت الطباعة
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: "11px", // تقليل من 14px إلى 11px
-                    fontWeight: "bold",
-                    color: "#2c3e50",
-                  }}
-                >
-                  {new Date().toLocaleTimeString("ar-EG", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Typography>
-              </Box>
-            </Grid>
+                {documentNumber || "---"}
+              </Typography>
+            </Box>
           </Grid>
-        </Paper>
+          <Grid size={{ xs: 4 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1, // تقليل من 2 إلى 1
+                // تقليل من 2px إلى 1px
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px", // تقليل من 12px إلى 10px
+                  mb: 0.5, // تقليل من 1 إلى 0.5
+                  textTransform: "uppercase",
+                }}
+              >
+                تاريخ المستند
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "12px", // تقليل من 16px إلى 12px
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {formatDateAr(documentInfo?.document_date)}{" "}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 4 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1, // تقليل من 2 إلى 1
+                // تقليل من 2px إلى 1px
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px", // تقليل من 12px إلى 10px
+                  mb: 0.5, // تقليل من 1 إلى 0.5
+                  textTransform: "uppercase",
+                }}
+              >
+                اسم المخزن
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "11px", // تقليل من 14px إلى 11px
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {documentInfo?.warehouse_name || "---"}
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+
+        {/* Document Additional Info - Account Number, Type Movement */}
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid size={{ xs: 4 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1,
+
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  mb: 0.5,
+                  textTransform: "uppercase",
+                }}
+              >
+                رقم الحساب
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {documentInfo?.account_number || "---"}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 4 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1,
+
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  mb: 0.5,
+                  textTransform: "uppercase",
+                }}
+              >
+                نوع الحركة
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {documentInfo?.type_movement || "---"}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 4 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1,
+
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  mb: 0.5,
+                  textTransform: "uppercase",
+                }}
+              >
+                رمز الحركة
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {documentInfo?.type_movement_code || "---"}
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
         <Box
           sx={{
             "& .MuiPaper-root": {
@@ -192,11 +304,6 @@ const InvoiceDisplayImport = ({
             "& .MuiTypography-h5": {
               color: "white",
               p: 2, // تقليل من 3 إلى 2
-              margin: 0,
-              fontSize: "16px", // تقليل من 20px إلى 16px
-              fontWeight: "bold",
-              textTransform: "uppercase",
-              letterSpacing: "0.5px", // تقليل من 1px إلى 0.5px
             },
           }}
         >
@@ -209,218 +316,209 @@ const InvoiceDisplayImport = ({
             ColumnKey={"InvoiceImport"}
           />
         </Box>
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-          }}
-        >
-          <tbody>
-            <tr>
-              <td
-                style={{
-                  width: "50%",
-                  padding: "16px",
-                  border: "1px solid #2c3e50",
-                  verticalAlign: "top",
+        {/* Summary Information Grid */}
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid size={{ xs: 3 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1,
+                border: "1px solid #bdc3c7",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  mb: 0.5,
+                  fontWeight: "bold",
                 }}
               >
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <tbody>
-                    <tr>
-                      <td
-                        style={{
-                          padding: "8px",
-                          border: "1px solid #bdc3c7",
-                          fontWeight: "bold",
-                          fontSize: "12px",
-                        }}
-                      >
-                        عدد البنود:
-                      </td>
-                      <td
-                        style={{
-                          padding: "8px",
-                          border: "1px solid #bdc3c7",
-                          fontWeight: "bold",
-                          fontSize: "13px",
-                          textAlign: "center",
-                        }}
-                      >
-                        {invoiceData?.length || 0}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style={{
-                          padding: "8px",
-                          border: "1px solid #bdc3c7",
-                          fontWeight: "bold",
-                          fontSize: "12px",
-                        }}
-                      >
-                        نوع الوصل:
-                      </td>
-                      <td
-                        style={{
-                          padding: "8px",
-                          border: "1px solid #bdc3c7",
-                          fontWeight: "bold",
-                          fontSize: "13px",
-                          textAlign: "center",
-                        }}
-                      >
-                        واردات مواد
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style={{
-                          padding: "8px",
+                عدد البنود
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {invoiceData?.length || 0}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 3 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1,
+                border: "1px solid #bdc3c7",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  mb: 0.5,
+                  fontWeight: "bold",
+                }}
+              >
+                نوع الوصل
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                واردات مواد
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 3 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1,
+                border: "1px solid #bdc3c7",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  mb: 0.5,
+                  fontWeight: "bold",
+                }}
+              >
+                إجمالي الكمية
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {totalQuantity || 0}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 3 }}>
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 1,
+                border: "1px solid #bdc3c7",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  mb: 0.5,
+                  fontWeight: "bold",
+                }}
+              >
+                القيمة الإجمالية
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#2c3e50",
+                }}
+              >
+                {totalPrice ? totalPrice.toLocaleString("ar-EG") : "0"} د.ع
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
 
-                          border: "1px solid #2c3e50",
-                          fontWeight: "bold",
-                          fontSize: "12px",
-                        }}
-                      >
-                        إجمالي الكمية:
-                      </td>
-                      <td
-                        style={{
-                          padding: "8px",
-                          border: "1px solid #2c3e50",
-                          fontWeight: "bold",
-                          fontSize: "14px",
-                          textAlign: "center",
-                        }}
-                      >
-                        {totalQuantity || 0}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style={{
-                          border: "1px solid #2c3e50",
-                          fontWeight: "bold",
-                          fontSize: "14px",
-                        }}
-                      >
-                        القيمة الإجمالية:
-                      </td>
-                      <td
-                        style={{
-                          padding: "8px",
-                          border: "1px solid #2c3e50",
-                          fontWeight: "bold",
-                          fontSize: "16px",
-                          textAlign: "center",
-                        }}
-                      >
-                        {totalPrice ? totalPrice.toLocaleString("ar-EG") : "0"}{" "}
-                        د.ع
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* Official Signatures Section */}
-        <Paper
-          elevation={0}
+        <Typography
+          variant="h5"
           sx={{
-            mt: 1, // تقليل من 6 إلى 3
-            p: 1, // تقليل من 4 إلى 2
-            border: "1px solid #2c3e50", // تقليل من 3px double إلى 2px solid
-            borderRadius: 0,
+            fontWeight: "bold",
+            fontSize: "16px",
+            textAlign: "center",
+            mb: 2, // تقليل من 4 إلى 2
+            textTransform: "uppercase",
+            letterSpacing: "0.5px", // تقليل من 1px إلى 0.5px
           }}
         >
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: "bold",
-              fontSize: "16px", // تقليل من 20px إلى 16px
-              textAlign: "center",
-              mb: 2, // تقليل من 4 إلى 2
-              textTransform: "uppercase",
-              letterSpacing: "0.5px", // تقليل من 1px إلى 0.5px
-            }}
-          >
-            التوقيعات والاعتماد الرسمي
-          </Typography>
+          التوقيعات والاعتماد الرسمي
+        </Typography>
 
-          <Grid container spacing={2} dir="rtl">
-            {" "}
-            {signauterData && signauterData.length > 0 ? (
-              signauterData?.map((item, index) => (
-                <Grid size key={index}>
-                  <Box sx={{ textAlign: "center" }}>
-                    <Box
-                      sx={{
-                        height: "60px", // تقليل من 100px إلى 60px
-                        border: "1px solid #2c3e50", // تقليل من 2px إلى 1px
-                        borderRadius: 0,
-                        mb: 2, // تقليل من 3 إلى 2
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: "10px", // تقليل من 12px إلى 10px
-                          fontStyle: "italic",
-                        }}
-                      >
-                        منطقة التوقيع
-                      </Typography>
-                    </Box>
+        <Grid container spacing={2} dir="rtl">
+          {" "}
+          {signauterData && signauterData.length > 0 ? (
+            signauterData?.map((item, index) => (
+              <Grid size key={index}>
+                <Box sx={{ textAlign: "center" }}>
+                  <Box
+                    sx={{
+                      height: "60px", // تقليل من 100px إلى 60px
+                      border: "1px solid #2c3e50", // تقليل من 2px إلى 1px
+                      borderRadius: 0,
+                      mb: 2, // تقليل من 3 إلى 2
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <Typography
                       sx={{
-                        fontWeight: "bold",
-                        fontSize: "12px", // تقليل من 16px إلى 12px
-                        mb: 1, // تقليل من 2 إلى 1
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {item?.title}
-                    </Typography>
-                    <Box
-                      sx={{
-                        textAlign: "right",
                         fontSize: "10px", // تقليل من 12px إلى 10px
+                        fontStyle: "italic",
                       }}
                     >
-                      <Typography sx={{ mb: 0.5 }}>
-                        {" "}
-                        {/* تقليل من 1 إلى 0.5 */}
-                        الاسم: ................................
-                      </Typography>
-                      <Typography sx={{ mb: 0.5 }}>
-                        {" "}
-                        {/* تقليل من 1 إلى 0.5 */}
-                        التاريخ: ................................
-                      </Typography>
-                      <Typography>
-                        الختم: ................................
-                      </Typography>
-                    </Box>
+                      منطقة التوقيع
+                    </Typography>
                   </Box>
-                </Grid>
-              ))
-            ) : (
-              <Grid item xs>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography sx={{ fontSize: "12px", color: "#2c3e50" }}>
-                    لا توجد توقيعات مسجلة
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "12px", // تقليل من 16px إلى 12px
+                      mb: 1, // تقليل من 2 إلى 1
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {item?.title}
                   </Typography>
+                  <Box
+                    sx={{
+                      textAlign: "right",
+                      fontSize: "10px", // تقليل من 12px إلى 10px
+                    }}
+                  >
+                    <Typography sx={{ mb: 0.5 }}>
+                      {" "}
+                      {/* تقليل من 1 إلى 0.5 */}
+                      الاسم: ................................
+                    </Typography>
+                    <Typography sx={{ mb: 0.5 }}>
+                      {" "}
+                      {/* تقليل من 1 إلى 0.5 */}
+                      التاريخ: ................................
+                    </Typography>
+                    <Typography>
+                      الختم: ................................
+                    </Typography>
+                  </Box>
                 </Box>
               </Grid>
-            )}
-          </Grid>
-        </Paper>
+            ))
+          ) : (
+            <Grid item xs>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography sx={{ fontSize: "12px", color: "#2c3e50" }}>
+                  لا توجد توقيعات مسجلة
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
       </Box>
     </div>
   );

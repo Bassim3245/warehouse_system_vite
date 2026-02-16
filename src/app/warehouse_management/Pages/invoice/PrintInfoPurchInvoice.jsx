@@ -17,6 +17,7 @@ export const PrintPurchases = ({
   totalPrice,
   totalAmount,
   document_id,
+  documentInfo,
 }) => {
   const [open, setOpen] = useState(false);
   const printRef = React.useRef();
@@ -38,6 +39,7 @@ export const PrintPurchases = ({
         totalAmount={totalAmount}
         printRef={printRef}
         signauterData={signauterData}
+        documentInfo={documentInfo}
       />
     </>
   );

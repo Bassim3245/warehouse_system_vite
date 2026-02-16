@@ -1,5 +1,5 @@
 // ===== REACT HOOKS =====
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ===== REDUX HOOKS =====
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +35,7 @@ const useGetAllWarehouse = () => {
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   // ===== STATE MANAGEMENT =====
   const [refreshKey, setRefreshKey] = useState(false);
+  const hasFetched = useRef(false);
   // ===== MEMOIZED VALUES =====
   /**
    * معرف الكيان المستخرج من بيانات المستخدم
@@ -280,10 +281,28 @@ const useGetAllWarehouse = () => {
   // ===== EFFECTS =====
   /**
    * تأثير لجلب بيانات المخازن عند تغيير المعاملات
+   * يعيد المحاولة عندما تصل البيانات المطلوبة
    */
   useEffect(() => {
+    hasFetched.current = false;
     dispatchWarehouseData();
   }, [dispatchWarehouseData]);
+
+  // إعادة المحاولة عندما تكون البيانات غير متوفرة بعد
+  useEffect(() => {
+    if (hasFetched.current) return;
+    if (!entityId || !roles || !applicationPermission) return;
+
+    const userRole = dataUserById?.group_name;
+    const needsLab = userRole === "lab user" || (userRole !== "Admin" && userRole !== "warehouse_Manager" && userRole !== "warehouse_main_manger" && userRole !== "production_manager" && userRole !== "Factory user");
+    const needsFactory = userRole === "Factory user" || userRole === "production_manager" || (userRole !== "Admin" && userRole !== "warehouse_Manager" && userRole !== "warehouse_main_manger" && userRole !== "lab user");
+
+    if (needsLab && !labId && has_lab) return;
+    if (needsFactory && !factoryId && has_factory) return;
+
+    dispatchWarehouseData();
+    hasFetched.current = true;
+  }, [entityId, roles, applicationPermission, labId, factoryId, dataUserById?.group_name, has_lab, has_factory, dispatchWarehouseData]);
 
   // ===== RETURN VALUES =====
   return {

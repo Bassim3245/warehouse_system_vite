@@ -15,7 +15,8 @@ import Divider from "@mui/material/Divider";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import {useTheme} from "@mui/material/styles";import Autocomplete from "@mui/material/Autocomplete";
+import {useTheme} from "@mui/material/styles";
+import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 
@@ -350,6 +351,9 @@ function Document({
                     "تاريخ المستند",
                     "تاريخ الإدخال",
                     "نوع المستند",
+                    "رقم الحساب",
+                    "نوع الحركة",
+                    "رمز نوع الحركة",
                     "الجهة",
                     "المخزن",
                     "المبلغ",
@@ -402,6 +406,19 @@ function Document({
                               ? "مستند وارد"
                               : "مستند صادر"}
                       </StyledTableCell>
+
+                      <StyledTableCell>
+                        {item?.account_number || "-"}
+                      </StyledTableCell>
+
+                      <StyledTableCell>
+                        {item?.type_movement || "-"}
+                      </StyledTableCell>
+
+                      <StyledTableCell>
+                        {item?.type_movement_code || "-"}
+                      </StyledTableCell>
+
                       <StyledTableCell>
                         {item?.beneficiary || "-"}
                       </StyledTableCell>
