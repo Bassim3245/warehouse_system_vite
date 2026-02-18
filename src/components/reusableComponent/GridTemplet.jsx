@@ -154,7 +154,7 @@ const GridTemplate = ({
   );
 
   return (
-    <Box sx={{ mt: 1 }} >
+    <Box sx={{ mt: 1 }} dir={rtl?.dir || "rtl"}>
       <Paper sx={paperStyles}>
         <Box sx={{ width: "100%", p: isMobileView ? 1 : 0 }}>
           {isMobileView ? (
@@ -168,6 +168,7 @@ const GridTemplate = ({
               getRowClassName={getRowClassNameMemo}
               mainColor={theme.palette.primary.main}
               initialState={initialState}
+              dir={rtl?.dir || "rtl"}
             />
           ) : (
             <StyledDataGrid
@@ -180,7 +181,7 @@ const GridTemplate = ({
               // rowSelectionModel={singleSelectionModel}
               columnVisibilityModel={columnVisibilityModel}
               getRowId={getRowId}
-              direction={rtl.dir}
+              direction={rtl?.dir || "rtl"}
               getRowHeight={() => "auto"}
               hideFooter={true}
               getRowClassName={getRowClassNameMemo}

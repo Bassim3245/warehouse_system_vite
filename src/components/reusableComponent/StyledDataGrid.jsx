@@ -11,7 +11,7 @@ const StyledDataGrid = styled(DataGrid, {
     !["rowCount", "containerHasDirection", "direction", "gridTheme"].includes(
       prop
     ),
-})(({ theme, rowCount, direction, gridTheme  }) => {
+})(({ theme, rowCount, direction, gridTheme }) => {
   const mainColor = gridTheme?.mainColor || theme.palette.primary.main;
   const isDark = theme?.palette?.mode === "dark";
 
@@ -93,7 +93,14 @@ const StyledDataGrid = styled(DataGrid, {
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-      direction: "rtl",
+      direction: direction === "rtl" ? "rtl" : "ltr",
+      textAlign: direction === "rtl" ? "right" : "left",
+      fontFamily: "Cairo, sans-serif",
+    },
+
+    "& .MuiDataGrid-columnHeaderTitleContainer": {
+      flexDirection: direction === "rtl" ? "row-reverse" : "row",
+      justifyContent: direction === "rtl" ? "flex-end" : "flex-start",
     },
 
     "& .MuiDataGrid-columnHeaderTitleContainerContent, & .MuiDataGrid-columnHeaderTitleContainerContent div, & .MuiDataGrid-columnHeaderTitleContainerContent span, & .MuiDataGrid-columnHeaderTitleContainerContent p":
@@ -112,6 +119,8 @@ const StyledDataGrid = styled(DataGrid, {
       outline: "none",
       borderBottom: `1px solid ${alpha(theme.palette.divider, 0.3)}`,
       transition: "background-color 0.2s ease",
+      direction: direction === "rtl" ? "rtl" : "ltr",
+      textAlign: direction === "rtl" ? "right" : "left",
     },
 
     "& .MuiDataGrid-row": {
@@ -148,7 +157,7 @@ const StyledDataGrid = styled(DataGrid, {
 
     "& .MuiDataGrid-menuIcon, & .MuiDataGrid-iconButtonContainer": {
       // display: "
-      color:"white !important"
+      color: "white !important"
 
     },
 

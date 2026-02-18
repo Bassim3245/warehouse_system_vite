@@ -52,7 +52,6 @@ const StoreData = ({
 }) => {
   const navigate = useNavigate();
 
-  console.log("page", page, limit, totalItems, totalPages)
   if (!selectedWarehouse) {
     return (
       <Card sx={{ mt: 2, textAlign: "center", p: 4 }}>
