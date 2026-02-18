@@ -180,7 +180,7 @@ const SelectInformation = ({
         <Header title={title} dir="rtl" />
       </Box>
       <Grid container spacing={2} sx={{ mb: 1 }}>
-        <Grid item xs={12} md={3} lg={2}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ar">
             <DatePicker
               label="اختر الشهر والسنة"
@@ -193,7 +193,7 @@ const SelectInformation = ({
             />
           </LocalizationProvider>
         </Grid>
-        <Grid item xs={12} md={3} lg={2}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <FormControl fullWidth>
             <InputLabel id="document-type-label">نوع المستند</InputLabel>
             <Select
@@ -212,7 +212,7 @@ const SelectInformation = ({
           </FormControl>
         </Grid>
         {showFactory && (
-          <Grid item xs={12} md={3} lg={2}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <Autocomplete
               fullWidth
               options={factoryData}
@@ -227,7 +227,7 @@ const SelectInformation = ({
           </Grid>
         )}
         {showLab && (
-          <Grid item xs={12} md={3} lg={2}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <Autocomplete
               fullWidth
               options={labData}
@@ -241,7 +241,7 @@ const SelectInformation = ({
             />
           </Grid>
         )}
-        <Grid item xs={12} md={3} lg={2}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Autocomplete
             fullWidth
             options={wareHouseData}
@@ -255,7 +255,7 @@ const SelectInformation = ({
           />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Box sx={buttonContainerSx}>
             <PrintDialogInventory
               store_id={selectedWarehouse}

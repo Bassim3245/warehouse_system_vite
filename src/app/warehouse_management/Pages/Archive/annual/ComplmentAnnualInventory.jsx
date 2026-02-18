@@ -285,16 +285,12 @@ export default function AnnualInventoryModel({
   return (
     <div>
       <Tooltip title="إكمال الجرد الشهري وأرشفة المستندات المكتملة">
-        <Button
-          variant="contained"
-          color="success"
+        <ButtonTheme
           onClick={handleOpen}
           startIcon={<ArchiveIcon />}
-          size="medium"
-          sx={{ boxShadow: 1, "&:hover": { boxShadow: 3 } }}
         >
           أرشفة نهائية
-        </Button>
+        </ButtonTheme>
       </Tooltip>
       <PopupForm
         title="إكمال الجرد الشهري وأرشفة المستندات"

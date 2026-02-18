@@ -112,7 +112,7 @@ export default function MonthlyInventory({
 
   const DateRangeSelector = () => (
     <Grid container spacing={2} sx={{ mt: 1 }} dir="ltr">
-      <Grid item xs={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <CustomDatePicker
           haswidth={true}
           label="من تاريخ"
@@ -126,7 +126,7 @@ export default function MonthlyInventory({
           borderColor="inherit"
         />
       </Grid>
-      <Grid item xs={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <CustomDatePicker
           haswidth={true}
           label="إلى تاريخ"
@@ -157,17 +157,17 @@ export default function MonthlyInventory({
           </Box>
           <Grid container spacing={1}>
             {documentsToArchive.slice(0, 5).map((doc, index) => (
-              <Grid item key={doc.id || index}>
+              <Grid item key={doc?.id || index}>
                 <Chip
                   icon={<Description fontSize="small" />}
-                  label={doc.name || `مستند ${index + 1}`}
+                  label={doc?.name || `مستند ${index + 1}`}
                   size="small"
                   variant="outlined"
                 />
               </Grid>
             ))}
             {documentsToArchive.length > 5 && (
-              <Grid item>
+              <Grid >
                 <Chip
                   label={`+${documentsToArchive.length - 5} أخرى`}
                   size="small"

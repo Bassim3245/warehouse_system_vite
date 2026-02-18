@@ -280,7 +280,6 @@ export default function StoreFormModel({
         open={open}
         onClose={handleClose}
         setOpen={setOpen}
-        width="100%"
         content={renderFormContent()}
         footer={renderFormActions()}
       />

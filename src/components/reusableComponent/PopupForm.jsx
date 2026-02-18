@@ -36,6 +36,10 @@ export default function PopupForm(props) {
   };
 
   const getMaxWidth = () => {
+    if (props?.maxWidth) {
+      const sizes = { xs: "444px", sm: "600px", md: "900px", lg: "1200px", xl: "1536px" };
+      return sizes[props.maxWidth] || props.maxWidth;
+    }
     if (props?.width) return props.width + " !important";
     if (props?.customeWidth) return props.customeWidth;
     return {

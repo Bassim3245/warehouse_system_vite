@@ -270,7 +270,7 @@ function DocumentModel({
                  <Grid size={{ xs: 12, sm: 4 }}>
               <CustomDatePicker
                 label="تاريخ المستند"
-                value={formData.document_date}
+                value={formData?.document_date}
                 setValue={(v) => handleDateChange("document_date", v)}
                 format="YYYY/MM/DD"
                 haswidth

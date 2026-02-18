@@ -1,4 +1,4 @@
-import  { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -178,7 +178,7 @@ export default function MonthlyLockForm({
     // الخطوة 1: اختيار الفترة (السنة والشهر)
     // ============================================
     const Step1Content = () => (
-        <Box sx={{ p: 2 }} >
+        <Box sx={{ p: 2 }} dir="rtl">
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
                 <CalendarMonthIcon color="primary" />
                 <Typography variant="h6" color="text.primary">
@@ -446,10 +446,22 @@ export default function MonthlyLockForm({
     );
 
     const FormContent = () => (
-        <Box sx={{ minHeight: 400 }}>
+        <Box dir="rtl">
             {/* Stepper */}
-            <Stepper activeStep={activeStep} alternativeLabel sx={{ pt: 2, pb: 3 }}>
-                {steps.map((label, index) => (
+            <Stepper
+                activeStep={activeStep}
+                alternativeLabel
+                sx={{
+                    pt: 2,
+                    pb: 3,
+                    direction: "ltr",   // keep MUI stepper LTR internally so step numbers are correct
+                    "& .MuiStepLabel-label": {
+                        fontFamily: "Cairo, sans-serif",
+                        fontSize: "13px",
+                    },
+                }}
+            >
+                {steps.map((label) => (
                     <Step key={label}>
                         <StepLabel>{label}</StepLabel>
                     </Step>
@@ -464,21 +476,21 @@ export default function MonthlyLockForm({
     );
 
     const FormActions = () => (
-        <Stack direction="row" spacing={1} justifyContent="space-between" sx={{ width: '100%' }}>
+        <Stack direction="row" spacing={1} justifyContent="space-between" sx={{ width: '100%', gap: 1 }}>
             <Box>
                 {activeStep > 0 && (
                     <Button
                         onClick={handleBack}
                         variant="outlined"
                         size="small"
-                        startIcon={<ArrowForwardIcon />}
+                        startIcon={<ArrowBackIcon />}
                         disabled={loading || fetchingDocs}
                     >
                         السابق
                     </Button>
                 )}
             </Box>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ gap: 1 }}>
                 <Button
                     onClick={handleClose}
                     variant="outlined"
@@ -494,7 +506,7 @@ export default function MonthlyLockForm({
                         variant="contained"
                         onClick={handleNext}
                         disabled={fetchingDocs}
-                        endIcon={fetchingDocs ? <CircularProgress size={16} color="inherit" /> : <ArrowBackIcon />}
+                        startIcon={fetchingDocs ? <CircularProgress size={16} color="inherit" /> : <ArrowForwardIcon />}
                         size="small"
                     >
                         {activeStep === 0 ? "عرض السجلات" : "التالي"}
@@ -524,27 +536,20 @@ export default function MonthlyLockForm({
     return (
         <div>
             <Tooltip title="إكمال الجرد الشهري وأرشفة المستندات المكتملة">
-                <Button
-                    variant="contained"
-                    color="success"
+                <ButtonTheme
                     onClick={handleOpen}
                     startIcon={<ArchiveIcon />}
-                    size="medium"
-                    sx={{ boxShadow: 1, "&:hover": { boxShadow: 3 } }}
                 >
                     أرشفة نهائية
-                </Button>
+                </ButtonTheme>
             </Tooltip>
             <PopupForm
                 title="إكمال الجرد الشهري وأرشفة المستندات"
                 open={open}
                 onClose={handleClose}
                 setOpen={setOpen}
-                icon={<ArchiveIcon color="success" />}
+                icon={<ArchiveIcon />}
                 width="100%"
-                height="100%"
-                isFullScreen={true}
-                fullheight={true}
                 content={<FormContent />}
                 footer={<FormActions />}
             />
