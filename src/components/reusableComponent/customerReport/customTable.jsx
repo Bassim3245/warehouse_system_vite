@@ -22,7 +22,8 @@ function CostumeTable({
   ColumnKey,
 }) {
   return (
-    <Card elevation={0} sx={{ mb: 3, }}>
+    <>
+    
       <TableContainer >
         <Table size="small" sx={{ border: "1px solid #000" }}>
           <TableHead>
@@ -75,8 +76,10 @@ function CostumeTable({
           )}`}
           dataItem={dataItem?.material}
         />
+
       )}
-    </Card>
+    </>
+
   );
 }
 export default CostumeTable;

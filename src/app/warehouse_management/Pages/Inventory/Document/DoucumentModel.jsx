@@ -195,137 +195,196 @@ function DocumentModel({
    ------------------------------ */
   const renderFormContent = useMemo(
     () => (
-      <Box>
-        <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              name="total_amount"
-              label="المبلغ الأجمالي"
-              type="number"
-              value={formData.total_amount}
-              fullWidth
-              disabled
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">دينار</InputAdornment>
-                ),
-              }}
-            />
+      <Box dir="rtl">
+        {/* ===== الحقول الإجبارية ===== */}
+        <Box
+          sx={{
+            p: 2,
+            mb: 2,
+          
+          }}
+        >
+          <Typography
+            variant="subtitle2"
+            sx={{
+              mb: 1.5,
+              fontWeight: "bold",
+              color: "primary.main",
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            ★ الحقول الإجبارية
+          </Typography>
+          <Grid container spacing={2}>
+            {/* المخزن */}
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <Autocomplete
+                fullWidth
+                options={wareHouseData}
+                getOptionLabel={(opt) => opt?.name || ""}
+                value={
+                  wareHouseData.find((w) => w.id === formData.warehouse_id) ||
+                  null
+                }
+                onChange={handleWarehouseChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="اختر المخزن"
+                    required
+                    sx={{ bgcolor: "white", borderRadius: 1 }}
+                  />
+                )}
+                renderOption={(props, option) => (
+                  <Box {...props} sx={{ display: "flex", gap: 1, p: 1 }}>
+                    <WarehouseIcon size={18} />
+                    <Box>
+                      <Typography>{option.name}</Typography>
+                      <Typography variant="caption">
+                        {option.location} - {option.user_name}
+                      </Typography>
+                    </Box>
+                    <Chip
+                      label={option.status}
+                      color={option.status === "ممتلئ" ? "error" : "success"}
+                      size="small"
+                    />
+                  </Box>
+                )}
+              />
+            </Grid>
+            {/* المجهز / المورد / المستفيد */}
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <TextField
+                name="beneficiary"
+                label={filedLabel}
+                value={formData.beneficiary}
+                onChange={handleInputChange}
+                fullWidth
+                required
+                sx={{ bgcolor: "white", borderRadius: 1 }}
+              />
+            </Grid>
+                 <Grid size={{ xs: 12, sm: 4 }}>
+              <CustomDatePicker
+                label="تاريخ المستند"
+                value={formData.document_date}
+                setValue={(v) => handleDateChange("document_date", v)}
+                format="YYYY/MM/DD"
+                haswidth
+              />
+            </Grid>
           </Grid>
-          {/* نوع المستند */}
-          {!(documentType === "in" && !isExport) && (
+        </Box>
+
+        {/* ===== الحقول الاختيارية ===== */}
+        <Box
+          sx={{
+            p: 2,
+            border: "1px dashed",
+            borderColor: "grey.400",
+            borderRadius: 2,
+          }}
+        >
+          <Typography
+            variant="subtitle2"
+            sx={{
+              mb: 1.5,
+              fontWeight: "bold",
+              color: "text.secondary",
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            معلومات إضافية (اختيارية)
+          </Typography>
+          <Grid container spacing={2}>
+            {/* نوع المستند */}
+            {!(documentType === "in" && !isExport) && (
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  name="documentType"
+                  label="نوع المستند"
+                  fullWidth
+                  select
+                  value={formData.documentType}
+                  onChange={handleInputChange}
+                >
+                  {typeDocument
+                    .filter((item) => item.value !== "in")
+                    .map((item) => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+            )}
+            {/* رقم الحساب */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
-                name="documentType"
-                label="نوع المستند"
-                fullWidth
-                select
-                value={formData.documentType}
+                name="account_number"
+                label="رقم الحساب"
+                value={formData.account_number}
                 onChange={handleInputChange}
-              >
-                {typeDocument
-                  .filter((item) => item.value !== "in")
-                  .map((item) => (
-                    <MenuItem key={item.value} value={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-              </TextField>
+                fullWidth
+              />
             </Grid>
-          )}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              name="account_number"
-              label={"رقم الحساب"}
-              value={formData.account_number}
-              onChange={handleInputChange}
-              fullWidth
-            />
-          </Grid>{" "}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              name="type_movement"
-              label={"نوع الحركة"}
-              value={formData.type_movement}
-              onChange={handleInputChange}
-              fullWidth
-            />
-          </Grid>{" "}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              name="type_movement_code"
-              label={"رمز نوع الحركة"}
-              value={formData.type_movement_code}
-              onChange={handleInputChange}
-              fullWidth
-            />
+            {/* نوع الحركة */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                name="type_movement"
+                label="نوع الحركة"
+                value={formData.type_movement}
+                onChange={handleInputChange}
+                fullWidth
+              />
+            </Grid>
+            {/* رمز نوع الحركة */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                name="type_movement_code"
+                label="رمز نوع الحركة"
+                value={formData.type_movement_code}
+                onChange={handleInputChange}
+                fullWidth
+              />
+            </Grid>
+            {/* تاريخ المستند */}
+       
+            {/* المبلغ الإجمالي */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                name="total_amount"
+                label="المبلغ الأجمالي"
+                type="number"
+                value={formData.total_amount}
+                fullWidth
+                disabled
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">دينار</InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            {/* الملاحظات */}
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                name="description"
+                label="ملاحظات"
+                multiline
+                rows={3}
+                fullWidth
+                value={formData.description}
+                onChange={handleInputChange}
+              />
+            </Grid>
           </Grid>
-          {/* المستفيد */}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              name="beneficiary"
-              label={filedLabel}
-              value={formData.beneficiary}
-              onChange={handleInputChange}
-              fullWidth
-              required
-            />
-          </Grid>
-          {/* المخزن */}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Autocomplete
-              fullWidth
-              options={wareHouseData}
-              getOptionLabel={(opt) => opt?.name || ""}
-              value={
-                wareHouseData.find((w) => w.id === formData.warehouse_id) ||
-                null
-              }
-              onChange={handleWarehouseChange}
-              renderInput={(params) => (
-                <TextField {...params} label="اختر المخزن" />
-              )}
-              renderOption={(props, option) => (
-                <Box {...props} sx={{ display: "flex", gap: 1, p: 1 }}>
-                  <WarehouseIcon size={18} />
-                  <Box>
-                    <Typography>{option.name}</Typography>
-                    <Typography variant="caption">
-                      {option.location} - {option.user_name}
-                    </Typography>
-                  </Box>
-                  <Chip
-                    label={option.status}
-                    color={option.status === "ممتلئ" ? "error" : "success"}
-                    size="small"
-                  />
-                </Box>
-              )}
-            />
-          </Grid>
-          {/* تاريخ المستند */}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <CustomDatePicker
-              label="تاريخ المستند"
-              value={formData.document_date}
-              setValue={(v) => handleDateChange("document_date", v)}
-              format="YYYY/MM/DD"
-              haswidth
-            />
-          </Grid>
-          {/* الملاحظات */}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              name="description"
-              label="ملاحظات"
-              multiline
-              rows={4}
-              fullWidth
-              value={formData.description}
-              onChange={handleInputChange}
-            />
-          </Grid>
-        </Grid>
+        </Box>
       </Box>
     ),
     [
@@ -379,7 +438,6 @@ function DocumentModel({
         open={open}
         onClose={handleClose}
         setOpen={setOpen}
-        width="70%"
         content={renderFormContent}
         footer={renderFormActions}
       />

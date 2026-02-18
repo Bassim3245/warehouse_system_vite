@@ -1,5 +1,5 @@
-import { ContainerOfInputFields } from "./ThemDesign";
-import { Box, TextField, useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
@@ -16,133 +16,99 @@ export default function CustomDatePicker({
   placeholder,
   textError,
   error,
-  is_years,
   is_Time,
   minDate,
   maxDate,
   customWidth,
-  paddingHorizontal,
-  borderPosition = "left",
-  borderColor,
   ...props
 }) {
   const theme = useTheme();
-  const borderStyle =
-    borderPosition === "left"
-      ? `5px solid ${borderColor || theme.palette.primary.main} !important`
-      : borderPosition === "right"
-        ? `5px solid ${borderColor || theme.palette.primary.main} !important`
-        : "none";
 
-  const isDark = theme?.palette?.mode === "dark";
-
-  // Common TextField props
+  // Common TextField props — outlined to match MUI TextField default
   const textFieldProps = {
-    variant: "filled",
-    focused: true,
+    variant: "outlined",
     error: error,
     helperText: textError,
     required: props?.required || false,
-    placeholder: placeholder || "not specified yet",
+    placeholder: placeholder,
+    fullWidth: true,
     sx: {
       width: "100%",
-      "& .MuiFilledInput-root": {
-        borderLeft: borderPosition === "left" ? borderStyle : "none",
-        borderRight: borderPosition === "right" ? borderStyle : "none",
-        borderRadius: 0,
+      "& .MuiOutlinedInput-root": {
+        borderRadius: 1,
       },
     },
   };
 
   return (
-    <ContainerOfInputFields
-      mainTheme={theme.palette.primary.main}
-      customeWidth={customWidth ? customWidth : "100%"}
-      hasError={error}
-      haswidth={true}
-      isForm={true}
-      paddingHorizontal={paddingHorizontal}
-    >
-      <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-          backgroundColor: isDark
-            ? theme.palette.backgroundColorTheme?.backgroundColorDark
-            : theme.palette.backgroundColorTheme?.backgroundColorLight,
-        }}
-      >
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          {is_dateTime && !is_Time ? (
-            <DateTimePicker
+    <Box sx={{ position: "relative", width: customWidth || "100%" }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {is_dateTime && !is_Time ? (
+          <DateTimePicker
+            label={label}
+            format={format || "YYYY/MM/DD HH:mm:ss"}
+            value={value}
+            minDate={minDate}
+            maxDate={maxDate}
+            onChange={(date) => setValue(date)}
+            slotProps={{ textField: textFieldProps }}
+          />
+        ) : !is_Time ? (
+          props?.is_year ? (
+            <DatePicker
+              views={["year"]}
+              openTo="year"
               label={label}
-              format={format || "YYYY/MM/DD HH:mm:ss"}
+              format={format || "YYYY"}
               value={value}
               minDate={minDate}
               maxDate={maxDate}
               onChange={(date) => setValue(date)}
-              slotProps={{
-                textField: textFieldProps,
-              }}
+              readOnly={props?.readOnly}
+              slotProps={{ textField: textFieldProps }}
             />
-          ) : !is_Time ? (
-            props?.is_year ? (
-              <DatePicker
-                views={["year"]}
-                openTo="year"
-                label={label}
-                format={format || "YYYY"}
-                value={value}
-                minDate={minDate}
-                maxDate={maxDate}
-                onChange={(date) => setValue(date)}
-                readOnly={props?.readOnly}
-                slotProps={{
-                  textField: textFieldProps,
-                }}
-              />
-            ) : (
-              <DatePicker
-                label={label}
-                format={format || "YYYY/MM/DD"}
-                value={value}
-                minDate={minDate}
-                maxDate={maxDate}
-                onChange={(date) => setValue(date)}
-                readOnly={props?.readOnly}
-                slotProps={{
-                  textField: textFieldProps,
-                }}
-              />
-            )
           ) : (
-            <TimePicker
+            <DatePicker
               label={label}
-              format={format || "HH:mm:ss"}
+              format={format || "YYYY/MM/DD"}
               value={value}
-              minTime={minDate}
-              maxTime={maxDate}
+              minDate={minDate}
+              maxDate={maxDate}
               onChange={(date) => setValue(date)}
-              slotProps={{
-                textField: textFieldProps,
-              }}
+              readOnly={props?.readOnly}
+              slotProps={{ textField: textFieldProps }}
             />
-          )}
-          {value && !props?.readOnly ? (
-            <CloseIcon
-              className="closeIcon"
-              onClick={() => setValue(null)}
-              sx={{
-                right: "37px !important",
-                top: "14px !important",
-                cursor: "pointer",
-                position: "absolute",
-                zIndex: 1,
-              }}
-            />
-          ) : null}
-        </LocalizationProvider>
-      </Box>
-    </ContainerOfInputFields>
+          )
+        ) : (
+          <TimePicker
+            label={label}
+            format={format || "HH:mm:ss"}
+            value={value}
+            minTime={minDate}
+            maxTime={maxDate}
+            onChange={(date) => setValue(date)}
+            slotProps={{ textField: textFieldProps }}
+          />
+        )}
+
+        {/* زر مسح التاريخ */}
+        {value && !props?.readOnly && (
+          <CloseIcon
+            onClick={() => setValue(null)}
+            sx={{
+              position: "absolute",
+              right: "42px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+              zIndex: 1,
+              fontSize: "18px",
+              color: "text.secondary",
+              "&:hover": { color: "error.main" },
+            }}
+          />
+        )}
+      </LocalizationProvider>
+    </Box>
   );
 }

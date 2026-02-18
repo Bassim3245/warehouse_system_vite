@@ -53,6 +53,14 @@ export default function useInventoryDocuments({
     wareHouseData?.[0]?.id || ""
   );
 
+  // Auto-select first warehouse once data loads
+  useEffect(() => {
+    if (wareHouseData?.length > 0 && !warehosueId) {
+      setWaerhouseId(wareHouseData[0].id);
+    }
+  }, [wareHouseData]);
+
+
   /** --------------------------------
    *  LABEL BASED ON TYPE
   ----------------------------------*/
@@ -130,12 +138,12 @@ export default function useInventoryDocuments({
       const docs = data?.data ?? [];
       setAllDocuments(docs);
 
-      setPagination({
-        page: data?.pagination?.page || 1,
-        limit: data?.pagination?.limit || 10,
+      // Only update total/totalPages — never overwrite page/limit chosen by user
+      setPagination((prev) => ({
+        ...prev,
         total: data?.pagination?.total || 0,
         totalPages: data?.pagination?.totalPages || 1,
-      });
+      }));
       setDocumentMaterials(
         warehosueId ? docs.filter((d) => d.warehouse_id === warehosueId) : docs
       );
@@ -151,9 +159,11 @@ export default function useInventoryDocuments({
   /** --------------------------------
    *  TRIGGER FETCH WHEN NEEDED
   ----------------------------------*/
+  // fetchDocuments already depends on requestUrl which includes page & limit
+  // so we don't need pagination.page / pagination.limit here — avoids double-fetch
   useEffect(() => {
     fetchDocuments();
-  }, [fetchDocuments, refreshButton ,pagination.page,pagination.limit]);
+  }, [fetchDocuments, refreshButton]);
 
   /** --------------------------------
    *  WAREHOUSE CHANGE HANDLER
@@ -162,6 +172,8 @@ export default function useInventoryDocuments({
     (event, newValue) => {
       const newId = newValue?.id || "";
       setWaerhouseId(newId);
+      // Reset to page 1 when warehouse filter changes
+      setPagination((prev) => ({ ...prev, page: 1 }));
 
       const filtered = newId
         ? allDocuments.filter((d) => d.warehouse_id === newId)
@@ -171,6 +183,11 @@ export default function useInventoryDocuments({
     },
     [allDocuments]
   );
+
+  // Helper: when limit changes, reset to page 1 to avoid empty results
+  const handleLimitChange = useCallback((newLimit) => {
+    setPagination((prev) => ({ ...prev, limit: newLimit, page: 1 }));
+  }, []);
 
   /** --------------------------------
    *  OPEN MOVEMENT PAGE
@@ -230,7 +247,7 @@ export default function useInventoryDocuments({
         toast.success("تم تحديث حالة المستند بنجاح");
         fetchDocuments();
       } catch (error) {
-        toast.error(error?.response?.data?.message );
+        toast.error(error?.response?.data?.message);
       }
     },
     [token, fetchDocuments]
@@ -247,6 +264,7 @@ export default function useInventoryDocuments({
     documentMaterials,
     warehosueId,
     handleWarehouseChange,
+    handleLimitChange,
     openMovement,
     deleteDocument,
     completeItem,

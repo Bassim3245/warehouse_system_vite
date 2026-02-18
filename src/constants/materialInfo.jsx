@@ -14,7 +14,10 @@ export const tableHeaderInvoiceImport = [
   "رمز المادة",
   "اسم المادة",
   "الكمية",
+  "وحدة القياس",
+
   "السعر",
+  "مواصفات المادة",
   "السعر الكلي",
   "تاريخ الشراء",
   "الجهة الموردة",
@@ -32,6 +35,8 @@ export const tableBodyImport = (dataItem) =>
     document_number: importItem?.document_number,
     quantity: FormatDataNumber(importItem?.quantity),
     price: importItem?.price,
+    // total_price: importItem?.total_price,
+    // specification: importItem?.specification,
     purchase_date: formatDateAr(importItem?.import_date),
     expiration_date: formatDateAr(importItem?.expiry_date),
     remaining_quantity: FormatDataNumber(importItem?.remaining_quantity),
@@ -49,6 +54,8 @@ export const tableBodyInvoiceImport = (dataItem) =>
     item_name: importItem?.name_of_material,
     quantity: FormatDataNumber(importItem?.quantity),
     price: importItem?.price,
+    total_price: importItem?.measuring_unit,
+    specification: importItem?.specification,
     purchase_date: formatDateAr(importItem?.purchase_date),
     expiration_date: formatDateAr(importItem?.expiry_date),
     remaining_quantity: FormatDataNumber(importItem?.remaining_quantity),
@@ -65,8 +72,8 @@ export const tableBodyExport = (dataItem) =>
     quantity: FormatDataNumber(
       exportItem?.export_details.reduce(
         (sum, item) => sum + parseFloat(item?.quantity),
-        0
-      )
+        0,
+      ),
     ),
     price: exportItem?.price,
     export_date: formatDateAr(exportItem?.export_date),
@@ -86,9 +93,9 @@ export const tableHeaderInvoiceExport = [
   "ت",
   "رمز المادة",
   "اسم المادة",
-  "المواصفات الفنية",
+  "المواصفات المادة",
   "الكمية",
-  "الوحدة",
+  "وحدة القياس",
   "سعر الوحدة",
   "المبلغ الاجمالي",
 ];
@@ -105,9 +112,9 @@ export const tableBodyInvoiceExport = (dataItem) =>
     total_price:
       exportItem?.price && exportItem?.total_quantity
         ? FormatDataNumber(
-          parseFloat(exportItem?.price) *
-          parseFloat(exportItem?.total_quantity)
-        )
+            parseFloat(exportItem?.price) *
+              parseFloat(exportItem?.total_quantity),
+          )
         : "---",
     style: {
       textAlign: "center",

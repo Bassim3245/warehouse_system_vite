@@ -298,6 +298,7 @@ const InvoiceDisplayImport = ({
         </Grid>
         <Box
           sx={{
+            mb: 2,
             "& .MuiPaper-root": {
               borderRadius: 0,
             },
@@ -436,21 +437,9 @@ const InvoiceDisplayImport = ({
           </Grid>
         </Grid>
 
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: "bold",
-            fontSize: "16px",
-            textAlign: "center",
-            mb: 2, // تقليل من 4 إلى 2
-            textTransform: "uppercase",
-            letterSpacing: "0.5px", // تقليل من 1px إلى 0.5px
-          }}
-        >
-          التوقيعات والاعتماد الرسمي
-        </Typography>
+     
 
-        <Grid container spacing={2} dir="rtl">
+        <Grid container spacing={2} dir="rtl" sx={{ minHeight: "100px" }}>
           {" "}
           {signauterData && signauterData.length > 0 ? (
             signauterData?.map((item, index) => (
@@ -509,15 +498,7 @@ const InvoiceDisplayImport = ({
                 </Box>
               </Grid>
             ))
-          ) : (
-            <Grid item xs>
-              <Box sx={{ textAlign: "center" }}>
-                <Typography sx={{ fontSize: "12px", color: "#2c3e50" }}>
-                  لا توجد توقيعات مسجلة
-                </Typography>
-              </Box>
-            </Grid>
-          )}
+          ) : null}
         </Grid>
       </Box>
     </div>

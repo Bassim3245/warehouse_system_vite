@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import PopupForm from "../../../../components/reusableComponent/PopupForm";
@@ -13,9 +13,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
-
-
-
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import ModeEditOutlined from "@mui/icons-material/ModeEditOutlined";
@@ -33,9 +30,8 @@ export default function StoreFormModel({
   dataUserLab,
   hierarchyConfig,
   has_main_warehouse,
-  storeData = null
+  storeData = null,
 }) {
-
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -85,7 +81,6 @@ export default function StoreFormModel({
     if (!formData.name) newErrors.name = "اسم المنتج مطلوب";
     if (!formData.measuring_id) newErrors.measuring_id = "وحدة القياس مطلوبة";
 
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -105,11 +100,17 @@ export default function StoreFormModel({
           user_id: dataUserById?.user_id,
           ministry_id: dataUserById?.minister_id,
           storeData_id: storeData?.id,
-          warehouse_id: hierarchyConfig?.has_warehouse
-            ? warehouseId
+          warehouse_id: hierarchyConfig?.has_warehouse ? warehouseId : null,
+          lab_id: hierarchyConfig?.has_lab
+            ? !has_main_warehouse
+              ? dataUserLab?.lab_id
+              : null
             : null,
-          lab_id: hierarchyConfig?.has_lab ? (!has_main_warehouse ? dataUserLab?.lab_id : null) : null,
-          factory_id: hierarchyConfig?.has_factory ? (!has_main_warehouse ? dataUserLab?.factory_id : null) : null
+          factory_id: hierarchyConfig?.has_factory
+            ? !has_main_warehouse
+              ? dataUserLab?.factory_id
+              : null
+            : null,
         },
       );
       if (response) {
@@ -120,7 +121,7 @@ export default function StoreFormModel({
     } catch (error) {
       console.error("Error submitting data:", error);
       toast.error(
-        error?.response?.data?.message || "حدث خطأ أثناء حفظ البيانات"
+        error?.response?.data?.message || "حدث خطأ أثناء حفظ البيانات",
       );
     } finally {
       setLoading(false);
@@ -183,7 +184,7 @@ export default function StoreFormModel({
               name="measuring_id"
               value={formData?.measuring_id}
               onChange={handleInputChange}
-              label="الوحدة"
+              label="وحدة القياس"
             >
               {dataUnitMeasuring?.map((item) => (
                 <MenuItem key={item?.unit_id} value={item?.unit_id}>
@@ -216,7 +217,7 @@ export default function StoreFormModel({
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             name="specification"
-            label="المواصفة الفنية"
+            label="مواصفات المادة"
             type="text"
             value={formData.specification}
             onChange={handleInputChange}
@@ -259,7 +260,11 @@ export default function StoreFormModel({
     <div>
       {!editMode && (
         <Tooltip title="رفع مادة جديدة">
-          <ButtonTheme disabled={loading} onClick={handleOpen} startIcon={<AddIcon />}>
+          <ButtonTheme
+            disabled={loading}
+            onClick={handleOpen}
+            startIcon={<AddIcon />}
+          >
             تسجيل مادة
           </ButtonTheme>
         </Tooltip>
@@ -271,11 +276,7 @@ export default function StoreFormModel({
         </MenuItem>
       )}
       <PopupForm
-        title={
-          editMode
-            ? "تعديل منتج"
-            : `${warehouseId}إضافة مادة جديد`
-        }
+        title={editMode ? "تعديل منتج" : `${warehouseId}إضافة مادة جديد`}
         open={open}
         onClose={handleClose}
         setOpen={setOpen}

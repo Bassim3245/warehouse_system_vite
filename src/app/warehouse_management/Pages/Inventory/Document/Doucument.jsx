@@ -2,6 +2,8 @@ import React, { useMemo, useCallback } from "react";
 import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
 import Inventory2 from "@mui/icons-material/Inventory2";
 import LockOutlined from "@mui/icons-material/LockOutlined";
+import LockOpenOutlined from "@mui/icons-material/LockOpenOutlined";
+
 import OpenInNew from "@mui/icons-material/OpenInNew";
 import Warehouse from "@mui/icons-material/Warehouse";
 import Box from "@mui/material/Box";
@@ -15,7 +17,7 @@ import Divider from "@mui/material/Divider";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -85,6 +87,7 @@ function Document({
     documentMaterials,
     warehosueId,
     handleWarehouseChange,
+    handleLimitChange,
     openMovement,
     deleteDocument,
     completeItem,
@@ -181,13 +184,12 @@ function Document({
         />
         <Divider />
 
-        {!item.is_complete &&
-          renderMenuItem(
-            "complete",
-            () => handleDocComplete(item.id, item.is_complete),
-            LockOutlined,
-            "قفل المستند"
-          )}
+        {renderMenuItem(
+          item.is_complete ? "unlock" : "complete",
+          () => handleDocComplete(item.id, item.is_complete),
+          item.is_complete ? LockOpenOutlined : LockOutlined,
+          item.is_complete ? "إلغاء القفل" : "قفل المستند"
+        )}
       </DropDownGrid>
     ),
     [
@@ -440,7 +442,7 @@ function Document({
                   ))
                 ) : (
                   <StyledTableRow>
-                    <StyledTableCell colSpan={11}>
+                    <StyledTableCell colSpan={13}>
                       <CustomNoRowsOverlay />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -453,8 +455,8 @@ function Document({
             totalPages={pagination?.totalPages}
             totalItems={pagination?.total}
             limit={pagination?.limit}
-            setPage={(page) => setPagination({ ...pagination, page })}
-            setLimit={(limit) => setPagination({ ...pagination, limit })}
+            setPage={(page) => setPagination((prev) => ({ ...prev, page }))}
+            setLimit={(limit) => handleLimitChange(limit)}
           />
         </CardContent>
       </Card>

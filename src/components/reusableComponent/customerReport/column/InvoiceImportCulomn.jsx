@@ -41,7 +41,14 @@ export default function InvoiceImportColumn({ tableBody }) {
               ...importItem?.style,
             }}
           >
-            {importItem.quantity} {importItem?.measuring_unit}
+            {importItem.quantity} 
+          </TableCell>
+             <TableCell
+            sx={{
+              ...importItem?.style,
+            }}
+          >
+            {importItem.measuring_unit} 
           </TableCell>
           <TableCell
             sx={{
@@ -50,6 +57,13 @@ export default function InvoiceImportColumn({ tableBody }) {
             }}
           >
             {formatCurrency(importItem?.price)}
+          </TableCell>
+             <TableCell
+            sx={{
+              ...importItem?.style,
+            }}
+          >
+            {importItem.specification} 
           </TableCell>
           <TableCell
             sx={{
