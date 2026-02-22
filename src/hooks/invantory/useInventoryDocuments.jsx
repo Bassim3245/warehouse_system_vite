@@ -74,10 +74,19 @@ export default function useInventoryDocuments({
 
   /** --------------------------------
    *  BUILD FETCH URL (MEMOIZED)
+   *  Updated to include warehouseId and trigger re-fetch
   ----------------------------------*/
   const requestUrl = useMemo(() => {
     const base = `${BackendUrl}/api/warehouse/documentGetDataByUserId`;
-    const params = new URLSearchParams({ documentType: activeDocumentType, searchTerm });
+    const params = new URLSearchParams({
+      documentType: activeDocumentType,
+      searchTerm,
+    });
+
+    // Add warehouseId if available
+    if (warehosueId) {
+      params.append("warehouseId", warehosueId);
+    }
 
     // warehouse + factory + lab
     if (has_warehouse && has_factory && has_lab) {
@@ -94,16 +103,17 @@ export default function useInventoryDocuments({
     else if (has_warehouse && has_lab) {
       params.append("labId", dataUserLab?.lab_id || dataUserById?.user_id);
     }
-    // only warehouse
-    else if (has_warehouse) {
+    // only warehouse (if warehouseId not already set or as fallback)
+    else if (has_warehouse && !warehosueId) {
       params.append(
         "entityId",
         dataUserById?.entity_id || dataUserById?.user_id
       );
-    } else {
+    } else if (!has_warehouse) {
       if (!dataUserById?.user_id) return null;
       params.append("userId", dataUserById?.user_id);
     }
+
     params.append("page", pagination.page);
     params.append("limit", pagination.limit);
 
@@ -120,6 +130,7 @@ export default function useInventoryDocuments({
     dataUserById?.user_id,
     pagination.page,
     pagination.limit,
+    warehosueId, // Added dependency to trigger re-fetch
   ]);
 
   /** --------------------------------
@@ -127,6 +138,13 @@ export default function useInventoryDocuments({
   ----------------------------------*/
   const fetchDocuments = useCallback(async () => {
     if (!requestUrl) return;
+
+    // If warehouse is required but not selected, don't fetch
+    if (has_warehouse && !warehosueId) {
+      setAllDocuments([]);
+      setDocumentMaterials([]);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -137,6 +155,7 @@ export default function useInventoryDocuments({
 
       const docs = data?.data ?? [];
       setAllDocuments(docs);
+      setDocumentMaterials(docs); // No more local filtering
 
       // Only update total/totalPages — never overwrite page/limit chosen by user
       setPagination((prev) => ({
@@ -144,9 +163,6 @@ export default function useInventoryDocuments({
         total: data?.pagination?.total || 0,
         totalPages: data?.pagination?.totalPages || 1,
       }));
-      setDocumentMaterials(
-        warehosueId ? docs.filter((d) => d.warehouse_id === warehosueId) : docs
-      );
     } catch (error) {
       console.error("Error fetching document data:", error);
       setAllDocuments([]);
@@ -154,7 +170,7 @@ export default function useInventoryDocuments({
     } finally {
       setLoading(false);
     }
-  }, [requestUrl, token, warehosueId]);
+  }, [requestUrl, token, has_warehouse, warehosueId]);
 
   /** --------------------------------
    *  TRIGGER FETCH WHEN NEEDED
@@ -174,14 +190,10 @@ export default function useInventoryDocuments({
       setWaerhouseId(newId);
       // Reset to page 1 when warehouse filter changes
       setPagination((prev) => ({ ...prev, page: 1 }));
-
-      const filtered = newId
-        ? allDocuments.filter((d) => d.warehouse_id === newId)
-        : allDocuments;
-
-      setDocumentMaterials(filtered);
+      // We no longer filter documentMaterials here because fetchDocuments
+      // will be triggered by requestUrl update (via waerhouseId change).
     },
-    [allDocuments]
+    []
   );
 
   // Helper: when limit changes, reset to page 1 to avoid empty results

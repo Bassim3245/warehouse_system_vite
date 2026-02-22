@@ -1,4 +1,4 @@
-import  { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -33,11 +33,13 @@ import { toast } from "react-toastify";
 import layoutStyle from "../../../style/layoutStyle";
 import usePermissionUser from "../../../hooks/usePermissionUser";
 import { typeDocument } from "../../../constants/arrayFuction";
+
 const DOC_TYPE_LABELS = {
   in: { label: "وارد", color: "success" },
   out: { label: "صادر", color: "error" },
   internal_consumption: { label: "استهلاك داخلي", color: "warning" },
 };
+
 const DocumentEdit = () => {
   const { get, post, loading } = useApi();
   const { Entities } = usePermissionUser();
@@ -47,6 +49,9 @@ const DocumentEdit = () => {
     warehouse_id: "",
     document_type: "",
   });
+
+  // Client-side year filter (separate from API filters)
+  const [selectedYear, setSelectedYear] = useState("");
 
   const [warehouses, setWarehouses] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -63,6 +68,29 @@ const DocumentEdit = () => {
     description: "",
   });
 
+  // Extract unique years from fetched documents
+  const availableYears = useMemo(() => {
+    const years = documents
+      .map((doc) =>
+        doc.document_date ? new Date(doc.document_date).getFullYear() : null
+      )
+      .filter(Boolean);
+    return [...new Set(years)].sort((a, b) => b - a); // descending
+  }, [documents]);
+
+  // Apply year filter to documents for display
+  const filteredDocuments = useMemo(() => {
+    if (!selectedYear) return documents;
+    return documents.filter(
+      (doc) =>
+        doc.document_date &&
+        new Date(doc.document_date).getFullYear() === Number(selectedYear)
+    );
+  }, [documents, selectedYear]);
+
+  // Reset year filter when new search is done
+  const resetYearFilter = () => setSelectedYear("");
+
   // Fetch warehouses when entity changes
   useEffect(() => {
     const fetchWarehouses = async () => {
@@ -70,12 +98,13 @@ const DocumentEdit = () => {
         setWarehouses([]);
         setDocuments([]);
         setHasFetched(false);
+        resetYearFilter();
         return;
       }
       try {
         const response = await get(
           "/api/warehouse/getWarehouseDataByEntity_id",
-          { entity_id: filters.entity_id },
+          { entity_id: filters.entity_id }
         );
         if (response?.data) setWarehouses(response.data);
         else setWarehouses([]);
@@ -98,20 +127,21 @@ const DocumentEdit = () => {
         {
           document_type: filters.document_type,
           warehouse_id: filters.warehouse_id,
-        },
+        }
       );
       if (response?.data) {
         setDocuments(response.data);
       } else {
         setDocuments([]);
       }
+      resetYearFilter(); // clear year filter on each new search
       setHasFetched(true);
     } catch (error) {
       setDocuments([]);
       setHasFetched(true);
       toast.error(error.response?.data?.message || "حدث خطأ أثناء البحث");
     }
-  }, [filters.warehouse_id, get ,filters.document_type]);
+  }, [filters.warehouse_id, filters.document_type, get]);
 
   const handleOpenEdit = (doc) => {
     setSelectedDoc(doc);
@@ -142,8 +172,8 @@ const DocumentEdit = () => {
         toast.success("تم تحديث المستند بنجاح");
         setDocuments((prev) =>
           prev.map((d) =>
-            d.id === selectedDoc.id ? { ...d, ...editData } : d,
-          ),
+            d.id === selectedDoc.id ? { ...d, ...editData } : d
+          )
         );
         handleCloseEdit();
       }
@@ -170,16 +200,20 @@ const DocumentEdit = () => {
           اختر الجهة والمستودع لعرض المستندات المتاحة وتعديلها.
         </Typography>
 
-        {/* Filters */}
+        {/* API Filters */}
         <Grid container spacing={3} sx={{ mb: 4 }} alignItems="center">
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <FormControl fullWidth>
               <InputLabel>الجهة</InputLabel>
               <Select
                 value={filters.entity_id}
                 label="الجهة"
                 onChange={(e) =>
-                  setFilters({ entity_id: e.target.value, warehouse_id: "" })
+                  setFilters({
+                    entity_id: e.target.value,
+                    warehouse_id: "",
+                    document_type: "",
+                  })
                 }
               >
                 {safeEntities.map((ent) => (
@@ -191,7 +225,7 @@ const DocumentEdit = () => {
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <FormControl fullWidth disabled={!filters.entity_id}>
               <InputLabel>المستودع</InputLabel>
               <Select
@@ -213,7 +247,7 @@ const DocumentEdit = () => {
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <FormControl fullWidth>
               <InputLabel>نوع المستند</InputLabel>
               <Select
@@ -235,7 +269,7 @@ const DocumentEdit = () => {
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <Button
               fullWidth
               variant="contained"
@@ -260,20 +294,53 @@ const DocumentEdit = () => {
         {hasFetched && (
           <>
             <Divider sx={{ mb: 3 }} />
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-              المستندات{" "}
-              <Typography
-                component="span"
-                color="text.secondary"
-                variant="body1"
-              >
-                ({documents.length} مستند)
-              </Typography>
-            </Typography>
 
-            {documents.length === 0 ? (
+            {/* Table header row: title + year filter */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 2,
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6" fontWeight="bold">
+                المستندات{" "}
+                <Typography component="span" color="text.secondary" variant="body1">
+                  ({filteredDocuments.length}
+                  {selectedYear ? ` من ${documents.length}` : ""} مستند)
+                </Typography>
+              </Typography>
+
+              {/* Year Filter — only shown after fetch and when years exist */}
+              {availableYears.length > 0 && (
+                <FormControl size="small" sx={{ minWidth: 150 }}>
+                  <InputLabel>تصفية بالسنة</InputLabel>
+                  <Select
+                    value={selectedYear}
+                    label="تصفية بالسنة"
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                  >
+                    <MenuItem value="">
+                      <em>كل السنوات</em>
+                    </MenuItem>
+                    {availableYears.map((year) => (
+                      <MenuItem key={year} value={year}>
+                        {year}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            </Box>
+
+            {filteredDocuments.length === 0 ? (
               <Typography color="text.secondary" textAlign="center" py={6}>
-                لا توجد مستندات لهذا المستودع
+                {selectedYear
+                  ? `لا توجد مستندات للسنة ${selectedYear}`
+                  : "لا توجد مستندات لهذا المستودع"}
               </Typography>
             ) : (
               <TableContainer
@@ -312,7 +379,7 @@ const DocumentEdit = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {documents.map((doc, index) => {
+                    {filteredDocuments.map((doc, index) => {
                       const typeInfo = DOC_TYPE_LABELS[doc.document_type] || {
                         label: doc.document_type,
                         color: "default",
@@ -325,10 +392,7 @@ const DocumentEdit = () => {
                             "&:nth-of-type(even)": { bgcolor: "grey.50" },
                           }}
                         >
-                          <TableCell
-                            align="center"
-                            sx={{ color: "text.secondary" }}
-                          >
+                          <TableCell align="center" sx={{ color: "text.secondary" }}>
                             {index + 1}
                           </TableCell>
                           <TableCell align="center" sx={{ fontWeight: "bold" }}>
@@ -341,30 +405,20 @@ const DocumentEdit = () => {
                               size="small"
                             />
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ whiteSpace: "nowrap" }}
-                          >
+                          <TableCell align="center" sx={{ whiteSpace: "nowrap" }}>
                             {doc.document_date
-                              ? new Date(doc.document_date).toLocaleDateString(
-                                  "ar-IQ",
-                                )
+                              ? new Date(doc.document_date).toLocaleDateString("ar-IQ")
                               : "-"}
                           </TableCell>
                           <TableCell align="center">
                             {doc.beneficiary || "-"}
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ whiteSpace: "nowrap" }}
-                          >
+                          <TableCell align="center" sx={{ whiteSpace: "nowrap" }}>
                             {doc.total_amount != null
                               ? Number(doc.total_amount).toLocaleString("ar-IQ")
                               : "-"}
                           </TableCell>
-                          <TableCell align="center">
-                            {doc.warehouse_name}
-                          </TableCell>
+                          <TableCell align="center">{doc.warehouse_name}</TableCell>
                           <TableCell align="center">{doc.user_name}</TableCell>
                           <TableCell align="center">
                             <Chip
@@ -397,18 +451,9 @@ const DocumentEdit = () => {
       </Paper>
 
       {/* Edit Dialog */}
-      <Dialog
-        open={editDialogOpen}
-        onClose={handleCloseEdit}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={editDialogOpen} onClose={handleCloseEdit} maxWidth="sm" fullWidth>
         <DialogTitle
-          sx={{
-            fontWeight: "bold",
-            borderBottom: "1px solid",
-            borderColor: "divider",
-          }}
+          sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider" }}
         >
           تعديل المستند رقم ({selectedDoc?.document_number})
         </DialogTitle>
@@ -478,14 +523,9 @@ const DocumentEdit = () => {
               />
             </Grid>
 
-            {/* Read-only info */}
             <Grid size={{ xs: 12 }}>
               <Box sx={{ p: 2, bgcolor: "grey.100", borderRadius: 1 }}>
-                <Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  gutterBottom
-                >
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   معلومات غير قابلة للتعديل:
                 </Typography>
                 <Grid container spacing={1}>
