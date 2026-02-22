@@ -68,6 +68,18 @@ export default function Root3() {
       checkPermission: roles?.show_log?._id,
     },
     {
+      text: t("تعديل المستندات"),
+      icon: <Grading />,
+      path: "document-edit",
+      checkPermission: roles?.setting_information?._id,
+    },
+    {
+      text: t("عداد المستندات"),
+      icon: <Settings />,
+      path: "document-count",
+      checkPermission: roles?.setting_information?._id,
+    },
+    {
       text: t("layout.User Manual"),
       icon: <Info />,
       path: "help-platform", // Fixed path to include a leading slash

@@ -26,7 +26,7 @@ export default function DocumentSales() {
         navigateUrl={"sales-material"}
         navigateLabel="مستند الصرف"
         location={location}
-        filedLabel="المجهز"
+        filedLabel="الحهة المستفيدة"
         dataUserLab={dataUserLab}
         wareHouseData={wareHouseData}
         isExport={true}

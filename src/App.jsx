@@ -90,6 +90,8 @@ const MainInformation = React.lazy(() => import("./app/managemant_platform/manag
 const Monitoring = React.lazy(() => import("./app/managemant_platform/monitoring/Monitoring"));
 const EntityManagement = React.lazy(() => import("./app/managemant_platform/setting/entityManagemant"));
 const EntityDetails = React.lazy(() => import("./app/managemant_platform/setting/entityDetails"));
+const DocumentEdit = React.lazy(() => import("./app/managemant_platform/DocumentManagement/DocumentEdit"));
+const DocumentCount = React.lazy(() => import("./app/managemant_platform/DocumentManagement/DocumentCount"));
 
 // Lazy loaded components - Permissions
 const Permission = React.lazy(() => import("./app/managemant_platform/manageMainInformation/RoleAndPermission/Permission"));
@@ -323,7 +325,7 @@ export default function App() {
                       path="document-purchase/purchases-material"
                       element={<PurchasesData />}
                     />
-               
+
 
                     {/* document sales */}
 
@@ -453,6 +455,8 @@ export default function App() {
                     path="entity-management/entity-details/:id"
                     element={<EntityDetails />}
                   />
+                  <Route path="document-edit" element={<DocumentEdit />} />
+                  <Route path="document-count" element={<DocumentCount />} />
                 </Route>
               </Route>
               <Route element={<ProtectedApplicationRoute applicationId={4} />}>

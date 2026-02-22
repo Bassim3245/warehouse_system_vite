@@ -61,6 +61,8 @@ function DocumentModel({
       account_number: "",
       type_movement: "",
       type_movement_code: "",
+      work_order: "",
+      center_cost: "",
     }),
     [documentTypeValue],
   );
@@ -127,6 +129,8 @@ function DocumentModel({
         account_number: documentData?.account_number,
         type_movement: documentData?.type_movement,
         type_movement_code: documentData?.type_movement_code,
+        work_order: documentData?.work_order,
+        center_cost: documentData?.center_cost,
       });
     }
   }, [editMode, open, documentData]);
@@ -241,9 +245,9 @@ function DocumentModel({
                   <Box {...props} sx={{ display: "flex", gap: 1, p: 1 }}>
                     <WarehouseIcon size={18} />
                     <Box>
-                      <Typography>{option.name}</Typography>
+                      <Typography>{option?.name}</Typography>
                       <Typography variant="caption">
-                        {option.location} - {option.user_name}
+                        {option?.location} - {option?.user_name}
                       </Typography>
                     </Box>
                     <Chip
@@ -255,12 +259,23 @@ function DocumentModel({
                 )}
               />
             </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+              <TextField
+                name="document_number"
+                label={"رقم المستند"}
+                value={formData?.document_number}
+                onChange={handleInputChange}
+                fullWidth
+                required
+                sx={{ bgcolor: "white", borderRadius: 1 }}
+              />
+            </Grid>
             {/* المجهز / المورد / المستفيد */}
             <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 name="beneficiary"
                 label={filedLabel}
-                value={formData.beneficiary}
+                value={formData?.beneficiary}
                 onChange={handleInputChange}
                 fullWidth
                 required
@@ -325,6 +340,24 @@ function DocumentModel({
             )}
             {/* رقم الحساب */}
             <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                name="center_cost"
+                label="رقم مركز الكلفة "
+                value={formData.center_cost}
+                onChange={handleInputChange}
+                fullWidth
+              />
+            </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                name="work_order"
+                label="رقم أمر  العمل"
+                value={formData.work_order}
+                onChange={handleInputChange}
+                fullWidth
+              />
+            </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 name="account_number"
                 label="رقم الحساب"
