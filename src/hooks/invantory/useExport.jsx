@@ -41,6 +41,7 @@ export const useExportData = ({ searchParams }) => {
       description: "",
       document_id: searchParams.get("id"),
       inventory_id: "",
+      work_order_number: "",
     }),
     [searchParams]
   );

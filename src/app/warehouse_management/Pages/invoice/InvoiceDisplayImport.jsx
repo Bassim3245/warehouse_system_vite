@@ -324,8 +324,6 @@ const InvoiceDisplayImport = ({
               sx={{
                 textAlign: "center",
                 p: 1,
-                border: "1px solid #bdc3c7",
-                backgroundColor: "#ffffff",
               }}
             >
               <Typography
@@ -353,8 +351,6 @@ const InvoiceDisplayImport = ({
               sx={{
                 textAlign: "center",
                 p: 1,
-                border: "1px solid #bdc3c7",
-                backgroundColor: "#ffffff",
               }}
             >
               <Typography
@@ -382,8 +378,6 @@ const InvoiceDisplayImport = ({
               sx={{
                 textAlign: "center",
                 p: 1,
-                border: "1px solid #bdc3c7",
-                backgroundColor: "#ffffff",
               }}
             >
               <Typography
@@ -411,8 +405,6 @@ const InvoiceDisplayImport = ({
               sx={{
                 textAlign: "center",
                 p: 1,
-                border: "1px solid #bdc3c7",
-                backgroundColor: "#ffffff",
               }}
             >
               <Typography
@@ -436,9 +428,6 @@ const InvoiceDisplayImport = ({
             </Box>
           </Grid>
         </Grid>
-
-     
-
         <Grid container spacing={2} dir="rtl" sx={{ minHeight: "100px" }}>
           {" "}
           {signauterData && signauterData.length > 0 ? (

@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo
-} from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -15,7 +10,6 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-
 
 import Print from "@mui/icons-material/Print";
 import PopupForm from "../../../../../../components/reusableComponent/PopupForm";
@@ -43,15 +37,15 @@ export const SalesFormPopup = ({
   setPriceMethod,
 }) => {
   const [open, setOpen] = useState(false);
-
+  const [IsMorInfo, setIsMorInfo] = useState(false);
   const isInternalTransfer = useMemo(
     () => searchParams?.get("documentType") === "internal_consumption",
-    [searchParams]
+    [searchParams],
   );
 
   const fixedWarehouseId = useMemo(
     () => warehouseDataBYId?.id || searchParams.get("warehouseId"),
-    [warehouseDataBYId, searchParams]
+    [warehouseDataBYId, searchParams],
   );
 
   // ---------------------------------------------
@@ -68,7 +62,7 @@ export const SalesFormPopup = ({
       handleMaterialSelect?.(mat || null);
       setSelectedMaterial?.(mat || null);
     },
-    [handleMaterialSelect, setSelectedMaterial]
+    [handleMaterialSelect, setSelectedMaterial],
   );
 
   // ---------------------------------------------
@@ -76,9 +70,7 @@ export const SalesFormPopup = ({
   // ---------------------------------------------
   const availableMovements = useMemo(() => {
     return materialMovements
-      .filter(
-        (m) => m.document_type === "in" && m.remaining_quantity > 0
-      )
+      .filter((m) => m.document_type === "in" && m.remaining_quantity > 0)
       .sort((a, b) => new Date(a.purchase_date) - new Date(b.purchase_date));
   }, [materialMovements]);
 
@@ -111,10 +103,10 @@ export const SalesFormPopup = ({
         distributed,
         totalCost,
         canFulfill: remainingQuantity === 0,
-        shortfall: remainingQuantity
+        shortfall: remainingQuantity,
       };
     },
-    [availableMovements]
+    [availableMovements],
   );
 
   useEffect(() => {
@@ -123,9 +115,16 @@ export const SalesFormPopup = ({
       setDistributedMovements(result.distributed);
 
       if (result.distributed.length > 0) {
-        const update = { distribution_details: result.distributed, price_method: priceMethod };
+        const update = {
+          distribution_details: result.distributed,
+          price_method: priceMethod,
+        };
         // Only auto-calculate price if FIFO method is selected and not internal transfer
-        if (!isInternalTransfer && result.canFulfill && priceMethod === "fifo") {
+        if (
+          !isInternalTransfer &&
+          result.canFulfill &&
+          priceMethod === "fifo"
+        ) {
           update.price = (result.totalCost / formData.quantity).toFixed(2);
         }
         setFormData((prev) => ({ ...prev, ...update }));
@@ -138,9 +137,8 @@ export const SalesFormPopup = ({
     priceMethod,
     distributeQuantityAutomatically,
     setDistributedMovements,
-    setFormData
+    setFormData,
   ]);
-
 
   useEffect(() => {
     if (isInternalTransfer) {
@@ -148,34 +146,45 @@ export const SalesFormPopup = ({
     }
   }, [isInternalTransfer, setFormData]);
 
-
   // ---------------------------------------------
   // Price Method Change Handler
   // ---------------------------------------------
-  const handlePriceMethodChange = useCallback((e) => {
-    const newMethod = e.target.value;
-    setPriceMethod(newMethod);
+  const handlePriceMethodChange = useCallback(
+    (e) => {
+      const newMethod = e.target.value;
+      setPriceMethod(newMethod);
 
-    // If switching to FIFO, recalculate the price
-    if (newMethod === "fifo" && distributedMovements.length > 0 && formData.quantity) {
-      const totalCost = distributedMovements.reduce(
-        (sum, mov) => sum + (parseFloat(mov.allocated_quantity) * parseFloat(mov.price || 0)),
-        0
-      );
-      const avgPrice = (totalCost / formData.quantity).toFixed(2);
-      setFormData((prev) => ({ ...prev, price: avgPrice, price_method: newMethod }));
-    } else {
-      setFormData((prev) => ({ ...prev, price_method: newMethod }));
-    }
-  }, [distributedMovements, formData.quantity, setFormData]);
-
+      // If switching to FIFO, recalculate the price
+      if (
+        newMethod === "fifo" &&
+        distributedMovements.length > 0 &&
+        formData.quantity
+      ) {
+        const totalCost = distributedMovements.reduce(
+          (sum, mov) =>
+            sum +
+            parseFloat(mov.allocated_quantity) * parseFloat(mov.price || 0),
+          0,
+        );
+        const avgPrice = (totalCost / formData.quantity).toFixed(2);
+        setFormData((prev) => ({
+          ...prev,
+          price: avgPrice,
+          price_method: newMethod,
+        }));
+      } else {
+        setFormData((prev) => ({ ...prev, price_method: newMethod }));
+      }
+    },
+    [distributedMovements, formData.quantity, setFormData],
+  );
 
   const handlePriceSelect = useCallback(
     (movements) => {
       if (Array.isArray(movements)) {
         const totalQty = movements.reduce(
           (sum, m) => sum + parseFloat(m.remaining_quantity || 0),
-          0
+          0,
         );
 
         if (isInternalTransfer) {
@@ -193,7 +202,7 @@ export const SalesFormPopup = ({
           (sum, m) =>
             sum +
             parseFloat(m.remaining_quantity || 0) * parseFloat(m.price || 0),
-          0
+          0,
         );
         const avg = totalCost / totalQty;
 
@@ -216,9 +225,11 @@ export const SalesFormPopup = ({
       }));
       setPriceMethod("fifo");
     },
-    [isInternalTransfer, setFormData]
+    [isInternalTransfer, setFormData],
   );
-
+useEffect(() => {
+    setIsMorInfo((prv) => !prv);
+  }, []);
 
   const renderFormContent = useCallback(
     () => (
@@ -298,7 +309,6 @@ export const SalesFormPopup = ({
                 value={formData.price ?? ""}
                 onChange={(e) => {
                   handleInputChange(e);
-                  // If user manually changes price, switch to manual mode
                   if (e.target.value !== "" && e.target.value !== null) {
                     setPriceMethod("manual");
                   }
@@ -332,13 +342,12 @@ export const SalesFormPopup = ({
                 >
                   توزيع الكميات التلقائي:
                 </Typography>
-
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                   {distributedMovements.map((mov, i) => (
                     <Chip
                       key={i}
                       label={`مستند ${mov.document_number}: ${FormatDataNumber(
-                        mov.allocated_quantity
+                        mov.allocated_quantity,
                       )} بسعر ${FormatDataNumber(mov.price)} دينار`}
                       variant="outlined"
                       size="small"
@@ -362,7 +371,96 @@ export const SalesFormPopup = ({
             </Grid>
           )}
 
-          {/* Notes */}
+          {/* Toggle More Info */}
+          <Grid size={{ xs: 12 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setIsMorInfo((prv) => !prv)}
+              sx={{ borderStyle: "dashed" }}
+            >
+              {IsMorInfo ? "▲ إخفاء التفاصيل الإضافية" : "▼ إظهار التفاصيل الإضافية"}
+            </Button>
+          </Grid>
+
+          {/* ── More Info Section ── */}
+          {IsMorInfo && (
+            <>
+              {/* work_order_number */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="رقم أمر العمل"
+                  name="work_order_number"
+                  value={formData.work_order_number ?? ""}
+                  onChange={handleInputChange}
+                  size="small"
+                  fullWidth
+                />
+              </Grid>
+
+              {/* account_number */}
+              {/* <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="رقم الحساب"
+                  name="account_number"
+                  value={formData.account_number ?? ""}
+                  onChange={handleInputChange}
+                  size="small"
+                  fullWidth
+                />
+              </Grid> */}
+
+              {/* type_movement */}
+              {/* <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="نوع الحركة"
+                  name="type_movement"
+                  value={formData.type_movement ?? ""}
+                  onChange={handleInputChange}
+                  size="small"
+                  fullWidth
+                />
+              </Grid> */}
+
+              {/* type_movement_code */}
+              {/* <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="كود نوع الحركة"
+                  name="type_movement_code"
+                  value={formData.type_movement_code ?? ""}
+                  onChange={handleInputChange}
+                  size="small"
+                  fullWidth
+                />
+              </Grid> */}
+
+              {/* reference_number */}
+              {/* <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="الرقم المرجعي"
+                  name="reference_number"
+                  value={formData.reference_number ?? ""}
+                  onChange={handleInputChange}
+                  size="small"
+                  fullWidth
+                />
+              </Grid> */}
+
+              {/* supplier / beneficiary */}
+              {/* <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="المورد / المستفيد"
+                  name="beneficiary"
+                  value={formData.beneficiary ?? ""}
+                  onChange={handleInputChange}
+                  size="small"
+                  fullWidth
+                />
+              </Grid> */}
+            </>
+          )}
+
+          {/* Notes — always visible */}
           <Grid size={{ xs: 12 }}>
             <TextField
               label="ملاحظات"
@@ -391,8 +489,9 @@ export const SalesFormPopup = ({
       handlePriceSelect,
       isInternalTransfer,
       priceMethod,
-      handlePriceMethodChange
-    ]
+      handlePriceMethodChange,
+      IsMorInfo,
+    ],
   );
   const renderFormActions = useCallback(
     () => (
@@ -412,7 +511,7 @@ export const SalesFormPopup = ({
         </Button>
       </>
     ),
-    [handleAddToSalesList, handleClose, selectedMaterial, formData.quantity]
+    [handleAddToSalesList, handleClose, selectedMaterial, formData.quantity],
   );
   return (
     <div>

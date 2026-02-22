@@ -1072,6 +1072,7 @@ export const inventoryExportTransactions = ({
       headerName: t("أسم المادة"),
       flex: 1,
     },
+
     {
       field: "total_quantity",
       headerName: t("الكمية"),
@@ -1101,6 +1102,16 @@ export const inventoryExportTransactions = ({
           {params?.row?.total_amount
             ? formatCurrency(params?.row?.total_amount)
             : "---"}
+        </div>
+      ),
+    },
+    {
+      field: "work_order_number",
+      headerName: t("رقم أمر العمل "),
+      flex: 1,
+      renderCell: (params) => (
+        <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          {params?.row?.work_order_number ? params?.row?.work_order_number : "---"}
         </div>
       ),
     },

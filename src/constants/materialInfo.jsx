@@ -91,6 +91,7 @@ export const totalImportValue = (dataItem) =>
 
 export const tableHeaderInvoiceExport = [
   "ت",
+  "رقم أمر العمل",
   "رمز المادة",
   "اسم المادة",
   "المواصفات المادة",
@@ -103,6 +104,7 @@ export const tableHeaderInvoiceExport = [
 export const tableBodyInvoiceExport = (dataItem) =>
   dataItem?.map((exportItem, index) => ({
     index: index + 1,
+    work_order_number: exportItem?.work_order_number || "غير محدد",
     item_code: exportItem?.cod_material || "---",
     item_name: exportItem?.name_of_material || "غير محدد",
     specification: exportItem?.specification || "غير محدد",

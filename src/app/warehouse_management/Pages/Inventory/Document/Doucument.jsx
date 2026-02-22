@@ -36,10 +36,7 @@ import {
   StyledTableRow,
 } from "../../../../../style/generalStyle";
 
-import {
-  formatCurrency,
-  formatDateAr,
-} from "../../../../../utils/formatData";
+import { formatCurrency, formatDateAr } from "../../../../../utils/formatData";
 import DocumentModel from "./DoucumentModel";
 import { usePermissionsStructure } from "../../../../../hooks/useStructureCompany";
 import MonthlyInventory from "../../Archive/monthly/ComplmentMontlyInventory";
@@ -69,12 +66,8 @@ function Document({
   const theme = useTheme();
   const { t } = useTranslation();
 
-  const {
-    has_lab,
-    has_factory,
-    has_warehouse,
-    has_production_warehouse,
-  } = usePermissionsStructure();
+  const { has_lab, has_factory, has_warehouse, has_production_warehouse } =
+    usePermissionsStructure();
 
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const { wareHouseData } = useGetAllWarehouse();
@@ -108,7 +101,7 @@ function Document({
     has_lab,
     has_warehouse,
     refreshButton,
-    setRefreshButton
+    setRefreshButton,
   });
 
   // --------------------------------------
@@ -117,17 +110,17 @@ function Document({
 
   const memoWarehouseOptions = useMemo(
     () => wareHouseData || [],
-    [wareHouseData]
+    [wareHouseData],
   );
 
   const selectedWarehouse = useMemo(
     () => memoWarehouseOptions.find((w) => w.id === warehosueId) || null,
-    [memoWarehouseOptions, warehosueId]
+    [memoWarehouseOptions, warehosueId],
   );
 
   const memoDocuments = useMemo(
     () => documentMaterials || [],
-    [documentMaterials]
+    [documentMaterials],
   );
 
   // --------------------------------------
@@ -136,11 +129,11 @@ function Document({
 
   const handleDocDelete = useCallback(
     (id) => deleteDocument(id),
-    [deleteDocument]
+    [deleteDocument],
   );
   const handleDocComplete = useCallback(
     (id, is_complete) => completeItem(id, is_complete),
-    [completeItem]
+    [completeItem],
   );
 
   const renderRowMenu = useCallback(
@@ -156,14 +149,14 @@ function Document({
           "informationProduct",
           () => openMovement(item.id),
           OpenInNew,
-          documentTypeLabel
+          documentTypeLabel,
         )}
         <Divider />
         {renderMenuItem(
           "delete",
           () => handleDocDelete(item.id),
           DeleteOutlined,
-          "حذف"
+          "حذف",
         )}
         <Divider />
         <DocumentModel
@@ -188,7 +181,7 @@ function Document({
           item.is_complete ? "unlock" : "complete",
           () => handleDocComplete(item.id, item.is_complete),
           item.is_complete ? LockOpenOutlined : LockOutlined,
-          item.is_complete ? "إلغاء القفل" : "قفل المستند"
+          item.is_complete ? "إلغاء القفل" : "قفل المستند",
         )}
       </DropDownGrid>
     ),
@@ -207,8 +200,8 @@ function Document({
       has_warehouse,
       has_production_warehouse,
       setRefreshButton,
-      documentTypeLabel
-    ]
+      documentTypeLabel,
+    ],
   );
 
   // --------------------------------------
@@ -264,7 +257,7 @@ function Document({
             >
               {typeDocument
                 .filter((item) =>
-                  ["internal_consumption", "out"].includes(item.value)
+                  ["internal_consumption", "out"].includes(item.value),
                 )
                 .map((item) => (
                   <MenuItem key={item.value} value={item.value}>
@@ -273,7 +266,6 @@ function Document({
                 ))}
             </TextField>
           </Grid>
-
         )}
 
         <Grid size={{ xs: 12, sm: 4 }}>
@@ -337,7 +329,6 @@ function Document({
             }}
           />
         </Grid>
-
       </Grid>
 
       <Card sx={{ mb: 1 }}>
@@ -357,6 +348,7 @@ function Document({
                     "نوع الحركة",
                     "رمز نوع الحركة",
                     "الجهة",
+                    "رقم مركز الكلفة",
                     "المخزن",
                     "المبلغ",
                     "ملاحظات",
@@ -424,7 +416,9 @@ function Document({
                       <StyledTableCell>
                         {item?.beneficiary || "-"}
                       </StyledTableCell>
-
+                      <StyledTableCell>
+                        {item?.center_cost || "-"}
+                      </StyledTableCell>
                       <StyledTableCell>
                         {item?.warehouse_name || "-"}
                       </StyledTableCell>

@@ -306,6 +306,7 @@ function DocumentModel({
           <Grid container spacing={2}>
             {/* نوع المستند */}
             {!(documentType === "in" && !isExport) && (
+              <>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   name="documentType"
@@ -324,9 +325,7 @@ function DocumentModel({
                     ))}
                 </TextField>
               </Grid>
-            )}
-            {/* رقم الحساب */}
-            <Grid size={{ xs: 12, sm: 6 }}>
+                     <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 name="center_cost"
                 label="رقم مركز الكلفة "
@@ -335,6 +334,10 @@ function DocumentModel({
                 fullWidth
               />
             </Grid>
+            </>
+            )}
+            {/* رقم الحساب */}
+     
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 name="account_number"

@@ -111,6 +111,7 @@ const SalesMaterial = () => {
       inventory_id: formData.inventory_id,
       distribution_details: formData.distribution_details || [],
       selected_movements: formData.selected_movements || [],
+      work_order_number: formData.work_order_number,
     };
 
     setSalesList((prev) => [...prev, newSaleItem]);
@@ -182,6 +183,7 @@ const SalesMaterial = () => {
               docmentType: searchParams.get("documentType"),
               price_method: priceMethod,
               isInternalTransfer,
+              work_order_number: saleItem.work_order_number,
               temp_quantity: saleItem.distribution_details.map((d) => ({
                 inventory_id: d.inventory_id,
                 allocated_quantity: d.allocated_quantity,
