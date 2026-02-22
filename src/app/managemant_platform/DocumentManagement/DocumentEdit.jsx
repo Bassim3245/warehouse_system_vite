@@ -32,13 +32,12 @@ import { useApi } from "../../../hooks/useApi";
 import { toast } from "react-toastify";
 import layoutStyle from "../../../style/layoutStyle";
 import usePermissionUser from "../../../hooks/usePermissionUser";
-
+import { typeDocument } from "../../../constants/arrayFuction";
 const DOC_TYPE_LABELS = {
   in: { label: "وارد", color: "success" },
   out: { label: "صادر", color: "error" },
   internal_consumption: { label: "استهلاك داخلي", color: "warning" },
 };
-
 const DocumentEdit = () => {
   const { get, post, loading } = useApi();
   const { Entities } = usePermissionUser();
@@ -46,6 +45,7 @@ const DocumentEdit = () => {
   const [filters, setFilters] = useState({
     entity_id: "",
     warehouse_id: "",
+    document_type: "",
   });
 
   const [warehouses, setWarehouses] = useState([]);
@@ -94,7 +94,11 @@ const DocumentEdit = () => {
     }
     try {
       const response = await get(
-        `/api/warehouse/documentGetDataByEntityId/${filters.warehouse_id}`,
+        `/api/warehouse/documentGetDataByWarehouseAndDocumentType`,
+        {
+          document_type: filters.document_type,
+          warehouse_id: filters.warehouse_id,
+        },
       );
       if (response?.data) {
         setDocuments(response.data);
@@ -107,7 +111,7 @@ const DocumentEdit = () => {
       setHasFetched(true);
       toast.error(error.response?.data?.message || "حدث خطأ أثناء البحث");
     }
-  }, [filters.warehouse_id, get]);
+  }, [filters.warehouse_id, get ,filters.document_type]);
 
   const handleOpenEdit = (doc) => {
     setSelectedDoc(doc);
@@ -203,6 +207,28 @@ const DocumentEdit = () => {
                 {safeWarehouses.map((wh) => (
                   <MenuItem key={wh.id} value={wh.id}>
                     {wh.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <FormControl fullWidth>
+              <InputLabel>نوع المستند</InputLabel>
+              <Select
+                value={filters.document_type}
+                label="نوع المستند"
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    document_type: e.target.value,
+                  }))
+                }
+              >
+                {typeDocument.map((type) => (
+                  <MenuItem key={type.value} value={type.value}>
+                    {type.label}
                   </MenuItem>
                 ))}
               </Select>
