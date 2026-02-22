@@ -205,7 +205,6 @@ function DocumentModel({
           sx={{
             p: 2,
             mb: 2,
-          
           }}
         >
           <Typography
@@ -259,18 +258,6 @@ function DocumentModel({
                 )}
               />
             </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
-              <TextField
-                name="document_number"
-                label={"رقم المستند"}
-                value={formData?.document_number}
-                onChange={handleInputChange}
-                fullWidth
-                required
-                sx={{ bgcolor: "white", borderRadius: 1 }}
-              />
-            </Grid>
-            {/* المجهز / المورد / المستفيد */}
             <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 name="beneficiary"
@@ -282,7 +269,7 @@ function DocumentModel({
                 sx={{ bgcolor: "white", borderRadius: 1 }}
               />
             </Grid>
-                 <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <CustomDatePicker
                 label="تاريخ المستند"
                 value={formData?.document_date}
@@ -348,16 +335,7 @@ function DocumentModel({
                 fullWidth
               />
             </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                name="work_order"
-                label="رقم أمر  العمل"
-                value={formData.work_order}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 name="account_number"
                 label="رقم الحساب"
@@ -387,7 +365,7 @@ function DocumentModel({
               />
             </Grid>
             {/* تاريخ المستند */}
-       
+
             {/* المبلغ الإجمالي */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
