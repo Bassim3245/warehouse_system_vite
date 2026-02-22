@@ -114,44 +114,39 @@ export default function OfficialSalesInvoice({
         {/* Document Information Grid */}
         <hr />
         <Grid container spacing={2} sx={{ mt: 1 }}>
-
-
-          {
-            document?.document_number &&(
-              
-             <Grid size={{ xs: 4 }}>
-            <Box
-              sx={{
-                textAlign: "center",
-                p: 1,
-                backgroundColor: "#ffffff",
-              }}
-            >
-              <Typography
+          {document?.document_number && (
+            <Grid size={{ xs: 3 }}>
+              <Box
                 sx={{
-                  fontSize: "11px",
-                  mb: 0.5,
-                  textTransform: "uppercase",
+                  textAlign: "center",
+                  p: 1,
+                  backgroundColor: "#ffffff",
                 }}
               >
-                رقم المستند
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  color: "#e74c3c",
-                }}
-              >
-                {documentNumber || "---"}
-              </Typography>
-            </Box>
-          </Grid>
-            )
-          }
-         
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    mb: 0.5,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  رقم المستند
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "#e74c3c",
+                  }}
+                >
+                  {documentNumber || "---"}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+
           {document?.document_date && (
-            <Grid size={{ xs: 4 }}>
+            <Grid size={{ xs: 3 }}>
               <Box
                 sx={{
                   textAlign: "center",
@@ -181,7 +176,7 @@ export default function OfficialSalesInvoice({
             </Grid>
           )}
           {document?.warehouse_name && (
-            <Grid size={{ xs: 4 }}>
+            <Grid size={{ xs: 3 }}>
               <Box
                 sx={{
                   textAlign: "center",
@@ -210,106 +205,161 @@ export default function OfficialSalesInvoice({
               </Box>
             </Grid>
           )}
+          {document?.center_cost && (
+            <Grid size={{ xs: 3 }}>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  p: 1,
+                  backgroundColor: "#ffffff",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    mb: 0.5,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  رقم مركز الكلفة
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    fontWeight: "bold",
+                    color: "#2c3e50",
+                  }}
+                >
+                  {document?.center_cost || "---"}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
         </Grid>
 
         {/* Document Additional Info - Account Number, Type Movement */}
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          {
-            document?.account_number &&(
-              <Grid size={{ xs: 4 }}>
-            <Box
-              sx={{
-                textAlign: "center",
-                p: 1,
-                backgroundColor: "#ffffff",
-              }}
-            >
-              <Typography
+          {document?.account_number && (
+            <Grid size={{ xs: 3 }}>
+              <Box
                 sx={{
-                  fontSize: "11px",
-                  mb: 0.5,
-                  textTransform: "uppercase",
+                  textAlign: "center",
+                  p: 1,
+                  backgroundColor: "#ffffff",
                 }}
               >
-                رقم الحساب
-              </Typography>
-              <Typography
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    mb: 0.5,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  رقم الحساب
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "#2c3e50",
+                  }}
+                >
+                  {document?.account_number || "---"}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+          {document?.type_movement && (
+            <Grid size={{ xs: 3 }}>
+              <Box
                 sx={{
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  color: "#2c3e50",
+                  textAlign: "center",
+                  p: 1,
+                  backgroundColor: "#ffffff",
                 }}
               >
-                {document?.account_number || "---"}
-              </Typography>
-            </Box>
-          </Grid>
-            )
-          }
-          {
-            document?.type_movement &&(
-                  <Grid size={{ xs: 4 }}>
-            <Box
-              sx={{
-                textAlign: "center",
-                p: 1,
-                backgroundColor: "#ffffff",
-              }}
-            >
-              <Typography
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    mb: 0.5,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  نوع الحركة
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "#2c3e50",
+                  }}
+                >
+                  {document?.type_movement || "---"}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+          {document?.type_movement_code && (
+            <Grid size={{ xs: 3 }}>
+              <Box
                 sx={{
-                  fontSize: "11px",
-                  mb: 0.5,
-                  textTransform: "uppercase",
+                  textAlign: "center",
+                  p: 1,
+                  backgroundColor: "#ffffff",
                 }}
               >
-                نوع الحركة
-              </Typography>
-              <Typography
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    mb: 0.5,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  رمز الحركة
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "#2c3e50",
+                  }}
+                >
+                  {document?.type_movement_code || "---"}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+          {document?.beneficiary && (
+            <Grid size={{ xs: 3 }}>
+              <Box
                 sx={{
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  color: "#2c3e50",
+                  textAlign: "center",
+                  p: 1,
+                  backgroundColor: "#ffffff",
                 }}
               >
-                {document?.type_movement || "---"}
-              </Typography>
-            </Box>
-          </Grid>
-              )
-          }
-          {
-            document?.type_movement_code &&(
-              <Grid size={{ xs: 4 }}>
-            <Box
-              sx={{
-                textAlign: "center",
-                p: 1,
-                backgroundColor: "#ffffff",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "11px",
-                  mb: 0.5,
-                  textTransform: "uppercase",
-                }}
-              >
-                رمز الحركة
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  color: "#2c3e50",
-                }}
-              >
-                {document?.type_movement_code || "---"}
-              </Typography>
-            </Box>
-          </Grid>
-            )
-          }
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    mb: 0.5,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  أسم مركز الكلفة
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "#2c3e50",
+                  }}
+                >
+                  {document?.beneficiary || "---"}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+
         </Grid>
         <Box
           sx={{
@@ -446,59 +496,59 @@ export default function OfficialSalesInvoice({
           {" "}
           {signauterData && signauterData.length > 0
             ? signauterData?.map((item, index) => (
-                <Grid size key={index}>
-                  <Box sx={{ textAlign: "center" }}>
-                    <Box
-                      sx={{
-                        height: "60px",
-                        border: "1px solid #2c3e50",
-                        borderRadius: 0,
-                        mb: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: "10px",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        منطقة التوقيع
-                      </Typography>
-                    </Box>
+              <Grid size key={index}>
+                <Box sx={{ textAlign: "center" }}>
+                  <Box
+                    sx={{
+                      height: "60px",
+                      border: "1px solid #2c3e50",
+                      borderRadius: 0,
+                      mb: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <Typography
                       sx={{
-                        fontWeight: "bold",
-                        fontSize: "12px",
-                        mb: 1,
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {item?.title}
-                    </Typography>
-                    <Box
-                      sx={{
-                        textAlign: "right",
                         fontSize: "10px",
+                        fontStyle: "italic",
                       }}
                     >
-                      <Typography sx={{ mb: 0.5 }}>
-                        {" "}
-                        الاسم: ................................
-                      </Typography>
-                      <Typography sx={{ mb: 0.5 }}>
-                        {" "}
-                        التاريخ: ................................
-                      </Typography>
-                      <Typography>
-                        الختم: ................................
-                      </Typography>
-                    </Box>
+                      منطقة التوقيع
+                    </Typography>
                   </Box>
-                </Grid>
-              ))
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "12px",
+                      mb: 1,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {item?.title}
+                  </Typography>
+                  <Box
+                    sx={{
+                      textAlign: "right",
+                      fontSize: "10px",
+                    }}
+                  >
+                    <Typography sx={{ mb: 0.5 }}>
+                      {" "}
+                      الاسم: ................................
+                    </Typography>
+                    <Typography sx={{ mb: 0.5 }}>
+                      {" "}
+                      التاريخ: ................................
+                    </Typography>
+                    <Typography>
+                      الختم: ................................
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            ))
             : null}
         </Grid>
       </Box>
