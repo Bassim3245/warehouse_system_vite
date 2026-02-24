@@ -57,6 +57,13 @@ export const getWarehouseColumns = ({
       flex: 1,
     },
     {
+      field: "measuring_unit",
+      headerName: t("وحدة القياس"),
+      minWidth: "150px",
+      maxWidth: "175px",
+      flex: 1,
+    },
+    {
       field: "specification",
       headerName: t("مواصفات المادة"),
       minWidth: "150px",

@@ -21,7 +21,7 @@ import { useMemo } from "react";
 import Root from "../../../components/Layout/Root";
 import logo from "../../../assets/image/1671635909.png";
 
-import { Factory, WarehouseIcon } from "lucide-react";
+import { Factory, Settings, WarehouseIcon } from "lucide-react";
 import { usePermissionsStructure } from "../../../hooks/useStructureCompany";
 
 export default function RootWarehouse() {
@@ -70,7 +70,7 @@ export default function RootWarehouse() {
         checkPermission: roles?.show_page_monthly_inventory?._id,
       },
     ],
-    [roles, t]
+    [roles, t],
   );
 
   /** -------------------------------------
@@ -173,7 +173,9 @@ export default function RootWarehouse() {
       },
       {
         text: t("layout.log"),
-        icon: <EventAvailableTwoToneIcon sx={{ transition: "transform 0.2s" }} />,
+        icon: (
+          <EventAvailableTwoToneIcon sx={{ transition: "transform 0.2s" }} />
+        ),
         path: "AllLog",
         checkPermission: roles?.show_log?._id,
       },
@@ -189,8 +191,14 @@ export default function RootWarehouse() {
         path: "log-warehouse-entity",
         checkPermission: roles?.show_log_entity?._id,
       },
+      {
+        text: t("إعدادات الحقول"),
+        icon: <Settings />,
+        path: "document-field-settings",
+        checkPermission: roles?.show_log_entity?._id,
+      },
     ],
-    [roles, t]
+    [roles, t],
   );
 
   return (

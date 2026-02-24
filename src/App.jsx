@@ -25,20 +25,36 @@ import HomeWharhouse from "./app/warehouse_management/Pages/Home/Home";
 import InventoryExportArchiveMonthly from "./app/warehouse_management/Pages/Archive/commen/inventoryExportArchiveMonthly";
 
 // Lazy loaded components - Dashboard Pages
-const Dashboard = React.lazy(() => import("./app/obesoloteMaterial/Page/dashboard/Dashboard"));
-const DashboardEntity = React.lazy(() => import("./app/obesoloteMaterial/Page/dashboard/DashboardEntity"));
-const GenerateReport = React.lazy(() => import("./app/obesoloteMaterial/Page/dashboard/Report/genrateReport"));
+const Dashboard = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/dashboard/Dashboard"),
+);
+const DashboardEntity = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/dashboard/DashboardEntity"),
+);
+const GenerateReport = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/dashboard/Report/genrateReport"),
+);
 
 // Lazy loaded components - Home Pages
 const Pages = React.lazy(() => import("./app/obesoloteMaterial/Page/pages"));
 
 // Lazy loaded components - User Management
-const PersonalProfile = React.lazy(() => import("./Auth/Profile/informationUser"));
-const UserManagementAllUsers = React.lazy(() => import("./app/managemant_platform/MangemantUsers/UsermanagemantAllUsers"));
-const UserManagementFromEntities = React.lazy(() => import("./app/customerManagePlatform/MangemantUsers/userMangemantFromEntitis"));
+const PersonalProfile = React.lazy(
+  () => import("./Auth/Profile/informationUser"),
+);
+const UserManagementAllUsers = React.lazy(
+  () =>
+    import("./app/managemant_platform/MangemantUsers/UsermanagemantAllUsers"),
+);
+const UserManagementFromEntities = React.lazy(
+  () =>
+    import("./app/customerManagePlatform/MangemantUsers/userMangemantFromEntitis"),
+);
 
 // Lazy loaded components - Categories
-const AllCategory = React.lazy(() => import("./app/obesoloteMaterial/Page/category/AllCategory"));
+const AllCategory = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/category/AllCategory"),
+);
 const AllCategory1 = React.lazy(() => import("./main/category/AllCategory"));
 
 // Lazy loaded components - Help & About
@@ -46,73 +62,208 @@ const HelpAboutProject = React.lazy(() => import("./help/help"));
 const AboutPage = React.lazy(() => import("./main/AboutPage"));
 
 // Lazy loaded components - Forms & CRUD
-const FormDeletedList = React.lazy(() => import("./app/obesoloteMaterial/Page/FromIsObsolete/FormObsoleteList"));
-const FormObsoleteMaterialApproveSuperAdminRoot = React.lazy(() => import("./app/obesoloteMaterial/Page/FromIsObsolete/FormAbsoleteMaterialApproveUperAdminRoot"));
-const FormObsoleteMaterialApproveAdmin = React.lazy(() => import("./app/obesoloteMaterial/Page/FromIsObsolete/FormAbsoleteMaterialApproveAdmin"));
-const ApproveAdmainTobsendRequestBooking = React.lazy(() => import("./app/obesoloteMaterial/Page/FromIsObsolete/approveAdmainTobsendRequestBooking"));
-const BookObsoleteMaterial = React.lazy(() => import("./app/obesoloteMaterial/Page/FromIsObsolete/BookObsoleteMaterial"));
+const FormDeletedList = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/FromIsObsolete/FormObsoleteList"),
+);
+const FormObsoleteMaterialApproveSuperAdminRoot = React.lazy(
+  () =>
+    import("./app/obesoloteMaterial/Page/FromIsObsolete/FormAbsoleteMaterialApproveUperAdminRoot"),
+);
+const FormObsoleteMaterialApproveAdmin = React.lazy(
+  () =>
+    import("./app/obesoloteMaterial/Page/FromIsObsolete/FormAbsoleteMaterialApproveAdmin"),
+);
+const ApproveAdmainTobsendRequestBooking = React.lazy(
+  () =>
+    import("./app/obesoloteMaterial/Page/FromIsObsolete/approveAdmainTobsendRequestBooking"),
+);
+const BookObsoleteMaterial = React.lazy(
+  () =>
+    import("./app/obesoloteMaterial/Page/FromIsObsolete/BookObsoleteMaterial"),
+);
 
 // Lazy loaded components - Material & Product Details
-const MaterialOverview = React.lazy(() => import("./app/obesoloteMaterial/Page/FromIsObsolete/MaterialOverview"));
-const ProductStagnant = React.lazy(() => import("./app/obesoloteMaterial/Page/Productstagmant"));
-const ProductOverview = React.lazy(() => import("./app/obesoloteMaterial/Page/materialOverview/ProductOverview"));
+const MaterialOverview = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/FromIsObsolete/MaterialOverview"),
+);
+const ProductStagnant = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/Productstagmant"),
+);
+const ProductOverview = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/materialOverview/ProductOverview"),
+);
 
 // Lazy loaded components - Warehouse Management
-const StoreData = React.lazy(() => import("./app/warehouse_management/Pages/managemnatStoreData/storeData"));
-const ManagementDataStore = React.lazy(() => import("./app/warehouse_management/Pages/managemnatStoreData/manigemantdDataStored"));
-const LabMinitoring = React.lazy(() => import("./app/warehouse_management/Pages/monitoringLabrarotory/LabMinitoring"));
-const MaterialMovement = React.lazy(() => import("./app/warehouse_management/Pages/Inventory/MovmentMaterial/materialMovment"));
-const MaterialMovementExport = React.lazy(() => import("./app/warehouse_management/Pages/Inventory/MovmentMaterial/WarehouseExportRecords"));
-const PrintInventory = React.lazy(() => import("./app/warehouse_management/Pages/printInventory/PrintInventory"));
-const WarehouseMange = React.lazy(() => import("./app/warehouse_management/Pages/managemantWarehouse/WarehouseManager"));
-const LabsEntity = React.lazy(() => import("./app/warehouse_management/Pages/managemantWarehouse/LabsEntity"));
-const Factories = React.lazy(() => import("./app/warehouse_management/Pages/managemantWarehouse/Factories"));
+const StoreData = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managemnatStoreData/storeData"),
+);
+const ManagementDataStore = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managemnatStoreData/manigemantdDataStored"),
+);
+const LabMinitoring = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/monitoringLabrarotory/LabMinitoring"),
+);
+const MaterialMovement = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Inventory/MovmentMaterial/materialMovment"),
+);
+const MaterialMovementExport = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Inventory/MovmentMaterial/WarehouseExportRecords"),
+);
+const PrintInventory = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/printInventory/PrintInventory"),
+);
+const WarehouseMange = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managemantWarehouse/WarehouseManager"),
+);
+const LabsEntity = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managemantWarehouse/LabsEntity"),
+);
+const Factories = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managemantWarehouse/Factories"),
+);
 
 // Lazy loaded components - Inventory & Documents
-const DocumentPurchase = React.lazy(() => import("./app/warehouse_management/Pages/Inventory/Purchases/DoucumentPurchases"));
-const PurchasesData = React.lazy(() => import("./app/warehouse_management/Pages/Inventory/Purchases/PurchasesData"));
-const DocumentSales = React.lazy(() => import("./app/warehouse_management/Pages/Inventory/selas/DoucumentSelas"));
-const SalesMaterial = React.lazy(() => import("./app/warehouse_management/Pages/Inventory/selas/salesMaterial"));
+const DocumentPurchase = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Inventory/Purchases/DoucumentPurchases"),
+);
+const PurchasesData = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Inventory/Purchases/PurchasesData"),
+);
+const DocumentSales = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Inventory/selas/DoucumentSelas"),
+);
+const SalesMaterial = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Inventory/selas/salesMaterial"),
+);
 
 // Lazy loaded components - Notifications
-const WarehouseNotification = React.lazy(() => import("./app/warehouse_management/Pages/Notification/WarehouseNotifction"));
-const NotificationObsoletedMaterial = React.lazy(() => import("./app/obesoloteMaterial/Page/Notification/NotificationObesoloteMaterial"));
-const ApproveBooked = React.lazy(() => import("./main_page/Notification/approveBooked"));
+const WarehouseNotification = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Notification/WarehouseNotifction"),
+);
+const NotificationObsoletedMaterial = React.lazy(
+  () =>
+    import("./app/obesoloteMaterial/Page/Notification/NotificationObesoloteMaterial"),
+);
+const ApproveBooked = React.lazy(
+  () => import("./main_page/Notification/approveBooked"),
+);
 
 // Lazy loaded components - Logs
-const LogById = React.lazy(() => import("./app/obesoloteMaterial/Page/log/LogById"));
+const LogById = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/log/LogById"),
+);
 const AllLog = React.lazy(() => import("./main_page/log/AllLog"));
-const LogWarehouseById = React.lazy(() => import("./app/warehouse_management/log/LogById"));
-const LogObsoleteById = React.lazy(() => import("./app/obesoloteMaterial/log/LogById"));
+const LogWarehouseById = React.lazy(
+  () => import("./app/warehouse_management/log/LogById"),
+);
+const LogObsoleteById = React.lazy(
+  () => import("./app/obesoloteMaterial/log/LogById"),
+);
 
 // Lazy loaded components - Platform Management
-const MainInformation = React.lazy(() => import("./app/managemant_platform/manageMainInformation/MainInformation"));
-const Monitoring = React.lazy(() => import("./app/managemant_platform/monitoring/Monitoring"));
-const EntityManagement = React.lazy(() => import("./app/managemant_platform/setting/entityManagemant"));
-const EntityDetails = React.lazy(() => import("./app/managemant_platform/setting/entityDetails"));
-const DocumentEdit = React.lazy(() => import("./app/managemant_platform/DocumentManagement/DocumentEdit"));
-const DocumentCount = React.lazy(() => import("./app/managemant_platform/DocumentManagement/DocumentCount"));
+const MainInformation = React.lazy(
+  () =>
+    import("./app/managemant_platform/manageMainInformation/MainInformation"),
+);
+const Monitoring = React.lazy(
+  () => import("./app/managemant_platform/monitoring/Monitoring"),
+);
+const EntityManagement = React.lazy(
+  () => import("./app/managemant_platform/setting/entityManagemant"),
+);
+const EntityDetails = React.lazy(
+  () => import("./app/managemant_platform/setting/entityDetails"),
+);
+const DocumentEdit = React.lazy(
+  () => import("./app/managemant_platform/DocumentManagement/DocumentEdit"),
+);
+const DocumentCount = React.lazy(
+  () => import("./app/managemant_platform/DocumentManagement/DocumentCount"),
+);
+const DocumentFieldSettings = React.lazy(
+  () =>
+    import("./app/managemant_platform/DocumentManagement/DocumentFieldSettings"),
+);
 
 // Lazy loaded components - Permissions
-const Permission = React.lazy(() => import("./app/managemant_platform/manageMainInformation/RoleAndPermission/Permission"));
-const SetPermissionToGroup = React.lazy(() => import("./app/managemant_platform/manageMainInformation/RoleAndPermission/SetPermisition"));
-const SetPermissionFromEntities = React.lazy(() => import("./app/managemant_platform/MangemantUsers/setPermissionFromEntitis"));
+const Permission = React.lazy(
+  () =>
+    import("./app/managemant_platform/manageMainInformation/RoleAndPermission/Permission"),
+);
+const SetPermissionToGroup = React.lazy(
+  () =>
+    import("./app/managemant_platform/manageMainInformation/RoleAndPermission/SetPermisition"),
+);
+const SetPermissionFromEntities = React.lazy(
+  () =>
+    import("./app/managemant_platform/MangemantUsers/setPermissionFromEntitis"),
+);
 
 // Lazy loaded components - Archive & Reports
-const Archive = React.lazy(() => import("./app/obesoloteMaterial/Page/archive/archiveList"));
-const InformationMaterialArchive = React.lazy(() => import("./app/obesoloteMaterial/Page/archive/InformationMaterial"));
-const MainPageForReport = React.lazy(() => import("./app/warehouse_management/Pages/managermantReports/mainPageReport"));
-const MonthlyInventory = React.lazy(() => import("./app/warehouse_management/Pages/Archive/monthly/MonthlyDocumentInventory"));
-const AnnualInventory = React.lazy(() => import("./app/warehouse_management/Pages/Archive/annual/AnnualDocumentInventory"));
-const InventoryImportArchiveMonthly = React.lazy(() => import("./app/warehouse_management/Pages/Archive/commen/inventoryImportArchiveMontly"));
-const InventoryDataArchive = React.lazy(() => import("./app/warehouse_management/Pages/Archive/monthly/InventoryDataArchive"));
-const InventoryArchiveAnnual = React.lazy(() => import("./app/warehouse_management/Pages/Archive/annual/InventoryArchiveAnnual"));
+const Archive = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/archive/archiveList"),
+);
+const InformationMaterialArchive = React.lazy(
+  () => import("./app/obesoloteMaterial/Page/archive/InformationMaterial"),
+);
+const MainPageForReport = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managermantReports/mainPageReport"),
+);
+const MonthlyInventory = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Archive/monthly/MonthlyDocumentInventory"),
+);
+const AnnualInventory = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Archive/annual/AnnualDocumentInventory"),
+);
+const InventoryImportArchiveMonthly = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Archive/commen/inventoryImportArchiveMontly"),
+);
+const InventoryDataArchive = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Archive/monthly/InventoryDataArchive"),
+);
+const InventoryArchiveAnnual = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/Archive/annual/InventoryArchiveAnnual"),
+);
+
+// Lazy loaded components - Invoice Template Designer
+const InvoiceTemplateDesigner = React.lazy(
+  () =>
+    import(
+      "./app/customerManagePlatform/InvoiceTemplateDesigner/InvoiceTemplateDesigner"
+    ),
+);
 
 // Lazy loaded components - Month Lock System
-const MonthlyLocks = React.lazy(() => import("./app/warehouse_management/Pages/MonthlyLocks/MonthlyLocks"));
-const UnlockRequests = React.lazy(() => import("./app/warehouse_management/Pages/UnlockRequests/UnlockRequests"));
-const AuditLog = React.lazy(() => import("./app/warehouse_management/Pages/AuditLog/AuditLog"));
-
+const MonthlyLocks = React.lazy(
+  () => import("./app/warehouse_management/Pages/MonthlyLocks/MonthlyLocks"),
+);
+const UnlockRequests = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/UnlockRequests/UnlockRequests"),
+);
+const AuditLog = React.lazy(
+  () => import("./app/warehouse_management/Pages/AuditLog/AuditLog"),
+);
 
 export default function App() {
   // Use custom hook for app initialization
@@ -326,7 +477,6 @@ export default function App() {
                       element={<PurchasesData />}
                     />
 
-
                     {/* document sales */}
 
                     <Route path="document-sales" element={<DocumentSales />} />
@@ -392,23 +542,22 @@ export default function App() {
                     />
 
                     {/* Month Lock System Routes */}
-                    <Route
-                      path="monthly-locks"
-                      element={<MonthlyLocks />}
-                    />
+                    <Route path="monthly-locks" element={<MonthlyLocks />} />
                     <Route
                       path="unlock-requests"
                       element={<UnlockRequests />}
                     />
-                    <Route
-                      path="audit-log"
-                      element={<AuditLog />}
-                    />
+                    <Route path="audit-log" element={<AuditLog />} />
 
                     <Route
                       path="warehouse-mange"
                       element={<WarehouseMange />}
                     />
+                    <Route
+                      path="document-field-settings"
+                      element={<DocumentFieldSettings />}
+                    />
+
                     <Route path="lab-manage" element={<LabsEntity />} />
                     <Route path="Factory-manage" element={<Factories />} />
                   </Route>
@@ -457,6 +606,10 @@ export default function App() {
                   />
                   <Route path="document-edit" element={<DocumentEdit />} />
                   <Route path="document-count" element={<DocumentCount />} />
+                  <Route
+                    path="document-field-settings"
+                    element={<DocumentFieldSettings />}
+                  />
                 </Route>
               </Route>
               <Route element={<ProtectedApplicationRoute applicationId={4} />}>
@@ -475,7 +628,10 @@ export default function App() {
                     path="Log-stagnant-entity"
                     element={<LogObsoleteById />}
                   />
-
+                  <Route
+                    path="invoice-template-designer"
+                    element={<InvoiceTemplateDesigner />}
+                  />
 
                   <Route path="help-platform" element={<HelpAboutProject />} />
                 </Route>

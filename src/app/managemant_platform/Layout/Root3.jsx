@@ -80,6 +80,12 @@ export default function Root3() {
       checkPermission: roles?.setting_information?._id,
     },
     {
+      text: t("إعدادات الحقول"),
+      icon: <Settings />,
+      path: "document-field-settings",
+      checkPermission: roles?.setting_information?._id,
+    },
+    {
       text: t("layout.User Manual"),
       icon: <Info />,
       path: "help-platform", // Fixed path to include a leading slash

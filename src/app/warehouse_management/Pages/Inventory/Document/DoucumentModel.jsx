@@ -8,6 +8,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import PopupForm from "../../../../../components/reusableComponent/PopupForm";
 import CustomDatePicker from "../../../../../components/reusableComponent/CustomDatePicker";
@@ -26,6 +27,7 @@ import { toast } from "react-toastify";
 import { WarehouseIcon } from "lucide-react";
 import { typeDocument } from "../../../../../constants/arrayFuction";
 import useGetDataId from "../../../../../hooks/useGetDataId";
+import useDocumentFields from "../../../../../hooks/invantory/useDocumentFields";
 
 function DocumentModel({
   documentTypeValue,
@@ -58,16 +60,43 @@ function DocumentModel({
       status: "draft",
       documentType: documentTypeValue,
       warehouse_id: "",
-      account_number: "",
-      type_movement: "",
-      type_movement_code: "",
-      work_order: "",
-      center_cost: "",
     }),
     [documentTypeValue],
   );
 
   const [formData, setFormData] = useState(initialForm);
+
+  /* ------------------------------
+      Dynamic fields state
+   ------------------------------ */
+  // Holds dynamic field values: { field_id: value }
+  const [dynValues, setDynValues] = useState({});
+
+  // Get the document type to use for fetching fields
+  const resolvedDocType = formData.documentType || documentType || documentTypeValue;
+
+  const {
+    fields: dynFields,
+    fieldValues: loadedFieldValues,
+    loadingFields,
+    saveFieldValues,
+  } = useDocumentFields({
+    documentType: open ? resolvedDocType : null,
+    documentId: editMode && open ? (documentData?.id ?? null) : null,
+  });
+
+  // Sync loaded field values into local state (edit mode)
+  useEffect(() => {
+
+    if (editMode && open && Object.keys(loadedFieldValues).length > 0) {
+      setDynValues(loadedFieldValues);
+    }
+  }, [loadedFieldValues, editMode, open]);
+
+  // Reset dynamic values when closing
+  useEffect(() => {
+    if (!open) setDynValues({});
+  }, [open]);
 
   /* ------------------------------
       Handle change functions
@@ -126,11 +155,6 @@ function DocumentModel({
         status: documentData?.status,
         documentType: documentData?.document_type,
         warehouse_id: documentData?.warehouse_id,
-        account_number: documentData?.account_number,
-        type_movement: documentData?.type_movement,
-        type_movement_code: documentData?.type_movement_code,
-        work_order: documentData?.work_order,
-        center_cost: documentData?.center_cost,
       });
     }
   }, [editMode, open, documentData]);
@@ -153,18 +177,29 @@ function DocumentModel({
   const handleSubmit = useCallback(async () => {
     setLoading(true);
     try {
+      // Build dynamic field values array: [{ field_id, value }]
+      const dynFieldValues = dynFields.map((f) => ({
+        field_id: f.id,
+        value: dynValues[f.id] ?? "",
+      }));
+
+      // Build unified payload — null-safe for optional fields
+      const payload = {
+        ...formData,
+        entity_id,
+        user_id: dataUserById?.user_id,
+        factory_id: factoryId ?? null,
+        lab_id: labId ?? null,
+        documentId: documentData?.id ?? null,
+        // in the same transaction. For edits we keep the separate call below.
+        ...(editMode ? {} : { fieldValues: dynFieldValues }),
+      };
+
       const url = editMode ? "documentEdit" : "documentRegister";
 
       const response = await axiosInstance.post(
         `${BackendUrl}/api/warehouse/${url}`,
-        {
-          ...formData,
-          entity_id,
-          user_id: dataUserById?.user_id,
-          factory_id: factoryId,
-          lab_id: labId,
-          documentId: documentData?.id ?? null,
-        },
+        payload,
         {
           headers: {
             Authorization: getToken(),
@@ -174,6 +209,15 @@ function DocumentModel({
       );
 
       if (response) {
+        // In edit mode, save field values via the dedicated endpoint
+        if (editMode && documentData?.id && dynFields.length > 0) {
+          const valuesMap = {};
+          dynFields.forEach((f) => {
+            valuesMap[f.id] = dynValues[f.id] ?? "";
+          });
+          await saveFieldValues(documentData.id, valuesMap);
+        }
+
         setRefreshButton((prev) => !prev);
         handleClose();
       }
@@ -192,6 +236,9 @@ function DocumentModel({
     documentData,
     handleClose,
     setRefreshButton,
+    dynFields,
+    dynValues,
+    saveFieldValues,
   ]);
 
   /* ------------------------------
@@ -281,7 +328,33 @@ function DocumentModel({
           </Grid>
         </Box>
 
-        {/* ===== الحقول الاختيارية ===== */}
+        {/* ===== نوع المستند (للصادر فقط) ===== */}
+        {!(documentType === "in" && !isExport) && (
+          <Box sx={{ px: 2, mb: 2 }}>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  name="documentType"
+                  label="نوع المستند"
+                  fullWidth
+                  select
+                  value={formData.documentType}
+                  onChange={handleInputChange}
+                >
+                  {typeDocument
+                    .filter((item) => item.value !== "in")
+                    .map((item) => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+
+        {/* ===== الحقول الإضافية الديناميكية ===== */}
         <Box
           sx={{
             p: 2,
@@ -301,103 +374,89 @@ function DocumentModel({
               gap: 0.5,
             }}
           >
-            معلومات إضافية (اختيارية)
+            معلومات إضافية
+            {loadingFields && <CircularProgress size={14} sx={{ ml: 1 }} />}
           </Typography>
-          <Grid container spacing={2}>
-            {/* نوع المستند */}
-            {!(documentType === "in" && !isExport) && (
-              <>
+
+          {dynFields.length === 0 && !loadingFields ? (
+            <Typography variant="body2" color="text.disabled" sx={{ py: 1 }}>
+              لا توجد حقول إضافية لهذا النوع من المستندات
+            </Typography>
+          ) : (
+            <Grid container spacing={2}>
+              {dynFields?.map((field) => (
+                <Grid key={field.id} size={{ xs: 12, sm: 6 }}>
+                  {field.field_type === "textarea" ? (
+                    <TextField
+                      label={`${field?.field_label}${field?.is_required ? " *" : ""}`}
+                      value={dynValues[field?.id] ?? ""}
+                      onChange={(e) =>
+                        setDynValues((prev) => ({ ...prev, [field?.id]: e.target.value }))
+                      }
+                      multiline
+                      rows={3}
+                      fullWidth
+                      required={Boolean(field?.is_required)}
+                    />
+                  ) : field?.field_type === "date" ? (
+                    <CustomDatePicker
+                      label={`${field?.field_label}${field?.is_required ? " *" : ""}`}
+                      value={dynValues[field?.id] ? dayjs(dynValues[field?.id]) : null}
+                      setValue={(v) =>
+                        setDynValues((prev) => ({
+                          ...prev,
+                          [field?.id]: v ? dayjs(v).format("YYYY-MM-DD") : "",
+                        }))
+                      }
+                      format="YYYY/MM/DD"
+                      haswidth
+                    />
+                  ) : (
+                    <TextField
+                      label={`${field?.field_label}${field?.is_required ? " *" : ""}`}
+                      type={field?.field_type === "number" ? "number" : "text"}
+                      value={dynValues[field?.id] ?? ""}
+                      onChange={(e) =>
+                        setDynValues((prev) => ({ ...prev, [field?.id]: e.target.value }))
+                      }
+                      fullWidth
+                      required={Boolean(field.is_required)}
+                    />
+                  )}
+                </Grid>
+              ))}
+
+              {/* المبلغ الإجمالي - ثابت دائماً */}
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
-                  name="documentType"
-                  label="نوع المستند"
+                  name="total_amount"
+                  label="المبلغ الأجمالي"
+                  type="number"
+                  value={formData.total_amount}
                   fullWidth
-                  select
-                  value={formData.documentType}
-                  onChange={handleInputChange}
-                >
-                  {typeDocument
-                    .filter((item) => item.value !== "in")
-                    .map((item) => (
-                      <MenuItem key={item.value} value={item.value}>
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                </TextField>
+                  disabled
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">دينار</InputAdornment>
+                    ),
+                  }}
+                />
               </Grid>
-                     <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                name="center_cost"
-                label="رقم مركز الكلفة "
-                value={formData.center_cost}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            </>
-            )}
-            {/* رقم الحساب */}
-     
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                name="account_number"
-                label="رقم الحساب"
-                value={formData.account_number}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            {/* نوع الحركة */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                name="type_movement"
-                label="نوع الحركة"
-                value={formData.type_movement}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            {/* رمز نوع الحركة */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                name="type_movement_code"
-                label="رمز نوع الحركة"
-                value={formData.type_movement_code}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Grid>
-            {/* تاريخ المستند */}
 
-            {/* المبلغ الإجمالي */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                name="total_amount"
-                label="المبلغ الأجمالي"
-                type="number"
-                value={formData.total_amount}
-                fullWidth
-                disabled
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">دينار</InputAdornment>
-                  ),
-                }}
-              />
+              {/* ملاحظات - ثابت دائماً */}
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  name="description"
+                  label="ملاحظات"
+                  multiline
+                  rows={3}
+                  fullWidth
+                  value={formData.description}
+                  onChange={handleInputChange}
+                />
+              </Grid>
             </Grid>
-            {/* الملاحظات */}
-            <Grid size={{ xs: 12 }}>
-              <TextField
-                name="description"
-                label="ملاحظات"
-                multiline
-                rows={3}
-                fullWidth
-                value={formData.description}
-                onChange={handleInputChange}
-              />
-            </Grid>
-          </Grid>
+          )}
         </Box>
       </Box>
     ),
@@ -409,6 +468,9 @@ function DocumentModel({
       documentType,
       isExport,
       filedLabel,
+      dynFields,
+      dynValues,
+      loadingFields,
     ],
   );
 

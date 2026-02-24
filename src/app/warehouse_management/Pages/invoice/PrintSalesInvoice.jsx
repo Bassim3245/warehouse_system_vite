@@ -6,10 +6,11 @@ import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { formatDateYearsMonth } from "../../../../utils/formatData";
 import { useReactToPrint } from "react-to-print";
 import { axiosInstance } from "../../../../redux/api/axiosConfig";
-import { getToken } from "../../../../utils/handelCookie";
-import OfficialSalesInvoice from "./InvoiceSales";
+import { getToken, getUserInformation } from "../../../../utils/handelCookie";
+import UnifiedInvoice from "./UnifiedInvoice";
 import useSingnature from "../../../../hooks/useSingnature";
 import SignatureForm from "./signatureForm";
+import useInvoiceTemplate from "../../../../hooks/invantory/useInvoiceTemplate";
 
 const PrintSales = ({ document_id, document, document_type }) => {
   const [open, setOpen] = useState(false);
@@ -20,7 +21,21 @@ const PrintSales = ({ document_id, document, document_type }) => {
   const toggleOpen = useCallback(() => setOpen((prev) => !prev), []);
 
   // ---------------------------
-  // 🔒 signature hook memoized
+  // Get entity_id from logged-in user
+  // ---------------------------
+  const userInfo = getUserInformation();
+  const entity_id = userInfo?.entity_id;
+
+  // ---------------------------
+  // 🖼 Fetch invoice template (custom or default)
+  // ---------------------------
+  const { template } = useInvoiceTemplate({
+    entity_id,
+    document_type,
+  });
+
+  // ---------------------------
+  // 🔒 Signature hook
   // ---------------------------
   const { signauterData } = useSingnature({
     documentId: document_id,
@@ -37,7 +52,6 @@ const PrintSales = ({ document_id, document, document_type }) => {
         `/api/warehouse/getMaterialExportByDocumentId?document_id=${document_id}&documentType=${document_type}`,
         { headers: { authorization: getToken() } }
       );
-
       setInvoiceData(response?.data?.data || []);
     } catch (error) {
       console.error("Error searching materials:", error);
@@ -50,7 +64,7 @@ const PrintSales = ({ document_id, document, document_type }) => {
   }, [getDataInvoice]);
 
   // ---------------------------
-  // 🧮 Prepare totals (Memoized)
+  // 🧮 Totals
   // ---------------------------
   const summary = useMemo(() => {
     const totalAmount = invoiceData.reduce((sum, i) => sum + i.total, 0);
@@ -64,20 +78,12 @@ const PrintSales = ({ document_id, document, document_type }) => {
         parseFloat(i.price || 0) * parseFloat(i.total_quantity || 0),
       0
     );
-
     const invoiceDate =
       invoiceData.length > 0 ? invoiceData[0].purchase_date : new Date();
-
     const documentNumber =
       invoiceData.length > 0 ? invoiceData[0].document_number : "غير متوفر";
 
-    return {
-      totalAmount,
-      totalQuantity,
-      totalPrice,
-      invoiceDate,
-      documentNumber,
-    };
+    return { totalAmount, totalQuantity, totalPrice, invoiceDate, documentNumber };
   }, [invoiceData]);
 
   // ---------------------------
@@ -90,12 +96,9 @@ const PrintSales = ({ document_id, document, document_type }) => {
     )}`,
   });
 
-  // ---------------------------
-  // 🧱 Memoized form content
-  // ---------------------------
   const formContent = useMemo(
     () => (
-      <OfficialSalesInvoice
+      <UnifiedInvoice
         invoiceData={invoiceData}
         documentNumber={summary.documentNumber}
         invoiceDate={summary.invoiceDate}
@@ -103,16 +106,15 @@ const PrintSales = ({ document_id, document, document_type }) => {
         totalPrice={summary.totalPrice}
         totalAmount={summary.totalAmount}
         printRef={printRef}
-        document={document}
+        documentInfo={document}
         signauterData={signauterData}
+        document_type={document_type}
+        template={template}
       />
     ),
-    [invoiceData, summary, document, signauterData]
+    [invoiceData, summary, document, signauterData, template]
   );
 
-  // ---------------------------
-  // 🧱 Memoized footer
-  // ---------------------------
   const formActions = useMemo(
     () => (
       <>
@@ -122,7 +124,6 @@ const PrintSales = ({ document_id, document, document_type }) => {
           setRefresh={setRefresh}
           signauterData={signauterData}
         />
-
         <ButtonTheme
           variant="contained"
           color="primary"
@@ -131,7 +132,6 @@ const PrintSales = ({ document_id, document, document_type }) => {
         >
           طباعة
         </ButtonTheme>
-
         <Button onClick={toggleOpen} variant="outlined">
           إغلاق
         </Button>

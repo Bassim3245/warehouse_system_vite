@@ -7,6 +7,7 @@ import ManageAccounts from "@mui/icons-material/ManageAccounts";
 import NotificationAdd from "@mui/icons-material/NotificationAdd";
 import { useTranslation } from "react-i18next";
 import logo from "../../../assets/image/computer-design-colorful-vector.png";
+import { Draw } from "@mui/icons-material";
 export default function Root4() {
   const { roles } = useSelector((state) => state?.RolesData);
   const { t } = useTranslation();
@@ -41,6 +42,12 @@ export default function Root4() {
       text: t("layout.User Manual"),
       icon: <Info />,
       path: "help-platform", // Fixed path to include a leading slash
+      checkPermission: roles?.show_profile?._id,
+    },
+    {
+      text: t("layout.Invoice Template Designer"),
+      icon: < Draw />,
+      path: "invoice-template-designer", // Fixed path to include a leading slash
       checkPermission: roles?.show_profile?._id,
     },
   ];

@@ -51,6 +51,29 @@ import { InputAdornment, MenuItem } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import CostumePagination from "../../../../../components/reusableComponent/CostumPagination";
 
+// ─── Helper: convert field_values array → { field_key: value } map ───────────
+const buildFieldMap = (fieldValues = []) =>
+  fieldValues.reduce((acc, fv) => {
+    acc[fv.field_key] = fv.value;
+    return acc;
+  }, {});
+
+// ─── Helper: extract unique dynamic columns from all documents ────────────────
+const extractDynamicColumns = (documents = []) => {
+  const seen = new Map(); // field_key → field_label
+  documents.forEach((doc) => {
+    (doc.field_values || []).forEach(({ field_key, field_label, display_order }) => {
+      if (!seen.has(field_key)) {
+        seen.set(field_key, { field_label, display_order });
+      }
+    });
+  });
+  // Sort by display_order so columns appear in the right order
+  return Array.from(seen.entries())
+    .sort((a, b) => a[1].display_order - b[1].display_order)
+    .map(([field_key, { field_label }]) => ({ field_key, field_label }));
+};
+
 function Document({
   token,
   documentType,
@@ -104,33 +127,36 @@ function Document({
     setRefreshButton,
   });
 
-  // --------------------------------------
-  //  Memoized Data
-  // --------------------------------------
-
-  const memoWarehouseOptions = useMemo(
-    () => wareHouseData || [],
-    [wareHouseData],
-  );
+  // ─── Memoized Data ────────────────────────────────────────────────────────
+  const memoWarehouseOptions = useMemo(() => wareHouseData || [], [wareHouseData]);
 
   const selectedWarehouse = useMemo(
     () => memoWarehouseOptions.find((w) => w.id === warehosueId) || null,
     [memoWarehouseOptions, warehosueId],
   );
 
-  const memoDocuments = useMemo(
-    () => documentMaterials || [],
-    [documentMaterials],
+  const memoDocuments = useMemo(() => documentMaterials || [], [documentMaterials]);
+
+  // ─── Dynamic columns derived from all loaded documents ───────────────────
+  const dynamicColumns = useMemo(
+    () => extractDynamicColumns(memoDocuments),
+    [memoDocuments],
   );
 
-  // --------------------------------------
-  // 🧠 Memoized Event Handlers
-  // --------------------------------------
+  // ─── Static columns (always shown) ───────────────────────────────────────
+  const staticHeaders = [
+    "#",
+    "رقم المستند",
+    "حالة",
+    "تاريخ المستند",
+    "تاريخ الإدخال",
+    "الجهة",
+    "المبلغ",
+    "ملاحظات",
+  ];
 
-  const handleDocDelete = useCallback(
-    (id) => deleteDocument(id),
-    [deleteDocument],
-  );
+  // ─── Memoized Event Handlers ──────────────────────────────────────────────
+  const handleDocDelete = useCallback((id) => deleteDocument(id), [deleteDocument]);
   const handleDocComplete = useCallback(
     (id, is_complete) => completeItem(id, is_complete),
     [completeItem],
@@ -176,7 +202,6 @@ function Document({
           has_lab={has_lab}
         />
         <Divider />
-
         {renderMenuItem(
           item.is_complete ? "unlock" : "complete",
           () => handleDocComplete(item.id, item.is_complete),
@@ -204,14 +229,10 @@ function Document({
     ],
   );
 
-  // --------------------------------------
-  // JSX
-  // --------------------------------------
-
+  // ─── JSX ──────────────────────────────────────────────────────────────────
   return (
     <div className="m-2" dir="rtl">
       {loading && <Loader />}
-
       <Header title={title} icon={<Inventory2 />} dir="rtl" />
 
       <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1 }}>
@@ -232,12 +253,10 @@ function Document({
           documentType={documentType}
           isExport={isExport}
         />
-
         <MonthlyInventory
           documentMaterials={memoDocuments}
           dataUserById={dataUserById}
         />
-
         <UseFullScreen
           setRefreshButton={setRefreshButton}
           refreshing={refreshButton}
@@ -288,12 +307,7 @@ function Document({
                 key={option.id}
                 component="li"
                 {...props}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  p: 1,
-                }}
+                sx={{ display: "flex", alignItems: "center", gap: 1, p: 1 }}
               >
                 <Warehouse sx={{ color: "primary.main", fontSize: 18 }} />
                 <Box sx={{ flex: 1 }}>
@@ -314,6 +328,7 @@ function Document({
             noOptionsText="لا توجد مخازن"
           />
         </Grid>
+
         <Grid size={{ xs: 12, sm: 4 }}>
           <TextField
             fullWidth
@@ -337,106 +352,87 @@ function Document({
             <Table>
               <TableHead>
                 <TableRow sx={getHeaderStyle(theme)}>
-                  {[
-                    "#",
-                    "رقم المستند",
-                    "حالة",
-                    "تاريخ المستند",
-                    "تاريخ الإدخال",
-                    "نوع المستند",
-                    "رقم الحساب",
-                    "نوع الحركة",
-                    "رمز نوع الحركة",
-                    "الجهة",
-                    "رقم مركز الكلفة",
-                    "المخزن",
-                    "المبلغ",
-                    "ملاحظات",
-                    "إجراءات",
-                  ].map((title, idx) => (
-                    <StyledTableCell key={idx} sx={getHeaderStyle(theme)}>
-                      {title}
+                  {/* Static headers */}
+                  {staticHeaders.map((h, idx) => (
+                    <StyledTableCell key={`static-${idx}`} sx={getHeaderStyle(theme)}>
+                      {h}
                     </StyledTableCell>
                   ))}
+
+                  {/* ✅ Dynamic headers from field_values */}
+                  {dynamicColumns.map(({ field_key, field_label }) => (
+                    <StyledTableCell key={field_key} sx={getHeaderStyle(theme)}>
+                      {field_label}
+                    </StyledTableCell>
+                  ))}
+
+                  <StyledTableCell sx={getHeaderStyle(theme)}>إجراءات</StyledTableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {memoDocuments?.length > 0 ? (
-                  memoDocuments?.map((item, index) => (
-                    <StyledTableRow key={item?.id}>
-                      <StyledTableCell>{index + 1}</StyledTableCell>
+                {memoDocuments.length > 0 ? (
+                  memoDocuments.map((item, index) => {
+                    // Build a quick lookup map for this row's field values
+                    const fieldMap = buildFieldMap(item.field_values);
 
-                      <StyledTableCell>
-                        <Chip
-                          label={item?.document_number}
-                          size="small"
-                          color="primary"
-                        />
-                      </StyledTableCell>
+                    return (
+                      <StyledTableRow key={item.id}>
+                        {/* Static cells */}
+                        <StyledTableCell>{index + 1}</StyledTableCell>
 
-                      <StyledTableCell>
-                        <Chip
-                          label={item?.is_complete ? "مكتمل" : "غير مكتمل"}
-                          size="small"
-                          color={item?.is_complete ? "success" : "warning"}
-                        />
-                      </StyledTableCell>
+                        <StyledTableCell>
+                          <Chip
+                            label={item.document_number}
+                            size="small"
+                            color="primary"
+                          />
+                        </StyledTableCell>
 
-                      <StyledTableCell>
-                        {formatDateAr(item?.document_date)}
-                      </StyledTableCell>
+                        <StyledTableCell>
+                          <Chip
+                            label={item.is_complete ? "مكتمل" : "غير مكتمل"}
+                            size="small"
+                            color={item.is_complete ? "success" : "warning"}
+                          />
+                        </StyledTableCell>
 
-                      <StyledTableCell>
-                        {formatDateAr(item?.created_at)}
-                      </StyledTableCell>
+                        <StyledTableCell>
+                          {formatDateAr(item.document_date)}
+                        </StyledTableCell>
 
-                      <StyledTableCell>
-                        {item?.document_type === "internal_transfer"
-                          ? "مستند نقل داخلي"
-                          : item?.document_type === "out"
-                            ? "مستند تصدير"
-                            : item?.document_type === "in"
-                              ? "مستند وارد"
-                              : "مستند صادر"}
-                      </StyledTableCell>
+                        <StyledTableCell>
+                          {formatDateAr(item.created_at)}
+                        </StyledTableCell>
 
-                      <StyledTableCell>
-                        {item?.account_number || "-"}
-                      </StyledTableCell>
+                        <StyledTableCell>
+                          {item.beneficiary || "-"}
+                        </StyledTableCell>
 
-                      <StyledTableCell>
-                        {item?.type_movement || "-"}
-                      </StyledTableCell>
+                        <StyledTableCell>
+                          {formatCurrency(item.total_amount || 0)}
+                        </StyledTableCell>
 
-                      <StyledTableCell>
-                        {item?.type_movement_code || "-"}
-                      </StyledTableCell>
+                        <StyledTableCell>
+                          {item.description || "-"}
+                        </StyledTableCell>
 
-                      <StyledTableCell>
-                        {item?.beneficiary || "-"}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {item?.center_cost || "-"}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {item?.warehouse_name || "-"}
-                      </StyledTableCell>
+                        {/* ✅ Dynamic cells — render value by field_key */}
+                        {dynamicColumns.map(({ field_key }) => (
+                          <StyledTableCell key={field_key}>
+                            {fieldMap[field_key] ?? "-"}
+                          </StyledTableCell>
+                        ))}
 
-                      <StyledTableCell>
-                        {formatCurrency(item?.total_amount || 0)}
-                      </StyledTableCell>
-
-                      <StyledTableCell>
-                        {item?.description || "-"}
-                      </StyledTableCell>
-
-                      <StyledTableCell>{renderRowMenu(item)}</StyledTableCell>
-                    </StyledTableRow>
-                  ))
+                        <StyledTableCell>{renderRowMenu(item)}</StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })
                 ) : (
                   <StyledTableRow>
-                    <StyledTableCell colSpan={13}>
+                    <StyledTableCell
+                      colSpan={staticHeaders.length + dynamicColumns.length + 1}
+                    >
                       <CustomNoRowsOverlay />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -444,6 +440,7 @@ function Document({
               </TableBody>
             </Table>
           </TableContainer>
+
           <CostumePagination
             page={pagination?.page}
             totalPages={pagination?.totalPages}

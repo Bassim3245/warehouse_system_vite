@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Print from "@mui/icons-material/Print";
-// Components
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { formatDateYearsMonth } from "../../../../utils/formatData";
 import { useReactToPrint } from "react-to-print";
-import InvoiceDisplayImport from "./InvoiceDisplayImport";
+import UnifiedInvoice from "./UnifiedInvoice";
 import SignatureForm from "./signatureForm";
 import useSingnature from "../../../../hooks/useSingnature";
+import useInvoiceTemplate from "../../../../hooks/invantory/useInvoiceTemplate";
+import { getUserInformation } from "../../../../utils/handelCookie";
+
 export const PrintPurchases = ({
   invoiceData,
   documentNumber,
@@ -24,31 +26,43 @@ export const PrintPurchases = ({
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [refresh, setRefresh] = useState(false);
+
+  const userInfo = getUserInformation();
+  const entity_id = userInfo?.entity_id;
+
+  // 🖼 Fetch template (custom or default)
+  const { template } = useInvoiceTemplate({
+    entity_id,
+    document_type: "in",
+  });
+
   const { signauterData } = useSingnature({
     documentId: document_id,
     refresh,
     setRefresh,
   });
+
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+    documentTitle: `فاتورة_توريد_${documentNumber}_${formatDateYearsMonth(invoiceDate)}`,
+  });
+
   const renderFormContent = () => (
     <>
-      <InvoiceDisplayImport
+      <UnifiedInvoice
         invoiceData={invoiceData}
         documentNumber={documentNumber}
         totalQuantity={totalQuantity}
         totalPrice={totalPrice}
-        totalAmount={totalAmount}
         printRef={printRef}
-        signauterData={signauterData}
         documentInfo={documentInfo}
+        signauterData={signauterData}
+        document_type="in"
+        template={template}
       />
     </>
   );
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-    documentTitle: `فاتورة_توريد_${documentNumber}_${formatDateYearsMonth(
-      invoiceDate
-    )}`,
-  });
+
   const renderFormActions = () => (
     <>
       <SignatureForm
@@ -70,6 +84,7 @@ export const PrintPurchases = ({
       </Button>
     </>
   );
+
   return (
     <div>
       <Button variant="outlined" onClick={handleOpen} disableRipple>
