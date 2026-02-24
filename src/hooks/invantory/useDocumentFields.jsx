@@ -21,7 +21,7 @@ const userInformation=getUserInformation()
         setLoadingFields(true);
         try {
             const res = await axiosInstance.get(
-                `${BackendUrl}/api/warehouse/fieldDefinitions/active/${userInformation.entity_id}?document_type=${documentType}`
+                `${BackendUrl}/api/warehouse/fieldDefinitions/active?entity_id=${userInformation.entity_id}&document_type=${documentType}`
             );
             setFields(res.data?.data || []);
         } catch (err) {
