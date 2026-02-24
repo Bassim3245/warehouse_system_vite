@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import { formatDateAr } from "../../../../utils/formatData";
 import { buildDefaultConfig } from "../../../../hooks/invantory/useInvoiceTemplate";
 import { resolveColumnValue, resolveHeaderValue } from "../../../../Helpers/helperInvoice";
-import { InfoCard } from "../../../../components/InventoryComponents/Invoice.jsX";
+import { InfoCard } from "../../../../components/InventoryComponents/Invoice.jsx";
 
 
 /* ──────────────────────────────────────────────────────────
