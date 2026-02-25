@@ -54,7 +54,7 @@ export default function DocumentFieldSettings() {
     setLoading(true);
     try {
       const res = await axiosInstance.get(
-        `${BackendUrl}/api/warehouse/fieldDefinitions?entity_id=${userInformation.entity_id} &document_type=${currentDocType}`,
+        `${BackendUrl}/api/warehouse/fieldDefinitions?entity_id=${userInformation.entity_id}&document_type=${currentDocType}`,
       );
       setFields(res.data?.data || []);
     } catch (err) {
