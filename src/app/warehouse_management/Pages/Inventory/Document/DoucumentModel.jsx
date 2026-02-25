@@ -191,8 +191,7 @@ function DocumentModel({
         factory_id: factoryId ?? null,
         lab_id: labId ?? null,
         documentId: documentData?.id ?? null,
-        // in the same transaction. For edits we keep the separate call below.
-        ...(editMode ? {} : { fieldValues: dynFieldValues }),
+        fieldValues: dynFieldValues,
       };
 
       const url = editMode ? "documentEdit" : "documentRegister";
@@ -209,15 +208,6 @@ function DocumentModel({
       );
 
       if (response) {
-        // In edit mode, save field values via the dedicated endpoint
-        if (editMode && documentData?.id && dynFields.length > 0) {
-          const valuesMap = {};
-          dynFields.forEach((f) => {
-            valuesMap[f.id] = dynValues[f.id] ?? "";
-          });
-          await saveFieldValues(documentData.id, valuesMap);
-        }
-
         setRefreshButton((prev) => !prev);
         handleClose();
       }
