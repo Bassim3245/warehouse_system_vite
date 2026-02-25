@@ -191,12 +191,7 @@ export default function RootWarehouse() {
         path: "log-warehouse-entity",
         checkPermission: roles?.show_log_entity?._id,
       },
-      {
-        text: t("إعدادات الحقول"),
-        icon: <Settings />,
-        path: "document-field-settings",
-        checkPermission: roles?.show_log_entity?._id,
-      },
+  
     ],
     [roles, t],
   );

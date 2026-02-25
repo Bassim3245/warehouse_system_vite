@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import Print from "@mui/icons-material/Print";
+import DownloadIcon from "@mui/icons-material/Download";
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { formatDateYearsMonth } from "../../../../utils/formatData";
 import { useReactToPrint } from "react-to-print";
-import { axiosInstance } from "../../../../redux/api/axiosConfig";
-import { getToken, getUserInformation } from "../../../../utils/handelCookie";
 import UnifiedInvoice from "./UnifiedInvoice";
 import useSingnature from "../../../../hooks/useSingnature";
 import SignatureForm from "./signatureForm";
@@ -15,104 +14,42 @@ import useInvoiceTemplate from "../../../../hooks/invantory/useInvoiceTemplate";
 const PrintSales = ({ document_id, document, document_type }) => {
   const [open, setOpen] = useState(false);
   const printRef = useRef();
-  const [invoiceData, setInvoiceData] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
   const toggleOpen = useCallback(() => setOpen((prev) => !prev), []);
 
-  // ---------------------------
-  // Get entity_id from logged-in user
-  // ---------------------------
-  const userInfo = getUserInformation();
-  const entity_id = userInfo?.entity_id;
+  // Fetch rendered HTML from backend
+  const { renderedHtml, loading, fetchRenderedDocument, downloadPdf } = useInvoiceTemplate();
 
-  // ---------------------------
-  // 🖼 Fetch invoice template (custom or default)
-  // ---------------------------
-  const { template } = useInvoiceTemplate({
-    entity_id,
-    document_type,
-  });
-
-  // ---------------------------
-  // 🔒 Signature hook
-  // ---------------------------
+  // Signatures
   const { signauterData } = useSingnature({
     documentId: document_id,
     refresh,
     setRefresh,
   });
 
-  // ---------------------------
-  // 📌 Fetch invoice data
-  // ---------------------------
-  const getDataInvoice = useCallback(async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/api/warehouse/getMaterialExportByDocumentId?document_id=${document_id}&documentType=${document_type}`,
-        { headers: { authorization: getToken() } }
-      );
-      setInvoiceData(response?.data?.data || []);
-    } catch (error) {
-      console.error("Error searching materials:", error);
-      setInvoiceData([]);
-    }
-  }, [document_id, document_type]);
-
+  // Fetch rendered document when popup opens
   useEffect(() => {
-    getDataInvoice();
-  }, [getDataInvoice]);
+    if (open && document_id && document_type) {
+      fetchRenderedDocument(document_id, document_type);
+    }
+  }, [open, document_id, document_type, fetchRenderedDocument]);
 
-  // ---------------------------
-  // 🧮 Totals
-  // ---------------------------
-  const summary = useMemo(() => {
-    const totalAmount = invoiceData.reduce((sum, i) => sum + i.total, 0);
-    const totalQuantity = invoiceData.reduce(
-      (sum, i) => sum + parseFloat(i.total_quantity || 0),
-      0
-    );
-    const totalPrice = invoiceData.reduce(
-      (sum, i) =>
-        sum +
-        parseFloat(i.price || 0) * parseFloat(i.total_quantity || 0),
-      0
-    );
-    const invoiceDate =
-      invoiceData.length > 0 ? invoiceData[0].purchase_date : new Date();
-    const documentNumber =
-      invoiceData.length > 0 ? invoiceData[0].document_number : "غير متوفر";
-
-    return { totalAmount, totalQuantity, totalPrice, invoiceDate, documentNumber };
-  }, [invoiceData]);
-
-  // ---------------------------
-  // 🖨 Print handler
-  // ---------------------------
+  // Print
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
-    documentTitle: `فاتورة_تصدير_${summary.documentNumber}_${formatDateYearsMonth(
-      summary.invoiceDate
-    )}`,
+    documentTitle: `فاتورة_${document?.document_number || ""}_${formatDateYearsMonth(new Date())}`,
   });
 
   const formContent = useMemo(
     () => (
       <UnifiedInvoice
-        invoiceData={invoiceData}
-        documentNumber={summary.documentNumber}
-        invoiceDate={summary.invoiceDate}
-        totalQuantity={summary.totalQuantity}
-        totalPrice={summary.totalPrice}
-        totalAmount={summary.totalAmount}
         printRef={printRef}
-        documentInfo={document}
-        signauterData={signauterData}
-        document_type={document_type}
-        template={template}
+        renderedHtml={renderedHtml}
+        loading={loading}
       />
     ),
-    [invoiceData, summary, document, signauterData, template]
+    [renderedHtml, loading]
   );
 
   const formActions = useMemo(
@@ -132,6 +69,14 @@ const PrintSales = ({ document_id, document, document_type }) => {
         >
           طباعة
         </ButtonTheme>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => downloadPdf(document_id, document_type)}
+          startIcon={<DownloadIcon />}
+        >
+          تحميل PDF
+        </Button>
         <Button onClick={toggleOpen} variant="outlined">
           إغلاق
         </Button>

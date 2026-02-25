@@ -196,7 +196,7 @@ const DocumentCount = React.lazy(
 );
 const DocumentFieldSettings = React.lazy(
   () =>
-    import("./app/managemant_platform/DocumentManagement/DocumentFieldSettings"),
+    import("./app/customerManagePlatform/documentFiledSetting/DocumentFieldSettings"),
 );
 
 // Lazy loaded components - Permissions
@@ -248,9 +248,7 @@ const InventoryArchiveAnnual = React.lazy(
 // Lazy loaded components - Invoice Template Designer
 const InvoiceTemplateDesigner = React.lazy(
   () =>
-    import(
-      "./app/customerManagePlatform/InvoiceTemplateDesigner/InvoiceTemplateDesigner"
-    ),
+    import("./app/customerManagePlatform/InvoiceTemplateDesigner/InvoiceTemplateDesigner"),
 );
 
 // Lazy loaded components - Month Lock System
@@ -553,10 +551,7 @@ export default function App() {
                       path="warehouse-mange"
                       element={<WarehouseMange />}
                     />
-                    <Route
-                      path="document-field-settings"
-                      element={<DocumentFieldSettings />}
-                    />
+                  
 
                     <Route path="lab-manage" element={<LabsEntity />} />
                     <Route path="Factory-manage" element={<Factories />} />
@@ -606,10 +601,6 @@ export default function App() {
                   />
                   <Route path="document-edit" element={<DocumentEdit />} />
                   <Route path="document-count" element={<DocumentCount />} />
-                  <Route
-                    path="document-field-settings"
-                    element={<DocumentFieldSettings />}
-                  />
                 </Route>
               </Route>
               <Route element={<ProtectedApplicationRoute applicationId={4} />}>
@@ -632,7 +623,10 @@ export default function App() {
                     path="invoice-template-designer"
                     element={<InvoiceTemplateDesigner />}
                   />
-
+                  <Route
+                    path="document-field-settings"
+                    element={<DocumentFieldSettings />}
+                  />
                   <Route path="help-platform" element={<HelpAboutProject />} />
                 </Route>
               </Route>
