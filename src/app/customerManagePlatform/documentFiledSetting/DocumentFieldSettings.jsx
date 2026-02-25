@@ -33,6 +33,7 @@ import { getUserInformation } from "../../../utils/handelCookie";
 import DeleteConfirmDialog from "./deleteConfirmModel";
 import FieldFormDialog from "./documetFildeModel";
 import { DOCUMENT_TYPES, FIELD_TYPES } from "./utils";
+import axios from "axios";
 
 
 export default function DocumentFieldSettings() {
@@ -54,7 +55,7 @@ export default function DocumentFieldSettings() {
     setLoading(true);
     try {
       const res = await axiosInstance.get(
-        `${BackendUrl}/api/warehouse/fieldDefinitions?entity_id=${userInformation.entity_id}&document_type=${currentDocType}`,
+        `/api/warehouse/fieldDefinitions?entity_id=${userInformation.entity_id}&document_type=${currentDocType}`,
       );
       setFields(res.data?.data || []);
     } catch (err) {
@@ -77,7 +78,7 @@ export default function DocumentFieldSettings() {
       try {
         await axiosInstance.post(
           `${BackendUrl}/api/warehouse/fieldDefinitions`,
-          {...formData, entity_id: userInformation.entity_id},
+          { ...formData, entity_id: userInformation.entity_id },
         );
         toast.success("تم إنشاء الحقل بنجاح");
         setFormOpen(false);
@@ -176,7 +177,7 @@ export default function DocumentFieldSettings() {
         toast.error("خطأ في ترتيب الحقول");
       }
     },
-    [ fetchFields],
+    [fetchFields],
   );
 
   return (
