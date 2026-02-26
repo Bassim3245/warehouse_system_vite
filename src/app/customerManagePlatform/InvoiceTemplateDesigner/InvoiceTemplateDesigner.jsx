@@ -40,6 +40,10 @@ import PaletteIcon from "@mui/icons-material/Palette";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import InjectIcon from "@mui/icons-material/PlaylistAdd";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../../redux/api/axiosConfig";
@@ -47,135 +51,172 @@ import { BackendUrl } from "../../../redux/api/axios";
 import { getToken, getUserInformation } from "../../../utils/handelCookie";
 
 const DOCUMENT_TYPES = [
-    { value: "in",                   label: "مستند وارد" },
-    { value: "out",                  label: "مستند صادر" },
-    { value: "internal_transfer",    label: "تحويل داخلي" },
-    { value: "production_entry",     label: "إدخال إنتاج" },
+    { value: "in", label: "مستند وارد" },
+    { value: "out", label: "مستند صادر" },
+    { value: "internal_transfer", label: "تحويل داخلي" },
+    { value: "production_entry", label: "إدخال إنتاج" },
     { value: "internal_consumption", label: "استهلاك داخلي" },
 ];
 
 const AVAILABLE_VARIABLES = [
-    { key: "header_line1",       desc: "السطر الأول من الرأسية" },
-    { key: "header_line2",       desc: "السطر الثاني" },
-    { key: "entity_name",        desc: "اسم الجهة / الشركة" },
-    { key: "document_number",    desc: "رقم المستند" },
-    { key: "document_date",      desc: "تاريخ المستند" },
-    { key: "warehouse_name",     desc: "اسم المخزن" },
-    { key: "warehouse_code",     desc: "رمز المخزن" },
-    { key: "center_cost",        desc: "رقم مركز الكلفة" },
-    { key: "center_cost_name",   desc: "اسم مركز الكلفة" },
-    { key: "account_number",     desc: "رقم الحساب" },
-    { key: "type_movement",      desc: "نوع الحركة" },
+    { key: "header_line1", desc: "السطر الأول من الرأسية" },
+    { key: "header_line2", desc: "السطر الثاني" },
+    { key: "entity_name", desc: "اسم الجهة / الشركة" },
+    { key: "document_number", desc: "رقم المستند" },
+    { key: "document_date", desc: "تاريخ المستند" },
+    { key: "warehouse_name", desc: "اسم المخزن" },
+    { key: "warehouse_code", desc: "رمز المخزن" },
+    { key: "center_cost", desc: "رقم مركز الكلفة" },
+    { key: "center_cost_name", desc: "اسم مركز الكلفة" },
+    { key: "account_number", desc: "رقم الحساب" },
+    { key: "type_movement", desc: "نوع الحركة" },
     { key: "type_movement_code", desc: "رمز نوع الحركة" },
-    { key: "beneficiary",        desc: "المستفيد" },
-    { key: "user_name",          desc: "اسم المستخدم" },
-    { key: "factory_name",       desc: "اسم المعمل" },
-    { key: "lab_name",           desc: "اسم المختبر" },
-    { key: "description",        desc: "الملاحظات" },
-    { key: "items_table",        desc: "جدول مواد كامل تلقائي" },
-    { key: "items_rows",         desc: "صفوف البيانات فقط" },
-    { key: "items_count",        desc: "عدد البنود" },
-    { key: "total_quantity",     desc: "إجمالي الكمية" },
-    { key: "total_price",        desc: "القيمة الإجمالية" },
-    { key: "dynamic_fields",     desc: "الحقول الديناميكية" },
-    { key: "signatures",         desc: "كل التوقيعات" },
-    { key: "signature_1",        desc: "توقيع 1" },
-    { key: "signature_2",        desc: "توقيع 2" },
-    { key: "signature_3",        desc: "توقيع 3" },
-    { key: "signature_4",        desc: "توقيع 4" },
+    { key: "beneficiary", desc: "المستفيد" },
+    { key: "user_name", desc: "اسم المستخدم" },
+    { key: "factory_name", desc: "اسم المعمل" },
+    { key: "lab_name", desc: "اسم المختبر" },
+    { key: "description", desc: "الملاحظات" },
+    { key: "items_table", desc: "جدول مواد كامل تلقائي" },
+    { key: "items_rows", desc: "صفوف البيانات فقط" },
+    { key: "items_count", desc: "عدد البنود" },
+    { key: "total_quantity", desc: "إجمالي الكمية" },
+    { key: "total_price", desc: "القيمة الإجمالية" },
+    { key: "dynamic_fields", desc: "الحقول الديناميكية" },
+    { key: "signatures", desc: "كل التوقيعات" },
+    { key: "signature_1", desc: "توقيع 1" },
+    { key: "signature_2", desc: "توقيع 2" },
+    { key: "signature_3", desc: "توقيع 3" },
+    { key: "signature_4", desc: "توقيع 4" },
+    { key: "items_loop_start", desc: "بداية حلقة المواد" },
+    { key: "items_loop_end", desc: "نهاية حلقة المواد" },
+    { key: "item_index", desc: "تسلسل المادة" },
+    { key: "item_code", desc: "رمز المادة" },
+    { key: "item_name", desc: "اسم المادة" },
+    { key: "item_qty", desc: "الكمية" },
+    { key: "item_unit", desc: "وحدة القياس" },
+    { key: "item_price", desc: "سعر الوحدة" },
+    { key: "item_total", desc: "المبلغ الإجمالي" },
+    { key: "item_spec", desc: "المواصفات" },
+    { key: "item_date", desc: "تاريخ الشراء" },
+    { key: "item_work_order", desc: "رقم أمر العمل" },
 ];
 
 /* ══════════════════════════════════════════════════════
-   ALL COLUMNS — fixed order matching buildItemsRows()
-   Position index (1-based) corresponds to <td> position
+   ALL COLUMNS — each maps to a backend item_* placeholder
    ══════════════════════════════════════════════════════ */
 const DEFAULT_COLUMNS = [
-    { pos: 1,  field: "index",    label: "ت" },
-    { pos: 2,  field: "work_order", label: "رقم أمر العمل" },
-    { pos: 3,  field: "code",     label: "رمز المادة" },
-    { pos: 4,  field: "name",     label: "اسم المادة" },
-    { pos: 5,  field: "spec",     label: "المواصفات" },
-    { pos: 6,  field: "qty",      label: "الكمية" },
-    { pos: 7,  field: "unit",     label: "وحدة القياس" },
-    { pos: 8,  field: "price",    label: "سعر الوحدة" },
-    { pos: 9,  field: "total",    label: "المبلغ الإجمالي" },
-    { pos: 10, field: "date",     label: "تاريخ الشراء" },
-    { pos: 11, field: "supplier", label: "الجهة الموردة" },
+    { id: "index", placeholder: "item_index", label: "ت" },
+    { id: "work_order", placeholder: "item_work_order", label: "رقم أمر العمل" },
+    { id: "code", placeholder: "item_code", label: "رمز المادة" },
+    { id: "name", placeholder: "item_name", label: "اسم المادة" },
+    { id: "spec", placeholder: "item_spec", label: "المواصفات" },
+    { id: "qty", placeholder: "item_qty", label: "الكمية" },
+    { id: "unit", placeholder: "item_unit", label: "وحدة القياس" },
+    { id: "price", placeholder: "item_price", label: "سعر الوحدة" },
+    { id: "total", placeholder: "item_total", label: "المبلغ الإجمالي" },
+    { id: "date", placeholder: "item_date", label: "تاريخ الشراء" },
+    { id: "supplier", placeholder: "item_supplier", label: "الجهة الموردة" },
 ];
 
 /* ══════════════════════════════════════════════════════
-   TABLE COLUMN DESIGNER
+   TABLE COLUMN DESIGNER — DND + Loop-Based HTML
    ══════════════════════════════════════════════════════ */
 function TableColumnDesigner({ htmlContent, onApply }) {
     const [columns, setColumns] = useState(
         DEFAULT_COLUMNS.map((c) => ({ ...c, visible: true }))
     );
-    const [tableId] = useState(() => "tbl_" + Math.random().toString(36).slice(2, 7));
 
-    const toggleColumn = (pos) => {
+    /* ---- Toggle visibility ---- */
+    const toggleColumn = (id) => {
         setColumns((prev) =>
-            prev.map((c) => c.pos === pos ? { ...c, visible: !c.visible } : c)
+            prev.map((c) => c.id === id ? { ...c, visible: !c.visible } : c)
         );
     };
 
-    const renameColumn = (pos, newLabel) => {
+    /* ---- Rename ---- */
+    const renameColumn = (id, newLabel) => {
         setColumns((prev) =>
-            prev.map((c) => c.pos === pos ? { ...c, label: newLabel } : c)
+            prev.map((c) => c.id === id ? { ...c, label: newLabel } : c)
         );
     };
 
+    /* ---- Move Up / Down ---- */
+    const moveColumn = (idx, direction) => {
+        setColumns((prev) => {
+            const arr = [...prev];
+            const targetIdx = idx + direction;
+            if (targetIdx < 0 || targetIdx >= arr.length) return prev;
+            [arr[idx], arr[targetIdx]] = [arr[targetIdx], arr[idx]];
+            return arr;
+        });
+    };
+
+    /* ---- Generate loop-based HTML ---- */
     const generateTableHtml = useCallback(() => {
-        const hiddenPositions = columns.filter((c) => !c.visible).map((c) => c.pos);
+        const visibleCols = columns.filter((c) => c.visible);
 
-        // Build CSS to hide unused columns
-        const hideRules = hiddenPositions.map(
-            (p) => `.${tableId} th:nth-child(${p}), .${tableId} td:nth-child(${p}) { display:none; }`
-        ).join("\n    ");
-
-        // We still use all 11 <th> slots but hide the unwanted ones via CSS
-        const allHeaders = columns.map((c) => `<th>${c.label}</th>`).join("");
+        const headerCells = visibleCols.map((c) => `<th>${c.label}</th>`).join("");
+        const dataCells = visibleCols.map((c) => `<td>{{${c.placeholder}}}</td>`).join("");
 
         return `<!-- جدول مواد مخصص -->
-<style>
-    .${tableId} { width:100%; border-collapse:collapse; font-size:11px; }
-    ${hideRules}
-</style>
-<table class="inv-table ${tableId}">
+<table class="inv-table">
   <thead>
-    <tr>
-      ${allHeaders}
-    </tr>
+    <tr>${headerCells}</tr>
   </thead>
   <tbody>
-    {{items_rows}}
+    {{items_loop_start}}
+    <tr>${dataCells}</tr>
+    {{items_loop_end}}
   </tbody>
 </table>`;
-    }, [columns, tableId]);
+    }, [columns]);
 
+    /* ---- Insert into template ---- */
     const handleInsert = useCallback(() => {
         if (!htmlContent) { toast.warning("افتح قالباً أولاً"); return; }
         const tableHtml = generateTableHtml();
         let updated = htmlContent;
+
+        // Replace {{items_table}} placeholder
         if (updated.includes("{{items_table}}")) {
             updated = updated.replace("{{items_table}}", tableHtml);
-        } else if (updated.includes("{{items_rows}}") && updated.includes("<!-- جدول مواد مخصص -->")) {
+        }
+        // Replace existing custom table
+        else if (updated.includes("<!-- جدول مواد مخصص -->")) {
             updated = updated.replace(
                 /<!-- جدول مواد مخصص -->[\s\S]*?<\/table>/,
                 tableHtml
             );
-        } else {
+        }
+        // Replace old {{items_rows}} based tables
+        else if (updated.includes("{{items_rows}}")) {
+            // Find the table containing items_rows and replace it
+            updated = updated.replace(
+                /<table[^>]*class="inv-table[^"]*"[^>]*>[\s\S]*?\{\{items_rows\}\}[\s\S]*?<\/table>/,
+                tableHtml
+            );
+        }
+        // Replace old loop-based tables
+        else if (updated.includes("{{items_loop_start}}")) {
+            updated = updated.replace(
+                /<table[^>]*class="inv-table[^"]*"[^>]*>[\s\S]*?\{\{items_loop_start\}\}[\s\S]*?\{\{items_loop_end\}\}[\s\S]*?<\/table>/,
+                tableHtml
+            );
+        }
+        // Insert before closing div
+        else {
             const lastDiv = updated.lastIndexOf("</div>");
             if (lastDiv !== -1) {
                 updated = updated.slice(0, lastDiv) + "\n" + tableHtml + "\n" + updated.slice(lastDiv);
             } else {
-                updated = updated + "\n" + tableHtml;
+                updated += "\n" + tableHtml;
             }
         }
         onApply(updated);
         toast.success("تم إدراج جدول المواد في القالب");
     }, [htmlContent, generateTableHtml, onApply]);
 
-    const previewHeaders = columns.filter((c) => c.visible);
+    const visibleCols = columns.filter((c) => c.visible);
 
     return (
         <Box>
@@ -183,35 +224,51 @@ function TableColumnDesigner({ htmlContent, onApply }) {
                 <TableChartIcon sx={{ fontSize: 16 }} /> تصميم أعمدة الجدول
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1.5 }}>
-                فعّل / أوقف الأعمدة وغيّر تسمياتها
+                فعّل / أوقف / رتّب الأعمدة وغيّر تسمياتها
             </Typography>
 
-            <Box sx={{ maxHeight: 280, overflow: "auto", mb: 1.5 }}>
-                {columns.map((col) => (
-                    <Box key={col.pos}
+            <Box sx={{ maxHeight: 340, overflow: "auto", mb: 1.5 }}>
+                {columns.map((col, idx) => (
+                    <Box key={col.id}
                         sx={{
-                            display: "flex", alignItems: "center", gap: 0.5, mb: 0.5,
+                            display: "flex", alignItems: "center", gap: 0.3, mb: 0.5,
                             p: 0.5, borderRadius: 1,
                             bgcolor: col.visible ? "action.hover" : "transparent",
-                            opacity: col.visible ? 1 : 0.45,
+                            opacity: col.visible ? 1 : 0.4,
+                            border: "1px solid",
+                            borderColor: col.visible ? "divider" : "transparent",
                         }}>
+                        {/* Drag handle / reorder arrows */}
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mr: 0.2 }}>
+                            <IconButton size="small" onClick={() => moveColumn(idx, -1)} disabled={idx === 0}
+                                sx={{ p: 0, "& svg": { fontSize: 13 } }}>
+                                <ArrowUpwardIcon />
+                            </IconButton>
+                            <DragIndicatorIcon sx={{ fontSize: 12, color: "text.disabled" }} />
+                            <IconButton size="small" onClick={() => moveColumn(idx, 1)} disabled={idx === columns.length - 1}
+                                sx={{ p: 0, "& svg": { fontSize: 13 } }}>
+                                <ArrowDownwardIcon />
+                            </IconButton>
+                        </Box>
+
                         <Switch
                             size="small"
                             checked={col.visible}
-                            onChange={() => toggleColumn(col.pos)}
-                            sx={{ mr: 0.5 }}
+                            onChange={() => toggleColumn(col.id)}
                         />
                         <TextField
                             size="small"
                             value={col.label}
-                            onChange={(e) => renameColumn(col.pos, e.target.value)}
+                            onChange={(e) => renameColumn(col.id, e.target.value)}
                             disabled={!col.visible}
-                            inputProps={{ style: { fontSize: 12, padding: "2px 6px" } }}
-                            sx={{ flex: 1 }}
+                            inputProps={{ style: { fontSize: 11, padding: "2px 6px" } }}
+                            sx={{ flex: 1, minWidth: 0 }}
                         />
-                        <Typography sx={{ fontSize: 10, color: "text.disabled", minWidth: 12 }}>
-                            {col.pos}
-                        </Typography>
+                        <Tooltip title={`{{${col.placeholder}}}`}>
+                            <Typography sx={{ fontSize: 9, color: "primary.main", fontFamily: "monospace", minWidth: 55, textAlign: "left" }}>
+                                {col.placeholder}
+                            </Typography>
+                        </Tooltip>
                     </Box>
                 ))}
             </Box>
@@ -219,15 +276,15 @@ function TableColumnDesigner({ htmlContent, onApply }) {
             {/* Mini preview */}
             <Paper variant="outlined" sx={{ p: 0.5, mb: 1.5, overflowX: "auto" }}>
                 <Typography variant="caption" color="primary" fontWeight={600} sx={{ display: "block", mb: 0.5 }}>
-                    معاينة الهيدر
+                    معاينة الجدول
                 </Typography>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10 }}>
                     <thead>
                         <tr>
-                            {previewHeaders.map((c) => (
-                                <th key={c.pos} style={{
-                                    background: "#2c3e50", color: "white",
-                                    padding: "3px 5px", border: "1px solid #bdc3c7",
+                            {visibleCols.map((c) => (
+                                <th key={c.id} style={{
+                                    background: "#000", color: "#fff",
+                                    padding: "3px 5px", border: "1px solid #000",
                                     textAlign: "center", whiteSpace: "nowrap"
                                 }}>{c.label}</th>
                             ))}
@@ -235,12 +292,12 @@ function TableColumnDesigner({ htmlContent, onApply }) {
                     </thead>
                     <tbody>
                         <tr>
-                            {previewHeaders.map((c) => (
-                                <td key={c.pos} style={{
-                                    padding: "2px 5px", border: "1px solid #bdc3c7",
-                                    textAlign: "center", color: "#888"
+                            {visibleCols.map((c) => (
+                                <td key={c.id} style={{
+                                    padding: "2px 5px", border: "1px solid #000",
+                                    textAlign: "center", color: "#888", fontSize: 9,
                                 }}>
-                                    {c.field === "index" ? "1" : "..."}
+                                    {c.id === "index" ? "1" : `{{${c.placeholder}}}`}
                                 </td>
                             ))}
                         </tr>
@@ -249,7 +306,7 @@ function TableColumnDesigner({ htmlContent, onApply }) {
             </Paper>
 
             <Button fullWidth variant="contained" startIcon={<InjectIcon />} onClick={handleInsert}
-                sx={{ background: "linear-gradient(135deg,#388e3c,#2e7d32)", boxShadow: "0 3px 12px rgba(56,142,60,0.3)", mb: 1 }}>
+                sx={{ background: "linear-gradient(135deg,#000,#333)", boxShadow: "0 3px 12px rgba(0,0,0,0.3)", mb: 1 }}>
                 إدراج الجدول في القالب
             </Button>
 
@@ -265,12 +322,12 @@ function TableColumnDesigner({ htmlContent, onApply }) {
    VISUAL TABLE STYLE EDITOR
    ══════════════════════════════════════════════════════ */
 function HeaderStyleEditor({ htmlContent, onApply }) {
-    const [thBg, setThBg]           = useState("#2c3e50");
-    const [thColor, setThColor]     = useState("#ffffff");
+    const [thBg, setThBg] = useState("#000000");
+    const [thColor, setThColor] = useState("#ffffff");
     const [thFontSize, setThFontSize] = useState(11);
     const [tdFontSize, setTdFontSize] = useState(11);
-    const [borderColor, setBorderColor] = useState("#bdc3c7");
-    const [accentColor, setAccentColor] = useState("#e74c3c");
+    const [borderColor, setBorderColor] = useState("#000000");
+    const [accentColor, setAccentColor] = useState("#000000");
 
     const applyStyles = useCallback(() => {
         if (!htmlContent) { toast.warning("افتح قالباً أولاً"); return; }
@@ -307,10 +364,10 @@ function HeaderStyleEditor({ htmlContent, onApply }) {
             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, display: "flex", alignItems: "center", gap: 0.5 }}>
                 <PaletteIcon sx={{ fontSize: 16 }} /> تنسيق الجدول
             </Typography>
-            <ColorRow label="لون خلفية الهيدر"  value={thBg}         onChange={setThBg} />
-            <ColorRow label="لون نص الهيدر"      value={thColor}      onChange={setThColor} />
-            <ColorRow label="لون الحدود"          value={borderColor}  onChange={setBorderColor} />
-            <ColorRow label="لون رقم المستند"    value={accentColor}  onChange={setAccentColor} />
+            <ColorRow label="لون خلفية الهيدر" value={thBg} onChange={setThBg} />
+            <ColorRow label="لون نص الهيدر" value={thColor} onChange={setThColor} />
+            <ColorRow label="لون الحدود" value={borderColor} onChange={setBorderColor} />
+            <ColorRow label="لون رقم المستند" value={accentColor} onChange={setAccentColor} />
             <Divider sx={{ my: 1 }} />
             <Typography sx={{ fontSize: 11, mb: 0.5, color: "text.secondary" }}>حجم خط الهيدر: {thFontSize}px</Typography>
             <Slider value={thFontSize} min={8} max={16} step={1} onChange={(_, v) => setThFontSize(v)} size="small" sx={{ mb: 1 }} />
@@ -345,23 +402,135 @@ function HeaderStyleEditor({ htmlContent, onApply }) {
 }
 
 /* ══════════════════════════════════════════════════════
+   DYNAMIC FIELD DESIGNER
+   ══════════════════════════════════════════════════════ */
+function DynamicFieldDesigner({ htmlContent, onApply }) {
+    const [dynCols, setDynCols] = useState(2);
+    const [showDynFields, setShowDynFields] = useState(true);
+
+    const applyDynLayout = useCallback(() => {
+        if (!htmlContent) { toast.warning("افتح قالباً أولاً"); return; }
+        let updated = htmlContent;
+
+        if (!showDynFields) {
+            // Remove dynamic_fields placeholder entirely
+            updated = updated.replace(/\{\{dynamic_fields\}\}/g, "");
+            // Also remove any existing rendered dyn-fields-table
+            updated = updated.replace(/<table class="dyn-fields-table">[\s\S]*?<\/table>/g, "");
+            onApply(updated);
+            toast.success("تم إخفاء الحقول الديناميكية");
+            return;
+        }
+
+        // Ensure {{dynamic_fields}} is present - if not, add it before items_table
+        if (!updated.includes("{{dynamic_fields}}")) {
+            const itemsIdx = updated.indexOf("{{items_table}}");
+            if (itemsIdx !== -1) {
+                updated = updated.slice(0, itemsIdx) + "{{dynamic_fields}}\n\n  " + updated.slice(itemsIdx);
+            }
+        }
+
+        // Update the dyn-fields-table CSS to use the chosen column count
+        // Each field occupies 2 <td> (label + value), so table width adjusts automatically
+        const colWidthLabel = Math.floor(50 / dynCols);
+        const colWidthValue = Math.ceil(50 / dynCols);
+
+        const newDynCss = `.dyn-fields-table .dyn-label { font-weight:bold; background:#f5f5f5; width:${colWidthLabel}%; text-align:right; }`;
+
+        // Replace existing .dyn-label rule
+        const labelRegex = /\.dyn-fields-table\s+\.dyn-label\s*\{[^}]*\}/;
+        if (labelRegex.test(updated)) {
+            updated = updated.replace(labelRegex, newDynCss);
+        }
+
+        onApply(updated);
+        toast.success(`تم تعيين عدد أعمدة الحقول الديناميكية إلى ${dynCols}`);
+    }, [htmlContent, dynCols, showDynFields, onApply]);
+
+    return (
+        <Box>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1, display: "flex", alignItems: "center", gap: 0.5 }}>
+                <ViewColumnIcon sx={{ fontSize: 16 }} /> تصميم الحقول الديناميكية
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
+                تحكم في عرض وتخطيط الحقول الإضافية
+            </Typography>
+
+            <FormControlLabel
+                control={<Switch checked={showDynFields} onChange={(e) => setShowDynFields(e.target.checked)} />}
+                label={<Typography sx={{ fontSize: 12 }}>{showDynFields ? "الحقول ظاهرة" : "الحقول مخفية"}</Typography>}
+                sx={{ mb: 2, display: "flex" }}
+            />
+
+            {showDynFields && (
+                <>
+                    <Typography sx={{ fontSize: 11, mb: 0.5, color: "text.secondary" }}>
+                        عدد الحقول في كل صف: {dynCols}
+                    </Typography>
+                    <Slider
+                        value={dynCols} min={1} max={4} step={1}
+                        marks={[
+                            { value: 1, label: "1" },
+                            { value: 2, label: "2" },
+                            { value: 3, label: "3" },
+                            { value: 4, label: "4" },
+                        ]}
+                        onChange={(_, v) => setDynCols(v)}
+                        size="small"
+                        sx={{ mb: 2 }}
+                    />
+
+                    {/* Mini Preview */}
+                    <Paper variant="outlined" sx={{ p: 1, mb: 2 }}>
+                        <Typography variant="caption" color="primary" fontWeight={600} sx={{ display: "block", mb: 0.5 }}>
+                            معاينة التخطيط
+                        </Typography>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10 }}>
+                            <tbody>
+                                <tr>
+                                    {Array.from({ length: dynCols }).map((_, i) => (
+                                        <React.Fragment key={i}>
+                                            <td style={{ border: "1px solid #000", padding: "3px 5px", fontWeight: "bold", background: "#f5f5f5", textAlign: "right" }}>
+                                                حقل {i + 1}
+                                            </td>
+                                            <td style={{ border: "1px solid #000", padding: "3px 5px", textAlign: "center" }}>
+                                                قيمة
+                                            </td>
+                                        </React.Fragment>
+                                    ))}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Paper>
+                </>
+            )}
+
+            <Button fullWidth variant="contained" startIcon={<InjectIcon />} onClick={applyDynLayout}
+                sx={{ background: "linear-gradient(135deg,#000,#333)", boxShadow: "0 3px 12px rgba(0,0,0,0.3)" }}>
+                تطبيق على القالب
+            </Button>
+        </Box>
+    );
+}
+
+/* ══════════════════════════════════════════════════════
    MAIN COMPONENT
    ══════════════════════════════════════════════════════ */
 export default function InvoiceTemplateDesigner() {
-    const user      = getUserInformation();
+    const user = getUserInformation();
     const companyId = user?.entity_id;
 
     const [docTypeTab, setDocTypeTab] = useState(0);
-    const [sideTab,    setSideTab]    = useState(0);
+    const [sideTab, setSideTab] = useState(0);
 
     const [templates, setTemplates] = useState([]);
-    const [loading,   setLoading]   = useState(false);
-    const [saving,    setSaving]    = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
 
-    const [editingId,     setEditingId]     = useState(null);
-    const [templateName,  setTemplateName]  = useState("");
-    const [htmlContent,   setHtmlContent]   = useState("");
-    const [showPreview,   setShowPreview]   = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [templateName, setTemplateName] = useState("");
+    const [htmlContent, setHtmlContent] = useState("");
+    const [showPreview, setShowPreview] = useState(false);
     const [nameDialogOpen, setNameDialogOpen] = useState(false);
     const [newTemplateName, setNewTemplateName] = useState("");
 
@@ -425,8 +594,8 @@ export default function InvoiceTemplateDesigner() {
                     id: editingId || undefined,
                     template_name: templateName,
                     document_type: currentDocType,
-                    entity_id:    companyId,
-                    html_content:  htmlContent,
+                    entity_id: companyId,
+                    html_content: htmlContent,
                 },
                 { headers: { authorization: getToken() } }
             );
@@ -469,10 +638,11 @@ export default function InvoiceTemplateDesigner() {
     }, [newTemplateName, loadDefault]);
 
     const SIDE_TABS = [
-        { label: "القوالب",      icon: <DescriptionIcon sx={{ fontSize: 14 }} /> },
-        { label: "المتغيرات",    icon: <CodeIcon         sx={{ fontSize: 14 }} /> },
-        { label: "أعمدة الجدول", icon: <TableChartIcon   sx={{ fontSize: 14 }} /> },
-        { label: "تنسيق",        icon: <PaletteIcon      sx={{ fontSize: 14 }} /> },
+        { label: "القوالب", icon: <DescriptionIcon sx={{ fontSize: 14 }} /> },
+        { label: "المتغيرات", icon: <CodeIcon sx={{ fontSize: 14 }} /> },
+        { label: "أعمدة الجدول", icon: <TableChartIcon sx={{ fontSize: 14 }} /> },
+        { label: "تنسيق", icon: <PaletteIcon sx={{ fontSize: 14 }} /> },
+        { label: "حقول ديناميكية", icon: <ViewColumnIcon sx={{ fontSize: 14 }} /> },
     ];
 
     return (
@@ -569,7 +739,7 @@ export default function InvoiceTemplateDesigner() {
                                                         primary={t.template_name}
                                                         secondary={t.is_default ? "افتراضي" : "مخصص"}
                                                         slotProps={{
-                                                            primary:   { sx: { fontSize: "12px" } },
+                                                            primary: { sx: { fontSize: "12px" } },
                                                             secondary: { sx: { fontSize: "10px" } },
                                                         }}
                                                     />
@@ -628,6 +798,11 @@ export default function InvoiceTemplateDesigner() {
                             {/* Tab 3 — Style Editor */}
                             {sideTab === 3 && (
                                 <HeaderStyleEditor htmlContent={htmlContent} onApply={setHtmlContent} />
+                            )}
+
+                            {/* Tab 4 — Dynamic Field Designer */}
+                            {sideTab === 4 && (
+                                <DynamicFieldDesigner htmlContent={htmlContent} onApply={setHtmlContent} />
                             )}
 
                         </CardContent>
