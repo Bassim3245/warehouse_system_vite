@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 
 import useSerchMateril from "../../hooks/Material/useSerchMateril";
+import { FormatDataNumber } from "../../utils/formatData";
 
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
@@ -143,7 +144,7 @@ const MaterialSearchInput = ({
           <Stack direction="column" spacing={0.5} useFlexGap>
             <Chip
               size="small"
-              label={` الرصيد الكلي: ${option?.balance || 0}`}
+              label={` الرصيد الكلي: ${FormatDataNumber(option?.balance || 0)}`}
               color={option?.balance > 0 ? "success" : "error"}
               variant="outlined"
               sx={{
