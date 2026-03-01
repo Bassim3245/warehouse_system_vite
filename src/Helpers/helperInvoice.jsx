@@ -37,6 +37,7 @@ const resolveColumnValue = (key, item, index) => {
         }
         case "purchase_date": return formatDateAr(item?.purchase_date);
         case "supplier": return item?.beneficiary || "---";
+        case "item_note": return item?.note || "---";
         default: return item?.[key] ?? "---";
     }
 };

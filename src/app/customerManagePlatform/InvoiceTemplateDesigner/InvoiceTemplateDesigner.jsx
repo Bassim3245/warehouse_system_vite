@@ -99,6 +99,9 @@ const AVAILABLE_VARIABLES = [
     { key: "item_spec", desc: "المواصفات" },
     { key: "item_date", desc: "تاريخ الشراء" },
     { key: "item_work_order", desc: "رقم أمر العمل" },
+    { key: "item_notes", desc: "ملاحظات" },
+    {key:"item_export" , desc:"تاريخ التصدير"}
+
 ];
 
 /* ══════════════════════════════════════════════════════
@@ -116,6 +119,8 @@ const DEFAULT_COLUMNS = [
     { id: "total", placeholder: "item_total", label: "المبلغ الإجمالي" },
     { id: "date", placeholder: "item_date", label: "تاريخ الشراء" },
     { id: "supplier", placeholder: "item_supplier", label: "الجهة الموردة" },
+    { id: "export_date", placeholder: "item_export", label: "تاريخ التصدير" },
+    {id:"notes",placeholder:"item_notes",label:"ملاحظات"}
 ];
 
 /* ══════════════════════════════════════════════════════

@@ -108,6 +108,7 @@ const PurchasesData = () => {
       purchase_date: formData.purchase_date,
       production_date: formData.production_date,
       state_id: formData.state_id,
+      note: formData.note,
     };
 
     setMaterialsList((prev) => [...prev, newMaterial]);
@@ -159,6 +160,7 @@ const PurchasesData = () => {
           purchase_date: materialItem?.purchase_date,
           production_date: materialItem?.production_date,
           state_id: materialItem?.state_id,
+          note: materialItem?.note, 
         };
       });
 

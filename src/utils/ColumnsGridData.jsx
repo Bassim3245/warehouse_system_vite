@@ -956,7 +956,7 @@ export const inventoryImportManagement = ({
     { field: "index", headerName: "#", width: 33 },
     {
       field: "name_of_material",
-      headerName: t("أسم المادة"),
+      headerName:"اسم المادة او الصنف",
       flex: 1,
     },
     {

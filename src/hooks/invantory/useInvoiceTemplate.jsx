@@ -31,6 +31,7 @@ const useInvoiceTemplate = () => {
         []
     );
 
+    console.log("renderedHtml", renderedHtml);
     const downloadPdf = useCallback(async (document_id, document_type) => {
         if (!document_id || !document_type) return;
         try {

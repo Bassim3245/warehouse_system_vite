@@ -63,36 +63,8 @@ export const PurchasesFormPopup = ({
 
   const renderFormContent = () => (
     <Box sx={{ p: 3 }} dir={rtl}>
-      <Card
-        elevation={1}
-        sx={{
-          borderRadius: 1,
-          maxWidth: 900,
-          mx: "auto",
-        }}
-      >
-        <Box
-          sx={{
-            backgroundColor: "#f5f5f5",
-            color: "#333",
-            p: 2,
-            borderBottom: "1px solid #e0e0e0",
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Add />
-            تفاصيل الاستلام
-          </Typography>
-        </Box>
+      
 
-        <CardContent sx={{ p: 3 }}>
           <Stack spacing={3}>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -222,6 +194,19 @@ export const PurchasesFormPopup = ({
                   />
                 </Box>
               </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="ملاحظات"
+                  type="text"
+                  multiline
+                  rows={4}
+                  name="note"
+                  value={formData.note || ""}
+                  onChange={handleInputChange}
+                  sx={inputStyles}
+                />
+              </Grid>
             </Grid>
 
             {/* Total Price Display */}
@@ -255,8 +240,6 @@ export const PurchasesFormPopup = ({
               </Paper>
             )}
           </Stack>
-        </CardContent>
-      </Card>
     </Box>
   );
 

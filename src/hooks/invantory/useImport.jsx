@@ -51,6 +51,7 @@ export const useImportData = ({ searchParams }) => {
       description: "",
       document_id: documentId,
       inventory_id: "",
+      note: "",
     }),
     [documentId]
   );
