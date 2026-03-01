@@ -316,7 +316,7 @@ export default function MaterialMovementExport() {
                               <StyledTableCell
                                 sx={{ fontWeight: "bold", color: "success.main" }}
                               >
-                                {FormatDataNumber(movement?.total_quantity) || "0"}
+                                {FormatDataNumber(movement?.quantity) || "0"}
                               </StyledTableCell>
                               <StyledTableCell>
                                 {movement?.measuring_unit || "N/A"}
