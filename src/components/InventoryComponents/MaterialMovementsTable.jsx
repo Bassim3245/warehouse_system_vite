@@ -23,7 +23,7 @@ import {
   StyledTableCell,
   StyledTableRow,
 } from "../../style/generalStyle";
-import { FormatDataNumber, formatDateYearsMonth } from "../../utils/formatData";
+import { formatCurrency, FormatDataNumber, formatDateAr, formatDateYearsMonth } from "../../utils/formatData";
 import DropDownGrid from "../reusableComponent/CustomMennu";
 
 const MaterialMovementsTable = ({
@@ -265,7 +265,7 @@ const MaterialMovementsTable = ({
                           color: "success.main",
                         }}
                       >
-                        {movement?.quantity || "0"}
+                        {FormatDataNumber(movement?.quantity) || "0"}
                       </StyledTableCell>
                       <StyledTableCell
                         sx={{
@@ -273,7 +273,7 @@ const MaterialMovementsTable = ({
                           color: "warning.main",
                         }}
                       >
-                        {movement?.remaining_quantity || "0"}
+                        {FormatDataNumber(movement?.remaining_quantity) || "0"}
                       </StyledTableCell>
                       <StyledTableCell
                         sx={{
@@ -281,7 +281,7 @@ const MaterialMovementsTable = ({
                           color: "primary.main",
                         }}
                       >
-                        {movement?.balance || "0"}
+                        {FormatDataNumber(movement?.balance) || "0"}
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip
@@ -305,18 +305,18 @@ const MaterialMovementsTable = ({
                         }}
                       >
                         {movement?.price
-                          ? `${FormatDataNumber(movement.price)} دينار`
+                          ? `${formatCurrency(movement.price)} دينار`
                           : "N/A"}
                       </StyledTableCell>
                       <StyledTableCell>
-                        {formatDateYearsMonth(movement?.production_date) ||
+                        {formatDateAr(movement?.production_date) ||
                           "N/A"}
                       </StyledTableCell>
                       <StyledTableCell>
-                        {formatDateYearsMonth(movement?.purchase_date) || "N/A"}
+                        {formatDateAr(movement?.purchase_date) || "N/A"}
                       </StyledTableCell>
                       <StyledTableCell>
-                        {formatDateYearsMonth(movement?.expiry_date) || "N/A"}
+                        {formatDateAr(movement?.expiry_date) || "N/A"}
                       </StyledTableCell>
                       <StyledTableCell>
                         {movement?.beneficiary ||
@@ -324,9 +324,6 @@ const MaterialMovementsTable = ({
                           "N/A"}
                       </StyledTableCell>
                       <DropDownGrid>
-                        <Divider sx={{ my: 0.5 }} />
-
-                        <Divider sx={{ my: 0.5 }} />
                         {renderMenuItem(
                           "informationProduct",
                           () =>
@@ -337,7 +334,6 @@ const MaterialMovementsTable = ({
                           OpenInNew,
                           " حركات الاخراج  "
                         )}
-                        <Divider />
 
                       </DropDownGrid>
                     </StyledTableRow>
