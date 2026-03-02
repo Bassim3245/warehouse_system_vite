@@ -84,7 +84,7 @@ function ReviewDataSet({
         user_id: dataUserById?.user_id,
         balance: item?.balance,
         price: item?.price,
-        minimum_stock_level: item?.minimum_stock_level,
+        minimum_stock_level: item?.minimum_stock_level||0,
         status: item?.status,
         warehouseId,
         lab_id: labId,

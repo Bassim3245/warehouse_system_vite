@@ -191,7 +191,12 @@ export default function RootWarehouse() {
         path: "log-warehouse-entity",
         checkPermission: roles?.show_log_entity?._id,
       },
-  
+      {
+        text: t("الرصيد الافتتاحي"),
+        icon: <EventAvailableIcon sx={{ transition: "transform 0.2s" }} />,
+        path: "opening-balance-import",
+        checkPermission: roles?.management_store?._id,
+      },
     ],
     [roles, t],
   );

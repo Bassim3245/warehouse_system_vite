@@ -85,7 +85,7 @@ export default function ExcelUpload({ setDataFileExcel }) {
           unitMeasuring: getCellByLabel(row, ["وحدة القياس", "وحدة القياس"]),
           specification: getCellByLabel(row, ["المواصفات الفنية", "مواصفات فنية"]),
           status: getCellByLabel(row, ["حالة المادة", "حالة المادة"]),
-          balance: getCellByLabel(row, ["الرصيد الافتتاحي", "رصيد افتتاحي"]),
+          balance: getCellByLabel(row, ["الرصيد الافتتاحي", "رصيد افتتاحي","الرصيد"]),
           price: getCellByLabel(row, ["السعر المفرد", "سعر مفرد"]),
           minimum_stock_level: getCellByLabel(row, ["الحد الادنا للمخزون", "حد أدنى للمخزون"]),
         };

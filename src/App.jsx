@@ -23,6 +23,7 @@ import useAppInitialization from "./hooks/useAppInitialization";
 import HomeObesoloteMaterial from "./app/obesoloteMaterial/Page/home/Home";
 import HomeWharhouse from "./app/warehouse_management/Pages/Home/Home";
 import InventoryExportArchiveMonthly from "./app/warehouse_management/Pages/Archive/commen/inventoryExportArchiveMonthly";
+import OpeningBalanceImport from "./app/warehouse_management/Pages/excelForm/uploadFileExcelPage";
 
 // Lazy loaded components - Dashboard Pages
 const Dashboard = React.lazy(
@@ -551,7 +552,10 @@ export default function App() {
                       path="warehouse-mange"
                       element={<WarehouseMange />}
                     />
-                  
+                    <Route
+                      path="opening-balance-import"
+                      element={<OpeningBalanceImport />}
+                    />
 
                     <Route path="lab-manage" element={<LabsEntity />} />
                     <Route path="Factory-manage" element={<Factories />} />
