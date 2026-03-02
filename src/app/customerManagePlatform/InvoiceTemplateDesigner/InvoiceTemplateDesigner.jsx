@@ -614,7 +614,7 @@ export default function InvoiceTemplateDesigner() {
     const handleDelete = useCallback(async (id) => {
         try {
             await axiosInstance.get(
-                `${BackendUrl}/api/warehouse/documentTemplate/${id}`,
+                `${BackendUrl}/api/warehouse/removeDocumentTemplate/${id}`,
                 { headers: { authorization: getToken() } }
             );
             toast.success("تم حذف القالب");
