@@ -613,7 +613,7 @@ export default function InvoiceTemplateDesigner() {
 
     const handleDelete = useCallback(async (id) => {
         try {
-            await axiosInstance.delete(
+            await axiosInstance.get(
                 `${BackendUrl}/api/warehouse/documentTemplate/${id}`,
                 { headers: { authorization: getToken() } }
             );
