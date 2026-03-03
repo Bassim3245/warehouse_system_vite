@@ -47,6 +47,9 @@ function DocumentModel({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const storageDocKey = `selectedDocumentType_${documentType || "general"}`;
+  const storageWarehouseKey = `selectedWarehouseId_${documentType || "general"}`;
+
   /* ------------------------------
       FORM DATA (MEMO INITIAL)
    ------------------------------ */
@@ -58,10 +61,10 @@ function DocumentModel({
       description: "",
       total_amount: 0,
       status: "draft",
-      documentType: documentTypeValue,
-      warehouse_id: "",
+      documentType: localStorage.getItem(`selectedDocumentType_${documentType || "general"}`) || documentTypeValue || documentType || "",
+      warehouse_id: localStorage.getItem(`selectedWarehouseId_${documentType || "general"}`) || "",
     }),
-    [documentTypeValue],
+    [documentTypeValue, documentType],
   );
 
   const [formData, setFormData] = useState(initialForm);
@@ -103,11 +106,14 @@ function DocumentModel({
    ------------------------------ */
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
+    if (name === "documentType") {
+      localStorage.setItem(storageDocKey, value);
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  }, []);
+  }, [storageDocKey]);
 
   const handleDateChange = useCallback((field, value) => {
     setFormData((prev) => ({
@@ -117,11 +123,13 @@ function DocumentModel({
   }, []);
 
   const handleWarehouseChange = useCallback((event, newValue) => {
+    const newWarehouseId = newValue ? newValue.id : "";
+    localStorage.setItem(storageWarehouseKey, newWarehouseId);
     setFormData((prev) => ({
       ...prev,
-      warehouse_id: newValue ? newValue.id : "",
+      warehouse_id: newWarehouseId,
     }));
-  }, []);
+  }, [storageWarehouseKey]);
 
   /* ------------------------------
       OPEN / CLOSE POPUP
