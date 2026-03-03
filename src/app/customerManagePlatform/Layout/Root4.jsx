@@ -49,13 +49,13 @@ export default function Root4() {
       text: t("تصميم قالب الفاتورة"),
       icon: < Draw />,
       path: "invoice-template-designer", // Fixed path to include a leading slash
-      checkPermission: roles?.show_profile?._id,
+      checkPermission: roles?.show_page_design_invoice_document?._id,
     },
     {
       text: t("إعدادات الحقول"),
       icon: <Settings />,
       path: "document-field-settings",
-      checkPermission: roles?.show_profile?._id,
+      checkPermission: roles?.show_page_manage_document_field_dynamically?._id,
     },
   ];
 

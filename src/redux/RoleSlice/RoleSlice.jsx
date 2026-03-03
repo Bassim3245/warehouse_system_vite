@@ -119,6 +119,10 @@ const initialState = {
       value: false,
       _id: 28,
     },
+      store_general_setting: {
+      value: false,
+      _id: 29,
+    },
     management_factory: {
       value: false,
       _id: 31,
@@ -131,10 +135,7 @@ const initialState = {
       value: false,
       _id: 33,
     },
-    store_general_setting: {
-      value: false,
-      _id: 29,
-    },
+  
     add_factory: {
       value: false,
       _id: 34,
@@ -219,9 +220,20 @@ const initialState = {
       value: false,
       _id: 60,
     },
-
-
+      show_page_design_invoice_document: {
+      value: false,
+      _id: 61,
+    },
+      show_page_manage_document_field_dynamically: {
+      value: false,
+      _id: 62,
+    },
+    show_page_user_to_inital_data_from_excel: {
+      value: false,
+      _id: 63,
+    },
   },
+
 };
 export const RolesReducer = createSlice({
   name: "RolesData",

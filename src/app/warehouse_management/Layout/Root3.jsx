@@ -21,7 +21,7 @@ import { useMemo } from "react";
 import Root from "../../../components/Layout/Root";
 import logo from "../../../assets/image/1671635909.png";
 
-import { Factory, Settings, WarehouseIcon } from "lucide-react";
+import { Factory, Settings, Upload, WarehouseIcon } from "lucide-react";
 import { usePermissionsStructure } from "../../../hooks/useStructureCompany";
 
 export default function RootWarehouse() {
@@ -193,9 +193,9 @@ export default function RootWarehouse() {
       },
       {
         text: t("الرصيد الافتتاحي"),
-        icon: <EventAvailableIcon sx={{ transition: "transform 0.2s" }} />,
+        icon: <Upload sx={{ transition: "transform 0.2s" }} />,
         path: "opening-balance-import",
-        checkPermission: roles?.management_store?._id,
+        checkPermission: roles?.show_page_user_to_inital_data_from_excel?._id,
       },
     ],
     [roles, t],

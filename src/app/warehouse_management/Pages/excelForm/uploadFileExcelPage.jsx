@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { axiosInstance } from "../../../../redux/api/axiosConfig";
+import useGetDataId from "../../../../hooks/useGetDataId";
+import { getUserInformation } from "../../../../utils/handelCookie";
 
 const COLUMNS = [
   { key: "warehouseCode", label: "رمز المخزن" },
@@ -25,7 +27,8 @@ export default function OpeningBalanceImport() {
   const [result, setResult] = useState(null);
   const fileRef = useRef();
   const currentFile = useRef(null);
-
+const { labId, factoryId } = useGetDataId();
+const userInfo=getUserInformation()
   // Upload file → backend reads with exceljs → returns JSON rows
   const uploadForPreview = async (file) => {
     setPreviewLoading(true);
@@ -39,8 +42,19 @@ export default function OpeningBalanceImport() {
     const formData = new FormData();
     formData.append("file", file);
 
+
+
     try {
-      const res = await axiosInstance.post("/api/warehouse/preview", formData);
+      const res = await axiosInstance(
+        "/api/warehouse/preview",
+        {
+          method: "POST",
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       if (res.status !== 200) {
         setError(res.data?.message || "فشل تحليل الملف");
         return;
@@ -73,9 +87,23 @@ export default function OpeningBalanceImport() {
     setResult(null);
     const formData = new FormData();
     formData.append("file", currentFile.current);
+        formData.append("lab_id", labId);
+    formData.append("factory_id", factoryId); 
+    formData.append("user_id", userInfo.user_id);
+    formData.append("entity_id", userInfo.entity_id);
+    formData.append("ministry_id", userInfo.minister_id);
     // formData.append("entity_id", ...);
     try {
-      const res = await axiosInstance.post("/api/warehouse/all-warehouses", formData);
+      const res = await axiosInstance(
+        "/api/warehouse/all-warehouses",
+        {
+          method: "POST",
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setResult({
         success: res.status === 200 || res.status === 201,
         message: res.data.message,
