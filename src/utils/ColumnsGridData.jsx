@@ -972,15 +972,11 @@ export const inventoryImportManagement = ({
     {
       field: "measuring_unit",
       headerName: "وحدة القياس",
-      minWidth: "150px",
-      maxWidth: "175px",
       flex: 1,
     },
     {
       field: "quantity",
       headerName: t("الكمية"),
-      minWidth: "150px",
-      maxWidth: "175px",
       flex: 1,
       renderCell: (params) => (
         <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
@@ -991,8 +987,6 @@ export const inventoryImportManagement = ({
     {
       field: "remaining_quantity",
       headerName: t("الكمية المتبقية"),
-      minWidth: "150px",
-      maxWidth: "175px",
       flex: 1,
       renderCell: (params) => (
         <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
@@ -1014,13 +1008,31 @@ export const inventoryImportManagement = ({
     },
     {
       field: "purchase_date",
-      minWidth: "150px",
-      maxWidth: "175px",
       headerName: t("تاريخ الشراء"),
       flex: 1,
       renderCell: (params) => (
         <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
           {formatDateAr(params?.row?.purchase_date)}
+        </div>
+      ),
+    },
+    {
+      field: "inspection_number",
+      headerName: t("رقم الفحص"),
+      flex: 1,
+      renderCell: (params) => (
+        <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          {params?.row?.inspection_number || "---"}
+        </div>
+      ),
+    },
+       {
+      field: "inspection_date",
+      headerName: t("تاريخ الفحص"),
+      flex: 1,
+      renderCell: (params) => (
+        <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          {formatDateAr(params?.row?.inspection_date)||"---"}
         </div>
       ),
     },

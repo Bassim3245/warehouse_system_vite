@@ -109,6 +109,10 @@ const PurchasesData = () => {
       production_date: formData.production_date,
       state_id: formData.state_id,
       note: formData.note,
+      check_number: formData.check_number,
+      inspection_number: formData.inspection_number,
+      inspection_date: formData.inspection_date,
+      has_inspection: formData.has_inspection,
     };
 
     setMaterialsList((prev) => [...prev, newMaterial]);
@@ -161,6 +165,10 @@ const PurchasesData = () => {
           production_date: materialItem?.production_date,
           state_id: materialItem?.state_id,
           note: materialItem?.note, 
+          check_number: materialItem?.check_number,
+          inspection_number: materialItem?.inspection_number,
+          inspection_date: materialItem?.inspection_date,
+          has_inspection: materialItem?.has_inspection,
         };
       });
 

@@ -38,28 +38,47 @@ export default function useInventoryDocuments({
     total: 0,
     totalPages: 0,
   });
+
   /** --------------------------------
    *  STATE
   ----------------------------------*/
+  const [documentTypeValue, setDocumentTypeValue] = useState(() => {
+    const saved = localStorage.getItem("documentTypeValue");
+    if (saved && isExport && ["internal_consumption", "out"].includes(saved)) {
+      return saved;
+    }
+    return isExport ? "internal_consumption" : documentType || "internal_consumption";
+  });
 
-  const [documentTypeValue, setDocumentTypeValue] = useState(
-    isExport ? "internal_consumption" : documentType || "internal_consumption"
-  );
   const [documentMaterials, setDocumentMaterials] = useState([]);
   const [allDocuments, setAllDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // ✅ FIX: Always read from localStorage on init — don't rely on wareHouseData being loaded yet
   const [warehosueId, setWaerhouseId] = useState(
-    wareHouseData?.[0]?.id || ""
+    () => localStorage.getItem("selectedWarehouseId") || ""
   );
 
-  // Auto-select first warehouse once data loads
+  // ✅ FIX: Only auto-select first warehouse if NOTHING is saved in localStorage
   useEffect(() => {
-    if (wareHouseData?.length > 0 && !warehosueId) {
+    const savedId = localStorage.getItem("selectedWarehouseId");
+    if (wareHouseData?.length > 0 && !savedId) {
       setWaerhouseId(wareHouseData[0].id);
     }
   }, [wareHouseData]);
 
+  // Persist selections to localStorage
+  useEffect(() => {
+    if (warehosueId) {
+      localStorage.setItem("selectedWarehouseId", warehosueId);
+    }
+  }, [warehosueId]);
+
+  useEffect(() => {
+    if (documentTypeValue) {
+      localStorage.setItem("documentTypeValue", documentTypeValue);
+    }
+  }, [documentTypeValue]);
 
   /** --------------------------------
    *  LABEL BASED ON TYPE
@@ -74,7 +93,6 @@ export default function useInventoryDocuments({
 
   /** --------------------------------
    *  BUILD FETCH URL (MEMOIZED)
-   *  Updated to include warehouseId and trigger re-fetch
   ----------------------------------*/
   const requestUrl = useMemo(() => {
     const base = `${BackendUrl}/api/warehouse/documentGetDataByUserId`;
@@ -83,32 +101,18 @@ export default function useInventoryDocuments({
       searchTerm,
     });
 
-    // Add warehouseId if available
     if (warehosueId) {
       params.append("warehouseId", warehosueId);
     }
 
-    // warehouse + factory + lab
     if (has_warehouse && has_factory && has_lab) {
       params.append("labId", dataUserLab?.lab_id || dataUserById?.user_id);
-    }
-    // warehouse + factory
-    else if (has_warehouse && has_factory) {
-      params.append(
-        "factoryId",
-        dataUserFactory?.factory_id || dataUserById?.user_id
-      );
-    }
-    // warehouse + lab
-    else if (has_warehouse && has_lab) {
+    } else if (has_warehouse && has_factory) {
+      params.append("factoryId", dataUserFactory?.factory_id || dataUserById?.user_id);
+    } else if (has_warehouse && has_lab) {
       params.append("labId", dataUserLab?.lab_id || dataUserById?.user_id);
-    }
-    // only warehouse (if warehouseId not already set or as fallback)
-    else if (has_warehouse && !warehosueId) {
-      params.append(
-        "entityId",
-        dataUserById?.entity_id || dataUserById?.user_id
-      );
+    } else if (has_warehouse && !warehosueId) {
+      params.append("entityId", dataUserById?.entity_id || dataUserById?.user_id);
     } else if (!has_warehouse) {
       if (!dataUserById?.user_id) return null;
       params.append("userId", dataUserById?.user_id);
@@ -130,7 +134,7 @@ export default function useInventoryDocuments({
     dataUserById?.user_id,
     pagination.page,
     pagination.limit,
-    warehosueId, // Added dependency to trigger re-fetch
+    warehosueId,
   ]);
 
   /** --------------------------------
@@ -139,7 +143,6 @@ export default function useInventoryDocuments({
   const fetchDocuments = useCallback(async () => {
     if (!requestUrl) return;
 
-    // If warehouse is required but not selected, don't fetch
     if (has_warehouse && !warehosueId) {
       setAllDocuments([]);
       setDocumentMaterials([]);
@@ -148,16 +151,14 @@ export default function useInventoryDocuments({
 
     try {
       setLoading(true);
-
       const { data } = await axiosInstance.get(requestUrl, {
         headers: { authorization: token },
       });
 
       const docs = data?.data ?? [];
       setAllDocuments(docs);
-      setDocumentMaterials(docs); // No more local filtering
+      setDocumentMaterials(docs);
 
-      // Only update total/totalPages — never overwrite page/limit chosen by user
       setPagination((prev) => ({
         ...prev,
         total: data?.pagination?.total || 0,
@@ -172,11 +173,6 @@ export default function useInventoryDocuments({
     }
   }, [requestUrl, token, has_warehouse, warehosueId]);
 
-  /** --------------------------------
-   *  TRIGGER FETCH WHEN NEEDED
-  ----------------------------------*/
-  // fetchDocuments already depends on requestUrl which includes page & limit
-  // so we don't need pagination.page / pagination.limit here — avoids double-fetch
   useEffect(() => {
     fetchDocuments();
   }, [fetchDocuments, refreshButton]);
@@ -184,19 +180,16 @@ export default function useInventoryDocuments({
   /** --------------------------------
    *  WAREHOUSE CHANGE HANDLER
   ----------------------------------*/
-  const handleWarehouseChange = useCallback(
-    (event, newValue) => {
-      const newId = newValue?.id || "";
-      setWaerhouseId(newId);
-      // Reset to page 1 when warehouse filter changes
-      setPagination((prev) => ({ ...prev, page: 1 }));
-      // We no longer filter documentMaterials here because fetchDocuments
-      // will be triggered by requestUrl update (via waerhouseId change).
-    },
-    []
-  );
+  const handleWarehouseChange = useCallback((event, newValue) => {
+    const newId = newValue?.id || "";
+    setWaerhouseId(newId);
+    // ✅ Clear localStorage if user clears the selection
+    if (!newId) {
+      localStorage.removeItem("selectedWarehouseId");
+    }
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  }, []);
 
-  // Helper: when limit changes, reset to page 1 to avoid empty results
   const handleLimitChange = useCallback((newLimit) => {
     setPagination((prev) => ({ ...prev, limit: newLimit, page: 1 }));
   }, []);
@@ -218,7 +211,7 @@ export default function useInventoryDocuments({
   ----------------------------------*/
   const deleteDocument = useCallback(
     (id) => {
-      DeleteItem(id, setRefreshButton, () => { }, token, "warehouse/deleteDocumentById");
+      DeleteItem(id, setRefreshButton, () => {}, token, "warehouse/deleteDocumentById");
     },
     [token]
   );
@@ -249,7 +242,9 @@ export default function useInventoryDocuments({
         confirmButtonText: "موافق",
         cancelButtonText: "تراجع",
       });
+
       if (!result.isConfirmed) return;
+
       try {
         await axiosInstance.post(
           `${BackendUrl}/api/warehouse/documentLock`,

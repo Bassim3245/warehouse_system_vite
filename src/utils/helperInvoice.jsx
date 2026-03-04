@@ -1,4 +1,4 @@
-import { formatCurrency, FormatDataNumber, formatDateAr } from "../utils/formatData";
+import { formatCurrency, FormatDataNumber, formatDateAr } from "./formatData";
 
 /* ──────────────────────────────────────────────────────────
    Resolve a header field key → actual document value

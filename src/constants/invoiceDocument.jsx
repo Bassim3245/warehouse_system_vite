@@ -40,7 +40,9 @@ const AVAILABLE_VARIABLES = [
     { key: "item_date", desc: "تاريخ الشراء" },
     { key: "item_work_order", desc: "رقم أمر العمل" },
     { key: "item_notes", desc: "ملاحظات" },
-    {key:"item_export" , desc:"تاريخ التصدير"}
+    {key:"item_export" , desc:"تاريخ التصدير"},
+    {key:"item_inspection_number" , desc:"رقم الفحص"},
+    {key:"item_inspection_date" , desc:"تاريخ الفحص"}
 
 ];
 
@@ -60,6 +62,8 @@ const DEFAULT_COLUMNS = [
     { id: "date", placeholder: "item_date", label: "تاريخ الشراء" },
     { id: "supplier", placeholder: "item_supplier", label: "الجهة الموردة" },
     { id: "export_date", placeholder: "item_export", label: "تاريخ التصدير" },
-    {id:"notes",placeholder:"item_notes",label:"ملاحظات"}
+    {id:"notes",placeholder:"item_notes",label:"ملاحظات"},
+    {id:"inspection_number",placeholder:"item_inspection_number",label:"رقم الفحص"},
+    {id:"inspection_date",placeholder:"item_inspection_date",label:"تاريخ الفحص"}
 ];
 export { AVAILABLE_VARIABLES, DEFAULT_COLUMNS };

@@ -42,7 +42,6 @@ export const useImportData = ({ searchParams }) => {
       quantity: "",
       expiry_date: dayjs(),
       purchase_date: dayjs(),
-      document_date: dayjs(),
       production_date: dayjs(),
       document_number: "",
       beneficiary: "",
@@ -52,6 +51,9 @@ export const useImportData = ({ searchParams }) => {
       document_id: documentId,
       inventory_id: "",
       note: "",
+      inspection_number: "",
+      inspection_date: dayjs(),
+      has_inspection: false,
     }),
     [documentId]
   );
@@ -108,6 +110,10 @@ export const useImportData = ({ searchParams }) => {
       beneficiary: "",
       description: "",
       document_date: "",
+      check_number: "",
+      inspection_number: "",
+      inspection_date: dayjs(),
+      has_inspection: false,
     }));
   }, []);
 
