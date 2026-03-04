@@ -33,15 +33,16 @@ import { getUserInformation } from "../../../utils/handelCookie";
 import DeleteConfirmDialog from "./deleteConfirmModel";
 import FieldFormDialog from "./documetFildeModel";
 import { DOCUMENT_TYPES, FIELD_TYPES } from "./utils";
-import axios from "axios";
+import { ButtonTheme } from "../../../style/ButtomStyle";
 
 
-export default function DocumentFieldSettings() {
+export default function DocumentFieldSettings({ entity_id = null }) {
   const [activeTab, setActiveTab] = useState(0);
   const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-
+  const userInformation = getUserInformation();
+const companyId = entity_id || userInformation?.entity_id;
   // Dialog state
   const [formOpen, setFormOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
@@ -49,13 +50,12 @@ export default function DocumentFieldSettings() {
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   const currentDocType = DOCUMENT_TYPES[activeTab].value;
-  const userInformation = getUserInformation();
   /* ── Fetch all field definitions ────────────────── */
   const fetchFields = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axiosInstance.get(
-        `/api/warehouse/fieldDefinitions?entity_id=${userInformation.entity_id}&document_type=${currentDocType}`,
+        `/api/warehouse/fieldDefinitions?entity_id=${companyId}&document_type=${currentDocType}`,
       );
       setFields(res.data?.data || []);
     } catch (err) {
@@ -78,7 +78,7 @@ export default function DocumentFieldSettings() {
       try {
         await axiosInstance.post(
           `${BackendUrl}/api/warehouse/fieldDefinitions`,
-          { ...formData, entity_id: userInformation.entity_id },
+          { ...formData, entity_id: companyId },
         );
         toast.success("تم إنشاء الحقل بنجاح");
         setFormOpen(false);
@@ -215,22 +215,16 @@ export default function DocumentFieldSettings() {
           </Box>
         </Box>
 
-        <Button
+        <ButtonTheme
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => {
             setEditTarget(null);
             setFormOpen(true);
           }}
-          sx={{
-            borderRadius: 2,
-            background: "linear-gradient(135deg, #1976d2, #1565c0)",
-            boxShadow: "0 4px 16px rgba(25,118,210,0.35)",
-            "&:hover": { boxShadow: "0 6px 20px rgba(25,118,210,0.45)" },
-          }}
         >
           إضافة حقل جديد
-        </Button>
+        </ButtonTheme>
       </Box>
 
       {/* ── Stats Cards ─────────────────────────────── */}
