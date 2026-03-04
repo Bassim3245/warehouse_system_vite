@@ -244,7 +244,7 @@ function Document({
           documentType={documentType}
           isExport={isExport}
         />
-        <MonthlyInventory documentMaterials={memoDocuments} dataUserById={dataUserById} />
+        {/* <MonthlyInventory documentMaterials={memoDocuments} dataUserById={dataUserById} /> */}
         <UseFullScreen setRefreshButton={setRefreshButton} refreshing={refreshButton} />
       </Box>
 

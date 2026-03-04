@@ -263,6 +263,12 @@ export default function MonthlyLockForm({
                 </Typography>
             </Stack>
 
+            <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
+                <Typography variant="body2">
+                    يتطلب النظام اكتمال كافة المستندات والقيود للشهر المحدد حتى تتمكن من إجراء عملية الأرشفة والإغلاق لتلك الفترة.
+                </Typography>
+            </Alert>
+
             {fetchingDocs ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
                     <CircularProgress />
@@ -278,7 +284,7 @@ export default function MonthlyLockForm({
                                     ⚠️ مستندات غير مكتملة ({incompleteDocs.length})
                                 </AlertTitle>
                                 <Typography variant="body2" sx={{ mb: 1 }}>
-                                    هذه المستندات لن تُؤرشف وستنتقل للشهر القادم:
+                                    لا يمكن إتمام الأرشفة بسبب وجود مستندات غير مكتملة. يرجى إكمالها أولاً:
                                 </Typography>
                                 <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
                                     {incompleteDocs.map((doc) => (
@@ -351,6 +357,10 @@ export default function MonthlyLockForm({
                 </Typography>
             </Stack>
 
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                يرجى تحديد المخزن إذا كنت ترغب في حصر الأرشفة بمخزن معين، أو اتركه فارغاً لتشمل الأرشفة جميع المخازن التابعة لك.
+            </Typography>
+
             {/* Warehouse Selection */}
             <Grid container spacing={2}>
                 <Grid size={{ xs: 12 }}>
@@ -405,7 +415,7 @@ export default function MonthlyLockForm({
                 </Typography>
 
                 <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'primary.50' }}>
                             <CalendarMonthIcon color="primary" sx={{ fontSize: 32, mb: 1 }} />
                             <Typography variant="body2" color="text.secondary">الفترة</Typography>
@@ -413,7 +423,7 @@ export default function MonthlyLockForm({
                         </Paper>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'success.50' }}>
                             <CheckCircleIcon color="success" sx={{ fontSize: 32, mb: 1 }} />
                             <Typography variant="body2" color="text.secondary">سيتم أرشفته</Typography>
@@ -423,24 +433,7 @@ export default function MonthlyLockForm({
                             <Typography variant="caption">مستند مكتمل</Typography>
                         </Paper>
                     </Grid>
-
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'warning.50' }}>
-                            <WarningAmberIcon color="warning" sx={{ fontSize: 32, mb: 1 }} />
-                            <Typography variant="body2" color="text.secondary">سينتقل للشهر القادم</Typography>
-                            <Typography variant="h5" fontWeight={600} color="warning.main">
-                                {incompleteDocs.length}
-                            </Typography>
-                            <Typography variant="caption">مستند غير مكتمل</Typography>
-                        </Paper>
-                    </Grid>
                 </Grid>
-
-                {incompleteDocs.length > 0 && (
-                    <Alert severity="info" sx={{ mt: 2 }}>
-                        المستندات غير المكتملة لن تُؤرشف وستبقى متاحة للتعديل في الشهر القادم.
-                    </Alert>
-                )}
             </Paper>
         </Box>
     );
@@ -505,7 +498,7 @@ export default function MonthlyLockForm({
                     <ButtonTheme
                         variant="contained"
                         onClick={handleNext}
-                        disabled={fetchingDocs}
+                        disabled={fetchingDocs || (activeStep === 1 && incompleteDocs.length > 0) || (activeStep === 1 && completedDocs.length === 0)}
                         startIcon={fetchingDocs ? <CircularProgress size={16} color="inherit" /> : <ArrowForwardIcon />}
                         size="small"
                     >

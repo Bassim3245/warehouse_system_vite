@@ -19,6 +19,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import useGetAllWarehouse from '../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse';
 import MonthlyLockForm from './MonthLockForm';
+import UserGuid from './userGuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllMonthlyLocksEntityId } from '../../../../redux/MonthLockState/monthLock';
 import { getUserInformation } from '../../../../utils/handelCookie';
@@ -26,6 +27,14 @@ import { ButtonTheme } from '../../../../style/ButtomStyle';
 import Loader from '../../../../components/reusableComponent/Loader';
 import Header from '../../../../components/reusableComponent/HeaderComponent';
 import { axiosInstance } from '../../../../redux/api/axiosConfig';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import InfoIcon from '@mui/icons-material/Info';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import { useTheme } from '@mui/material/styles';
+import { Alert } from '@mui/material';
 
 const MonthlyLocks = () => {
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
@@ -33,6 +42,7 @@ const MonthlyLocks = () => {
     const { lockData, isLoading } = useSelector((state) => state?.monthLock);
     const userInformation = getUserInformation();
     const dispatch = useDispatch();
+    const theme = useTheme();
 
     const fetchInformation = useCallback(() => {
         const entity_id = userInformation?.entity_id;
@@ -83,10 +93,11 @@ const MonthlyLocks = () => {
 
             {/* Header */}
             <Header
-                title="إغلاق الأشهر المحاسبية"
-                subTitle="إدارة إغلاق الفترات المحاسبية الشهرية للمخازن"
+                title="إغلاق الأشهر "
                 dir="rtl"
             />
+
+            <UserGuid />
 
             {/* Monthly Lock Form */}
             <Box sx={{ mb: 3 }}>

@@ -28,8 +28,9 @@ export default function RootWarehouse() {
   const { roles } = useSelector((state) => state?.RolesData);
   const { t } = useTranslation();
   const { has_lab, has_factory, has_warehouse } = usePermissionsStructure();
+
   /** -------------------------------------
-   *  Route1
+   *  Route1 - الصفحات الأساسية اليومية
    --------------------------------------*/
   const Route1 = useMemo(
     () => [
@@ -40,22 +41,16 @@ export default function RootWarehouse() {
         checkPermission: roles?.show_main_page?._id,
       },
       {
-        text: t("التقارير"),
-        icon: <LeaderboardIcon sx={{ transition: "transform 0.2s" }} />,
-        path: "main-page-report",
-        checkPermission: roles?.show_page_report_warehouse?._id,
-      },
-      {
         text: t("المخازن"),
         icon: <WarehouseIconMUI sx={{ transition: "transform 0.2s" }} />,
         path: "management-data-store",
         checkPermission: roles?.warehouse_page?._id,
       },
       {
-        text: t("إغلاق الأشهر"),
-        icon: <LockClockIcon sx={{ transition: "transform 0.2s" }} />,
-        path: "monthly-locks",
-        checkPermission: roles?.show_page_monthly_lock?._id,
+        text: t("التقارير"),
+        icon: <LeaderboardIcon sx={{ transition: "transform 0.2s" }} />,
+        path: "main-page-report",
+        checkPermission: roles?.show_page_report_warehouse?._id,
       },
       {
         text: t("الارشفة الشهرية"),
@@ -74,7 +69,7 @@ export default function RootWarehouse() {
   );
 
   /** -------------------------------------
-   *  Route2
+   *  Route2 - الوارد والصرف (العمليات اليومية)
    --------------------------------------*/
   const Route2 = useMemo(() => {
     const routes = [];
@@ -101,10 +96,19 @@ export default function RootWarehouse() {
   }, [roles, t]);
 
   /** -------------------------------------
-   *  Route3
+   *  Route3 - إدارة الوحدات (مصانع / معامل / مخازن)
    --------------------------------------*/
   const Route3 = useMemo(() => {
     const routes = [];
+
+    if (has_warehouse && roles?.management_store?._id) {
+      routes.push({
+        text: t("أدارة المخازن"),
+        icon: <WarehouseIconMUI sx={{ transition: "transform 0.2s" }} />,
+        path: "warehouse-mange",
+        checkPermission: roles?.management_store?._id,
+      });
+    }
 
     if (has_factory && roles?.management_factory?._id) {
       routes.push({
@@ -124,23 +128,20 @@ export default function RootWarehouse() {
       });
     }
 
-    if (has_warehouse && roles?.management_store?._id) {
-      routes.push({
-        text: t("أدارة المخازن"),
-        icon: <WarehouseIconMUI sx={{ transition: "transform 0.2s" }} />,
-        path: "warehouse-mange",
-        checkPermission: roles?.management_store?._id,
-      });
-    }
-
     return routes;
   }, [has_factory, has_lab, has_warehouse, roles, t]);
 
   /** -------------------------------------
-   *  Route4
+   *  Route4 - الأرشفة والإعدادات والأدوات الإدارية
    --------------------------------------*/
   const Route4 = useMemo(
     () => [
+      {
+        text: t("الرصيد الافتتاحي"),
+        icon: <Upload sx={{ transition: "transform 0.2s" }} />,
+        path: "opening-balance-import",
+        checkPermission: roles?.show_page_user_to_inital_data_from_excel?._id,
+      },
       {
         text: t("ارشفة المواد المستندات"),
         icon: <CalendarTodayIcon sx={{ transition: "transform 0.2s" }} />,
@@ -153,23 +154,23 @@ export default function RootWarehouse() {
         path: "inventory-archive-annual",
         checkPermission: roles?.show_page_annual_inventory?._id,
       },
-      // {
-      //   text: t("طلبات التعديل"),
-      //   icon: <EditIcon sx={{ transition: "transform 0.2s" }} />,
-      //   path: "unlock-requests",
-      //   checkPermission: roles?.show_main_page?._id,
-      // },
+      {
+        text: t("إغلاق الأشهر"),
+        icon: <LockClockIcon sx={{ transition: "transform 0.2s" }} />,
+        path: "monthly-locks",
+        checkPermission: roles?.show_page_monthly_lock?._id,
+      },
+      {
+        text: t("layout.Notification"),
+        icon: <NotificationAddIcon sx={{ transition: "transform 0.2s" }} />,
+        path: "warehouse-Notification",
+        checkPermission: roles?.management_Nonfiction?._id,
+      },
       {
         text: t("سجل التدقيق"),
         icon: <HistoryIcon sx={{ transition: "transform 0.2s" }} />,
         path: "audit-log",
         checkPermission: roles?.show_pag_auditLog?._id,
-      },
-      {
-        text: t("layout.companyInformation"),
-        icon: <AccountBoxIcon sx={{ transition: "transform 0.2s" }} />,
-        path: "profile",
-        checkPermission: roles?.show_profile?._id,
       },
       {
         text: t("layout.log"),
@@ -180,22 +181,16 @@ export default function RootWarehouse() {
         checkPermission: roles?.show_log?._id,
       },
       {
-        text: t("layout.Notification"),
-        icon: <NotificationAddIcon sx={{ transition: "transform 0.2s" }} />,
-        path: "warehouse-Notification",
-        checkPermission: roles?.management_Nonfiction?._id,
-      },
-      {
         text: t("layout.logEntity"),
         icon: <EventAvailableIcon sx={{ transition: "transform 0.2s" }} />,
         path: "log-warehouse-entity",
         checkPermission: roles?.show_log_entity?._id,
       },
       {
-        text: t("الرصيد الافتتاحي"),
-        icon: <Upload sx={{ transition: "transform 0.2s" }} />,
-        path: "opening-balance-import",
-        checkPermission: roles?.show_page_user_to_inital_data_from_excel?._id,
+        text: t("layout.companyInformation"),
+        icon: <AccountBoxIcon sx={{ transition: "transform 0.2s" }} />,
+        path: "profile",
+        checkPermission: roles?.show_profile?._id,
       },
     ],
     [roles, t],
