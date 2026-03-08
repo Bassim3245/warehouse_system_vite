@@ -2,48 +2,30 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
-import Paper from "@mui/material/Paper";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
-import DateRangeIcon from "@mui/icons-material/DateRange";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import DescriptionIcon from "@mui/icons-material/Description";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import dayjs from "dayjs";
 import "dayjs/locale/ar";
 import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import { toast } from "react-toastify";
-import { Autocomplete, Chip, TextField } from "@mui/material";
-import { Warehouse } from "lucide-react";
 import { createMonthlyLock } from "../../../../redux/MonthLockState/monthLock";
 import { axiosInstance } from "../../../../redux/api/axiosConfig";
 import { BackendUrl } from "../../../../redux/api/axios";
 import { getToken } from "../../../../utils/handelCookie";
 import { useDispatch } from "react-redux";
+import Step1Content from "./step1";
+import Step2Content from "./step2";
+import Step3Content from "./step3";
 
 // Step labels - 3 خطوات
 const steps = ["اختيار الفترة", "مراجعة السجلات", "تأكيد الأرشفة"];
@@ -174,269 +156,7 @@ export default function MonthlyLockForm({
         [memoWarehouseOptions, warehosueId]
     );
 
-    // ============================================
-    // الخطوة 1: اختيار الفترة (السنة والشهر)
-    // ============================================
-    const Step1Content = () => (
-        <Box sx={{ p: 2 }} dir="rtl">
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-                <CalendarMonthIcon color="primary" />
-                <Typography variant="h6" color="text.primary">
-                    اختر الفترة الزمنية للأرشفة
-                </Typography>
-            </Stack>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ar">
-                <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <DatePicker
-                            label="اختر السنة"
-                            views={["year"]}
-                            value={dayjs().year(selectedYear)}
-                            onChange={(newValue) => {
-                                if (newValue) {
-                                    setSelectedYear(newValue.year());
-                                }
-                            }}
-                            slotProps={{
-                                textField: {
-                                    fullWidth: true,
-                                    size: "small",
-                                },
-                            }}
-                            format="YYYY"
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                            fullWidth
-                            type="number"
-                            label="اختر الشهر (1-12)"
-                            value={selectedMonth}
-                            onChange={(e) => {
-                                const value = parseInt(e.target.value);
-                                if (value >= 1 && value <= 12) {
-                                    setSelectedMonth(value);
-                                }
-                            }}
-                            inputProps={{ min: 1, max: 12 }}
-                            size="small"
-                            helperText="أدخل رقم الشهر من 1 إلى 12"
-                        />
-                    </Grid>
-                </Grid>
-            </LocalizationProvider>
-
-            {/* Selected Period Preview */}
-            <Paper
-                variant="outlined"
-                sx={{
-                    mt: 3,
-                    p: 2,
-                    bgcolor: 'primary.50',
-                    borderColor: 'primary.200',
-                    textAlign: 'center'
-                }}
-            >
-                <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
-                    <DateRangeIcon color="primary" />
-                    <Typography variant="subtitle1" color="primary.main" fontWeight={600}>
-                        الفترة المحددة: {getPeriodText()}
-                    </Typography>
-                </Stack>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    اضغط "التالي" لعرض السجلات لهذه الفترة
-                </Typography>
-            </Paper>
-        </Box>
-    );
-
-    // ============================================
-    // الخطوة 2: مراجعة السجلات (المكتملة وغير المكتملة)
-    // ============================================
-    const Step2Content = () => (
-        <Box sx={{ p: 2 }} dir="rtl">
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-                <AssignmentIcon color="info" />
-                <Typography variant="h6" color="text.primary">
-                    مراجعة السجلات للفترة: {getPeriodText()}
-                </Typography>
-            </Stack>
-
-            <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
-                <Typography variant="body2">
-                    يتطلب النظام اكتمال كافة المستندات والقيود للشهر المحدد حتى تتمكن من إجراء عملية الأرشفة والإغلاق لتلك الفترة.
-                </Typography>
-            </Alert>
-
-            {fetchingDocs ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                    <CircularProgress />
-                    <Typography sx={{ ml: 2 }}>جاري جلب السجلات...</Typography>
-                </Box>
-            ) : (
-                <Grid container spacing={2}>
-                    {/* Incomplete Documents Warning */}
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        {incompleteDocs.length > 0 ? (
-                            <Alert severity="warning" sx={{ height: '100%' }}>
-                                <AlertTitle>
-                                    ⚠️ مستندات غير مكتملة ({incompleteDocs.length})
-                                </AlertTitle>
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    لا يمكن إتمام الأرشفة بسبب وجود مستندات غير مكتملة. يرجى إكمالها أولاً:
-                                </Typography>
-                                <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                                    {incompleteDocs.map((doc) => (
-                                        <ListItem key={doc.document_id} sx={{ py: 0.5 }}>
-                                            <ListItemIcon sx={{ minWidth: 32 }}>
-                                                <DescriptionIcon fontSize="small" color="warning" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={`${doc.document_type === 'out' ? 'صادر' : doc.document_type === 'in' ? 'وارد' : doc.document_type === 'internal_consumption' ? 'استهلاك داخلي' : 'مستند'} #${doc.document_number}`}
-                                                secondary={`${dayjs(doc.document_date).format('YYYY/MM/DD')} - ${doc.warehouse_name} (${doc.incomplete_inventory_count} مادة غير مكتملة)`}
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Alert>
-                        ) : (
-                            <Alert severity="success" sx={{ height: '100%' }}>
-                                <AlertTitle>✅ لا توجد مستندات غير مكتملة</AlertTitle>
-                                <Typography variant="body2">
-                                    جميع المستندات لهذه الفترة مكتملة ويمكن أرشفتها.
-                                </Typography>
-                            </Alert>
-                        )}
-                    </Grid>
-
-                    {/* Completed Documents */}
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Paper variant="outlined" sx={{ p: 2, height: '100%', bgcolor: 'success.50' }}>
-                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-                                <CheckCircleIcon color="success" />
-                                <Typography variant="subtitle1" fontWeight={600} color="success.dark">
-                                    المستندات المكتملة ({completedDocs.length})
-                                </Typography>
-                            </Stack>
-                            {completedDocs.length > 0 ? (
-                                <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                                    {completedDocs.map((doc) => (
-                                        <ListItem key={doc.document_id} sx={{ py: 0.5 }}>
-                                            <ListItemIcon sx={{ minWidth: 32 }}>
-                                                <CheckCircleIcon fontSize="small" color="success" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={`${doc.document_type === 'out' ? 'صادر' : doc.document_type === 'in' ? 'وارد' : doc.document_type === 'internal_consumption' ? 'استهلاك داخلي' : 'مستند'} #${doc.document_number}`}
-                                                secondary={`${dayjs(doc.document_date).format('YYYY/MM/DD')} - ${doc.warehouse_name}`}
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            ) : (
-                                <Typography variant="body2" color="text.secondary">
-                                    لا توجد مستندات مكتملة لهذه الفترة.
-                                </Typography>
-                            )}
-                        </Paper>
-                    </Grid>
-                </Grid>
-            )}
-        </Box>
-    );
-
-    // ============================================
-    // الخطوة 3: تأكيد الأرشفة
-    // ============================================
-    const Step3Content = () => (
-        <Box sx={{ p: 2 }} dir="rtl">
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-                <ArchiveIcon color="success" />
-                <Typography variant="h6" color="text.primary">
-                    تأكيد الأرشفة النهائية
-                </Typography>
-            </Stack>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                يرجى تحديد المخزن إذا كنت ترغب في حصر الأرشفة بمخزن معين، أو اتركه فارغاً لتشمل الأرشفة جميع المخازن التابعة لك.
-            </Typography>
-
-            {/* Warehouse Selection */}
-            <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }}>
-                    <Autocomplete
-                        fullWidth
-                        options={memoWarehouseOptions}
-                        getOptionLabel={(option) => option?.name || ""}
-                        value={selectedWarehouse}
-                        onChange={handleWarehouseChange}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="اختر المخزن (اختياري)"
-                                placeholder="اختر مخزن للتصفية أو اتركه فارغ لأرشفة الكل..."
-                                size="small"
-                            />
-                        )}
-                        renderOption={(props, option) => (
-                            <Box
-                                key={option.id}
-                                component="li"
-                                {...props}
-                                sx={{ display: "flex", alignItems: "center", gap: 1, p: 1 }}
-                            >
-                                <Warehouse sx={{ color: "primary.main", fontSize: 18 }} />
-                                <Box sx={{ flex: 1 }}>
-                                    <Typography variant="body2" sx={{ fontWeight: "medium" }}>
-                                        {option.name}
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        )}
-                        noOptionsText="لا توجد مخازن"
-                    />
-                </Grid>
-            </Grid>
-
-            {/* Summary */}
-            <Divider sx={{ my: 3 }} />
-
-            <Paper
-                variant="outlined"
-                sx={{
-                    p: 3,
-                    bgcolor: 'grey.50',
-                    border: '2px solid',
-                    borderColor: 'primary.200'
-                }}
-            >
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                    📊 ملخص الأرشفة
-                </Typography>
-
-                <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'primary.50' }}>
-                            <CalendarMonthIcon color="primary" sx={{ fontSize: 32, mb: 1 }} />
-                            <Typography variant="body2" color="text.secondary">الفترة</Typography>
-                            <Typography variant="subtitle1" fontWeight={600}>{getPeriodText()}</Typography>
-                        </Paper>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'success.50' }}>
-                            <CheckCircleIcon color="success" sx={{ fontSize: 32, mb: 1 }} />
-                            <Typography variant="body2" color="text.secondary">سيتم أرشفته</Typography>
-                            <Typography variant="h5" fontWeight={600} color="success.main">
-                                {completedDocs.length}
-                            </Typography>
-                            <Typography variant="caption">مستند مكتمل</Typography>
-                        </Paper>
-                    </Grid>
-                </Grid>
-            </Paper>
-        </Box>
-    );
 
     const FormContent = () => (
         <Box dir="rtl">
@@ -462,9 +182,9 @@ export default function MonthlyLockForm({
             </Stepper>
 
             {/* Step Content */}
-            {activeStep === 0 && <Step1Content />}
-            {activeStep === 1 && <Step2Content />}
-            {activeStep === 2 && <Step3Content />}
+            {activeStep === 0 && <Step1Content selectedYear={selectedYear} setSelectedYear={setSelectedYear} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} getPeriodText={getPeriodText} />}
+            {activeStep === 1 && <Step2Content getPeriodText={getPeriodText} fetchingDocs={fetchingDocs} incompleteDocs={incompleteDocs} completedDocs={completedDocs} />}
+            {activeStep === 2 && <Step3Content selectedWarehouse={selectedWarehouse} handleWarehouseChange={handleWarehouseChange} memoWarehouseOptions={memoWarehouseOptions} getPeriodText={getPeriodText} completedDocs={completedDocs} />}
         </Box>
     );
 
@@ -498,7 +218,7 @@ export default function MonthlyLockForm({
                     <ButtonTheme
                         variant="contained"
                         onClick={handleNext}
-                        disabled={fetchingDocs || (activeStep === 1 && incompleteDocs.length > 0) || (activeStep === 1 && completedDocs.length === 0)}
+                        // disabled={fetchingDocs || (activeStep === 1 && incompleteDocs.length > 0) || (activeStep === 1 && completedDocs.length === 0)}
                         startIcon={fetchingDocs ? <CircularProgress size={16} color="inherit" /> : <ArrowForwardIcon />}
                         size="small"
                     >
