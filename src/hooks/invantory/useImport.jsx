@@ -34,7 +34,12 @@ export const useImportData = ({ searchParams }) => {
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [invoiceData, setInvoiceData] = useState([]);
   const [refreshButton, setRefreshButton] = useState(false);
-
+const [pagination ,setPagination] = useState({
+  page:1,
+  limit:10,
+  total:0,
+  totalPages:0,
+})
 
   /** ============ INITIAL FORM DATA ============ */
   const initialFormData = useMemo(
@@ -72,19 +77,22 @@ export const useImportData = ({ searchParams }) => {
           params: {
             document_id: documentId,
             applicationPermission: applicationPermission?.warehouseSystem?._id,
+            page: pagination.page,
+            limit: pagination.limit,
           },
           headers: { authorization: token },
         }
       );
 
       setInvoiceData(res?.data?.data || []);
+      setPagination(res?.data?.pagination || {});
     } catch (error) {
       console.error("Error fetching import inventory:", error);
       setInvoiceData([]);
     } finally {
       setLoading(false);
     }
-  }, [documentId, applicationPermission?.warehouseSystem?._id, token]);
+  }, [documentId, applicationPermission?.warehouseSystem?._id, token ,pagination.limit,pagination.page]);
 
   /** ============ FORM HANDLERS ============ */
 
@@ -159,5 +167,7 @@ export const useImportData = ({ searchParams }) => {
     loading,
     dataUserFactory,
     warehouseDataBYId,
+    pagination,
+    setPagination
   };
 };

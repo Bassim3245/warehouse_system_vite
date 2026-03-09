@@ -42,6 +42,8 @@ const PurchasesData = () => {
     setSelectedMaterial,
     dataUserFactory,
     warehouseDataBYId,
+    pagination,
+    setPagination
   } = useImportData({ searchParams });
 
   const [materialsList, setMaterialsList] = useState([]);
@@ -261,22 +263,19 @@ const PurchasesData = () => {
           has_factory={has_factory}
           has_lab={has_lab}
           has_warehouse={has_warehouse}
+          
         />
       </Grid>
 
       <ImportManagement
-        documentId={searchParams.get("id")}
         invoiceData={invoiceData}
         documentNumber={documentNumber}
         invoiceDate={invoiceDate}
-        totalQuantity={totalQuantity}
-        totalPrice={totalPrice}
-        totalAmount={totalAmount}
-        printRef={printRef}
-        refreshButton={refreshButton}
         setRefreshButton={setRefreshButton}
         loading={loadingData}
         document={document}
+        pagination={pagination}
+        setPagination={setPagination}
       />
     </Box>
   );

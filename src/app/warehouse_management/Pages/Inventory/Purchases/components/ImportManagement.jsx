@@ -6,7 +6,7 @@ import RefreshButtonData from "../../../../../../components/reusableComponent/Re
 import usePermissionUser from "../../../../../../hooks/usePermissionUser";
 import Loader from "../../../../../../components/reusableComponent/Loader";
 
-const ImportManagement = ({ rtl, invoiceData, setRefreshButton, loading, document }) => {
+const ImportManagement = ({ rtl, invoiceData, setRefreshButton, loading, document, pagination, setPagination }) => {
   const { t } = useTranslation();
   const { roles, applicationPermission } = usePermissionUser();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -48,7 +48,13 @@ const ImportManagement = ({ rtl, invoiceData, setRefreshButton, loading, documen
         rows={rows}
         columns={columns}
         btn={<RefreshButtonData onClick={handleRefresh} />}
-        isPagination={false}
+        page={pagination.page}
+        limit={pagination.limit}
+        totalItems={pagination.total}
+        totalPages={pagination.totalPages}
+        setPage={(page) => setPagination((prev) => ({ ...prev, page }))}
+        setLimit={(limit) => setPagination((prev) => ({ ...prev, limit }))}
+      // isPagination={false}
       />
     </>
   );
