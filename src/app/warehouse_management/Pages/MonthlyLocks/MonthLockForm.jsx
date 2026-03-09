@@ -218,7 +218,7 @@ export default function MonthlyLockForm({
                     <ButtonTheme
                         variant="contained"
                         onClick={handleNext}
-                        // disabled={fetchingDocs || (activeStep === 1 && incompleteDocs.length > 0) || (activeStep === 1 && completedDocs.length === 0)}
+                        disabled={fetchingDocs || (activeStep === 1 && incompleteDocs.length > 0) || (activeStep === 1 && completedDocs.length === 0)}
                         startIcon={fetchingDocs ? <CircularProgress size={16} color="inherit" /> : <ArrowForwardIcon />}
                         size="small"
                     >
