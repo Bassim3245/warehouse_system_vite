@@ -19,7 +19,6 @@
 const apiUrl = import.meta.env.VITE_BACKEND_URL_PRODUCTION;
 const apiUrlFile = import.meta.env.VITE_BACKEND_URL_FILE_PRODUCTION;
 const apiUrlFileLog = import.meta.env.VITE_BACKEND_URL_LOG_PRODUCTION;
-
 const debug = import.meta.env.VITE_APP_DEBUG === "true";
 const Cluster = import.meta.env.VITE_APP_CLUSTER;
 const SecretKey = import.meta.env.VITE_APP_SECURITY_KEY;

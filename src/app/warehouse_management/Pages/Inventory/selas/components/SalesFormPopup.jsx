@@ -227,7 +227,7 @@ export const SalesFormPopup = ({
     },
     [isInternalTransfer, setFormData],
   );
-useEffect(() => {
+  useEffect(() => {
     setIsMorInfo((prv) => !prv);
   }, []);
 
@@ -324,6 +324,16 @@ useEffect(() => {
               />
             </Grid>
           )}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              label="رقم أمر العمل (اختياري)"
+              name="work_order_number"
+              value={formData.work_order_number ?? ""}
+              onChange={handleInputChange}
+              size="small"
+              fullWidth 
+            />
+          </Grid>
 
           {/* Automatic Distribution Chips */}
           {distributedMovements.length > 0 && (
@@ -371,94 +381,7 @@ useEffect(() => {
             </Grid>
           )}
 
-          {/* Toggle More Info */}
-          <Grid size={{ xs: 12 }}>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setIsMorInfo((prv) => !prv)}
-              sx={{ borderStyle: "dashed" }}
-            >
-              {IsMorInfo ? "▲ إخفاء التفاصيل الإضافية" : "▼ إظهار التفاصيل الإضافية"}
-            </Button>
-          </Grid>
-
-          {/* ── More Info Section ── */}
-          {IsMorInfo && (
-            <>
-              {/* work_order_number */}
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label="رقم أمر العمل"
-                  name="work_order_number"
-                  value={formData.work_order_number ?? ""}
-                  onChange={handleInputChange}
-                  size="small"
-                  fullWidth
-                />
-              </Grid>
-
-              {/* account_number */}
-              {/* <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label="رقم الحساب"
-                  name="account_number"
-                  value={formData.account_number ?? ""}
-                  onChange={handleInputChange}
-                  size="small"
-                  fullWidth
-                />
-              </Grid> */}
-
-              {/* type_movement */}
-              {/* <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label="نوع الحركة"
-                  name="type_movement"
-                  value={formData.type_movement ?? ""}
-                  onChange={handleInputChange}
-                  size="small"
-                  fullWidth
-                />
-              </Grid> */}
-
-              {/* type_movement_code */}
-              {/* <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label="كود نوع الحركة"
-                  name="type_movement_code"
-                  value={formData.type_movement_code ?? ""}
-                  onChange={handleInputChange}
-                  size="small"
-                  fullWidth
-                />
-              </Grid> */}
-
-              {/* reference_number */}
-              {/* <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label="الرقم المرجعي"
-                  name="reference_number"
-                  value={formData.reference_number ?? ""}
-                  onChange={handleInputChange}
-                  size="small"
-                  fullWidth
-                />
-              </Grid> */}
-
-              {/* supplier / beneficiary */}
-              {/* <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label="المورد / المستفيد"
-                  name="beneficiary"
-                  value={formData.beneficiary ?? ""}
-                  onChange={handleInputChange}
-                  size="small"
-                  fullWidth
-                />
-              </Grid> */}
-            </>
-          )}
+         
 
           {/* Notes — always visible */}
           <Grid size={{ xs: 12 }}>

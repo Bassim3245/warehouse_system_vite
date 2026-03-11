@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -22,11 +21,12 @@ import { toast } from "react-toastify";
 import { ButtonTheme } from "../../../../../../style/ButtomStyle";
 import { axiosInstance } from "../../../../../../redux/api/axiosConfig";
 import usePermissionUser from "../../../../../../hooks/usePermissionUser";
+import { FormControlLabel, Switch } from "@mui/material";
 
 function ModelEditImportData({ inventoryData, setRefreshButton }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { stateMaterial } = usePermissionUser()
+  const { stateMaterial } = usePermissionUser();
 
   /* ------------------------------
         FORM DATA FOR EDITING
@@ -40,6 +40,9 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
     production_date: dayjs(),
     state_id: "",
     price: "",
+    has_inspection: false,
+    inspection_number: "",
+    inspection_date: dayjs(),
   });
 
   /* ------------------------------
@@ -52,9 +55,20 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
       quantity: inventoryData.quantity || "",
       price: inventoryData.price || "",
       state_id: inventoryData.state_id || "",
-      expiry_date: inventoryData.expiry_date ? dayjs(inventoryData.expiry_date) : null,
-      purchase_date: inventoryData.purchase_date ? dayjs(inventoryData.purchase_date) : null,
-      production_date: inventoryData.production_date ? dayjs(inventoryData.production_date) : null,
+      expiry_date: inventoryData.expiry_date
+        ? dayjs(inventoryData.expiry_date)
+        : null,
+      purchase_date: inventoryData.purchase_date
+        ? dayjs(inventoryData.purchase_date)
+        : null,
+      production_date: inventoryData.production_date
+        ? dayjs(inventoryData.production_date)
+        : null,
+      has_inspection: inventoryData.has_inspection || false,
+      inspection_number: inventoryData.inspection_number || "",
+      inspection_date: inventoryData.inspection_date
+        ? dayjs(inventoryData.inspection_date)
+        : null,
     });
   }, [inventoryData]);
 
@@ -87,6 +101,7 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
           inventory_id: inventoryData?.id,
           material_id: inventoryData?.material_id,
           document_id: inventoryData?.document_id,
+          inspection_id: inventoryData?.inspection_id,
         },
       );
 
@@ -110,6 +125,21 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
   /* ------------------------------
          FORM CONTENT
      ------------------------------ */
+  const handleInspectionToggle = (e) => {
+    const syntheticEvent = {
+      target: {
+        name: "has_inspection",
+        value: e.target.checked,
+      },
+    };
+    handleInputChange(syntheticEvent);
+
+    // Clear inspection fields when toggled off
+    if (!e.target.checked) {
+      handleInputChange({ target: { name: "inspection_number", value: "" } });
+      handleDateChange("inspection_date", null);
+    }
+  };
   const renderFormContent = useMemo(
     () => (
       <Box>
@@ -161,7 +191,9 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
               onChange={handleInputChange}
               fullWidth
               InputProps={{
-                endAdornment: <InputAdornment position="end">دينار</InputAdornment>,
+                endAdornment: (
+                  <InputAdornment position="end">دينار</InputAdornment>
+                ),
               }}
             />
           </Grid>
@@ -217,10 +249,76 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
               haswidth
             />
           </Grid>
+          {/* Has Inspection Toggle */}
+          <Grid size={{ xs: 12 }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={!!formData?.has_inspection}
+                  onChange={handleInspectionToggle}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography
+                  fontWeight="bold"
+                  color={
+                    formData?.has_inspection ? "primary" : "text.secondary"
+                  }
+                >
+                  هل يوجد فحص؟
+                </Typography>
+              }
+              labelPlacement="start"
+              sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
+            />
+          </Grid>
+
+          {/* Inspection fields — shown only when has_inspection is true */}
+          {formData?.has_inspection && (
+            <>
+              {/* Inspection Number */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="رقم الفحص"
+                  type="text"
+                  name="inspection_number"
+                  value={formData?.inspection_number || ""}
+                  onChange={handleInputChange}
+                  required
+                />
+              </Grid>
+
+              {/* Inspection Date */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box sx={{ height: "56px", direction: "ltr" }}>
+                  <CustomDatePicker
+                    label=" (اختياري) تاريخ الفحص"
+                    format="YYYY/MM/DD"
+                    placeholder="تاريخ الفحص"
+                    required={false}
+                    value={
+                      formData?.inspection_date
+                        ? formData?.inspection_date
+                        : null
+                    }
+                    CustomFontSize="14px"
+                    is_dateTime={false}
+                    setValue={(value) =>
+                      handleDateChange("inspection_date", value)
+                    }
+                    is_Time={false}
+                    borderColor="inherit"
+                  />
+                </Box>
+              </Grid>
+            </>
+          )}
         </Grid>
       </Box>
     ),
-    [formData, handleInputChange, handleDateChange]
+    [formData, handleInputChange, handleDateChange],
   );
 
   /* ------------------------------
@@ -242,7 +340,7 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
         </Button>
       </>
     ),
-    [handleSubmit, loading, handleClose]
+    [handleSubmit, loading, handleClose],
   );
 
   /* ------------------------------
@@ -255,7 +353,7 @@ function ModelEditImportData({ inventoryData, setRefreshButton }) {
         <span className="ms-2">تعديل</span>
       </MenuItem>
     ),
-    [handleOpen]
+    [handleOpen],
   );
 
   /* ------------------------------
