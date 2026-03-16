@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
 import Inventory2 from "@mui/icons-material/Inventory2";
 import LockOutlined from "@mui/icons-material/LockOutlined";
@@ -22,8 +23,8 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-import { InputAdornment, MenuItem } from "@mui/material";
-import { Search } from "@mui/icons-material";
+import { InputAdornment } from "@mui/material";
+import { Search, Title } from "@mui/icons-material";
 
 import DropDownGrid from "../../../../../components/reusableComponent/CustomMennu";
 import {
@@ -38,13 +39,11 @@ import {
 import { formatCurrency, formatDateAr } from "../../../../../utils/formatData";
 import DocumentModel from "./DoucumentModel";
 import { usePermissionsStructure } from "../../../../../hooks/useStructureCompany";
-import MonthlyInventory from "../../Archive/monthly/ComplmentMontlyInventory";
 import useInventoryDocuments from "../../../../../hooks/invantory/useInventoryDocuments";
 import UseFullScreen from "../../../../../hooks/useFullScreen";
 import Header from "../../../../../components/reusableComponent/HeaderComponent";
 import useGetfactoryInformationByUserId from "../../../../../hooks/ManageWarehouseSetting/useGetfactoryInformationByUserId";
 import useGetAllWarehouse from "../../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
-import { typeDocument } from "../../../../../constants/arrayFuction";
 import { useTranslation } from "react-i18next";
 import CostumePagination from "../../../../../components/reusableComponent/CostumPagination";
 
@@ -87,6 +86,7 @@ const TableSkeleton = ({ cols = 8 }) => (
 function Document({
   token,
   documentType,
+  documentTypeLabel: initialDocumentTypeLabel,
   setRefreshButton,
   refreshButton,
   dataUserById,
@@ -97,6 +97,7 @@ function Document({
   isExport = false,
 }) {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { has_lab, has_factory, has_warehouse, has_production_warehouse } =
@@ -107,7 +108,6 @@ function Document({
 
   const {
     documentTypeValue,
-    setDocumentTypeValue,
     documentTypeLabel,
     loading,
     documentMaterials,
@@ -121,10 +121,12 @@ function Document({
     setSearchTerm,
     pagination,
     setPagination,
+
   } = useInventoryDocuments({
     token,
     navigateUrl,
     documentType,
+    documentTypeLabel: initialDocumentTypeLabel,
     isExport,
     dataUserById,
     dataUserLab,
@@ -136,6 +138,8 @@ function Document({
     refreshButton,
     setRefreshButton,
   });
+
+ 
 
   // ─── Memoized Data ────────────────────────────────────────────────────────
   const memoWarehouseOptions = useMemo(() => wareHouseData || [], [wareHouseData]);
@@ -183,7 +187,9 @@ function Document({
           gloablTextColor: "#666666",
         }}
       >
-        {renderMenuItem("informationProduct", () => openMovement(item.id), OpenInNew, documentTypeLabel)}
+        {renderMenuItem("informationProduct", () => {
+          navigate(`${navigateUrl}?id=${item.id}&documentType=${documentType}&warehouseId=${warehosueId}`);
+        }, OpenInNew, title)}
         <Divider />
         {renderMenuItem("delete", () => handleDocDelete(item.id), DeleteOutlined, "حذف")}
         <Divider />
@@ -208,7 +214,7 @@ function Document({
           item.is_complete ? "unlock" : "complete",
           () => handleDocComplete(item.id, item.is_complete),
           item.is_complete ? LockOpenOutlined : LockOutlined,
-          item.is_complete ? "إلغاء القفل" : "قفل المستند"
+          item.is_complete ? "فتح القفل" : "قفل المستند"
         )}
       </DropDownGrid>
     ),
@@ -261,31 +267,6 @@ function Document({
       >
         <CardContent sx={{ pb: "12px !important" }}>
           <Grid container spacing={2} alignItems="center" dir="rtl">
-
-            {/* Document type selector (export only) */}
-            {isExport && (
-              <Grid size={{ xs: 12, sm: 4 }}>
-                <TextField
-                  name="documentType"
-                  label="نوع المستند"
-                  value={documentTypeValue}
-                  onChange={(e) => setDocumentTypeValue(e.target.value)}
-                  fullWidth
-                  select
-                  size="small"
-                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
-                >
-                  {typeDocument
-                    .filter((item) => ["internal_consumption", "out"].includes(item.value))
-                    .map((item) => (
-                      <MenuItem key={item.value} value={item.value}>
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                </TextField>
-              </Grid>
-            )}
-
             <Grid size={{ xs: 12, sm: isExport ? 4 : 6 }}>
               <Autocomplete
                 fullWidth

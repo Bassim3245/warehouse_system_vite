@@ -24,6 +24,7 @@ import HomeObesoloteMaterial from "./app/obesoloteMaterial/Page/home/Home";
 import HomeWharhouse from "./app/warehouse_management/Pages/Home/Home";
 import InventoryExportArchiveMonthly from "./app/warehouse_management/Pages/Archive/commen/inventoryExportArchiveMonthly";
 import OpeningBalanceImport from "./app/warehouse_management/Pages/excelForm/uploadFileExcelPage";
+import InventoryReturnManagement from "./app/warehouse_management/Pages/Inventory/return/InventoryReturnManagement";
 
 // Lazy loaded components - Dashboard Pages
 const Dashboard = React.lazy(
@@ -133,18 +134,15 @@ const Factories = React.lazy(
 );
 
 // Lazy loaded components - Inventory & Documents
-const DocumentPurchase = React.lazy(
+const ManageDocuments = React.lazy(
   () =>
-    import("./app/warehouse_management/Pages/Inventory/Purchases/DoucumentPurchases"),
+    import("./app/warehouse_management/Pages/Inventory/Document/ManageDocuments"),
 );
 const PurchasesData = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/Inventory/Purchases/PurchasesData"),
 );
-const DocumentSales = React.lazy(
-  () =>
-    import("./app/warehouse_management/Pages/Inventory/selas/DoucumentSelas"),
-);
+// DocumentSales removed as it is now part of ManageDocuments
 const SalesMaterial = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/Inventory/selas/salesMaterial"),
@@ -468,21 +466,23 @@ export default function App() {
                     />
                     {/*  document purchase */}
                     <Route
-                      path="document-purchase"
-                      element={<DocumentPurchase />}
+                      path="manage-documents"
+                      element={<ManageDocuments />}
                     />
                     <Route
-                      path="document-purchase/purchases-material"
+                      path="manage-documents/purchases-material"
                       element={<PurchasesData />}
                     />
 
                     {/* document sales */}
 
-                    <Route path="document-sales" element={<DocumentSales />} />
-                    <Route path="manage-document" element={<DocumentSales />} />
                     <Route
-                      path="document-sales/sales-material"
+                      path="manage-documents/sales-material"
                       element={<SalesMaterial />}
+                    />
+                       <Route
+                      path="manage-documents/return-material"
+                      element={<InventoryReturnManagement />}
                     />
 
                     <Route

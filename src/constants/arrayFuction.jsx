@@ -20,17 +20,18 @@ export const typeDocument = [
   },
   {
     value: "internal_consumption",
-    label: "مستند مصرف داخلي",
+    label: "مستند الصرف الداخلي",
   },
   {
     value: "out",
     label: "مستند صادر",
   },
 
-  // {
-  //   value: "internal_transfer",
-  //   label: "مستند نقل داخلي",
-  // },
+
+   {
+    value: "return",
+    label: "مستند ارجاع",
+  },
 ];
 
 // select type report

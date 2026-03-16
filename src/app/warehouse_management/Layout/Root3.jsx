@@ -74,21 +74,12 @@ export default function RootWarehouse() {
   const Route2 = useMemo(() => {
     const routes = [];
 
-    if (roles?.show_page_purchase?._id) {
+    if (roles?.show_page_purchase?._id || roles?.show_page_sales?._id) {
       routes.push({
-        text: t("الوارد"),
+        text: t("إدارة المستندات"),
         icon: <GridViewIcon sx={{ transition: "transform 0.2s" }} />,
-        path: "document-purchase",
-        checkPermission: roles?.show_page_purchase?._id,
-      });
-    }
-
-    if (roles?.show_page_sales?._id) {
-      routes.push({
-        text: t("أدارة الصرف"),
-        icon: <GridViewIcon sx={{ transition: "transform 0.2s" }} />,
-        path: "document-sales",
-        checkPermission: roles?.show_page_sales?._id,
+        path: "manage-documents",
+        checkPermission: roles?.show_page_purchase?._id || roles?.show_page_sales?._id,
       });
     }
 

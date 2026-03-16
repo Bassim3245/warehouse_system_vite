@@ -19,6 +19,7 @@ export default function useInventoryDocuments({
   token,
   navigateUrl,
   documentType,
+  documentTypeLabel: propDocumentTypeLabel,
   isExport = false,
   dataUserById,
   wareHouseData = [],
@@ -42,13 +43,14 @@ export default function useInventoryDocuments({
   /** --------------------------------
    *  STATE
   ----------------------------------*/
-  const [documentTypeValue, setDocumentTypeValue] = useState(() => {
-    const saved = localStorage.getItem("documentTypeValue");
-    if (saved && isExport && ["internal_consumption", "out"].includes(saved)) {
-      return saved;
+  const [documentTypeValue, setDocumentTypeValue] = useState(documentType);
+
+  // Sync state with prop if it changes
+  useEffect(() => {
+    if (documentType) {
+      setDocumentTypeValue(documentType);
     }
-    return isExport ? "internal_consumption" : documentType || "internal_consumption";
-  });
+  }, [documentType]);
 
   const [documentMaterials, setDocumentMaterials] = useState([]);
   const [allDocuments, setAllDocuments] = useState([]);
@@ -74,21 +76,16 @@ export default function useInventoryDocuments({
     }
   }, [warehosueId]);
 
-  useEffect(() => {
-    if (documentTypeValue) {
-      localStorage.setItem("documentTypeValue", documentTypeValue);
-    }
-  }, [documentTypeValue]);
 
   /** --------------------------------
    *  LABEL BASED ON TYPE
   ----------------------------------*/
-  const activeDocumentType = isExport ? documentTypeValue : documentType;
+  const activeDocumentType = documentTypeValue;
 
   const documentTypeLabel = useMemo(
     () =>
-      documentTypeConfig[activeDocumentType] || documentTypeConfig.default,
-    [activeDocumentType]
+      propDocumentTypeLabel || documentTypeConfig[activeDocumentType] || documentTypeConfig.default,
+    [activeDocumentType, propDocumentTypeLabel]
   );
 
   /** --------------------------------
@@ -135,6 +132,7 @@ export default function useInventoryDocuments({
     pagination.page,
     pagination.limit,
     warehosueId,
+    documentType
   ]);
 
   /** --------------------------------
@@ -175,7 +173,7 @@ export default function useInventoryDocuments({
 
   useEffect(() => {
     fetchDocuments();
-  }, [fetchDocuments, refreshButton]);
+  }, [fetchDocuments, refreshButton,documentType]);
 
   /** --------------------------------
    *  WAREHOUSE CHANGE HANDLER

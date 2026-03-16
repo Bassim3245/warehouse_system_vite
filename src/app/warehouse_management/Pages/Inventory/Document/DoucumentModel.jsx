@@ -25,7 +25,6 @@ import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
 import { WarehouseIcon } from "lucide-react";
-import { typeDocument } from "../../../../../constants/arrayFuction";
 import useGetDataId from "../../../../../hooks/useGetDataId";
 import useDocumentFields from "../../../../../hooks/invantory/useDocumentFields";
 
@@ -61,7 +60,8 @@ function DocumentModel({
       description: "",
       total_amount: 0,
       status: "draft",
-      documentType: localStorage.getItem(`selectedDocumentType_${documentType || "general"}`) || documentTypeValue || documentType || "",
+      // documentType is always driven by the active tab — never from localStorage
+      documentType: documentTypeValue || documentType || "",
       warehouse_id: localStorage.getItem(`selectedWarehouseId_${documentType || "general"}`) || "",
     }),
     [documentTypeValue, documentType],
@@ -106,14 +106,11 @@ function DocumentModel({
    ------------------------------ */
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    if (name === "documentType") {
-      localStorage.setItem(storageDocKey, value);
-    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  }, [storageDocKey]);
+  }, []);
 
   const handleDateChange = useCallback((field, value) => {
     setFormData((prev) => ({
@@ -167,17 +164,15 @@ function DocumentModel({
     }
   }, [editMode, open, documentData]);
 
-  /* ------------------------------
-      Auto select document type
-   ------------------------------ */
+  // Whenever the tab changes (documentType prop changes), sync the form
   useEffect(() => {
-    if (!editMode && !isExport && documentType) {
+    if (!editMode && documentType) {
       setFormData((prev) => ({
         ...prev,
         documentType,
       }));
     }
-  }, [editMode, isExport, documentType]);
+  }, [editMode, documentType]);
 
   /* ------------------------------
       SUBMIT FORM
@@ -326,31 +321,7 @@ function DocumentModel({
           </Grid>
         </Box>
 
-        {/* ===== نوع المستند (للصادر فقط) ===== */}
-        {!(documentType === "in" && !isExport) && (
-          <Box sx={{ px: 2, mb: 2 }}>
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  name="documentType"
-                  label="نوع المستند"
-                  fullWidth
-                  select
-                  value={formData.documentType}
-                  onChange={handleInputChange}
-                >
-                  {typeDocument
-                    .filter((item) => item.value !== "in")
-                    .map((item) => (
-                      <MenuItem key={item.value} value={item.value}>
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                </TextField>
-              </Grid>
-            </Grid>
-          </Box>
-        )}
+        {/* documentType is now driven by the active tab — no selector shown */}
 
         {/* ===== الحقول الإضافية الديناميكية ===== */}
         <Box
@@ -460,11 +431,10 @@ function DocumentModel({
     ),
     [
       formData,
+      handleInputChange,
       handleDateChange,
       handleWarehouseChange,
       wareHouseData,
-      documentType,
-      isExport,
       filedLabel,
       dynFields,
       dynValues,
