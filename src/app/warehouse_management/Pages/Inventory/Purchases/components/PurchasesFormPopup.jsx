@@ -97,7 +97,11 @@ export const PurchasesFormPopup = ({
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               fullWidth
-              label="الكمية المستوردة"
+              label={
+                searchParams.get("documentType") === "in"
+                  ? "الكمية المستوردة"
+                  : "الكمية المرجعة"
+              }
               type="text"
               name="quantity"
               value={formData?.quantity || ""}
@@ -141,69 +145,98 @@ export const PurchasesFormPopup = ({
               >
                 {stateMaterial?.map((item) => (
                   <MenuItem key={item?.id} value={item?.id}>
-                    {item.state_name}
+                    {item?.state_name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
+          {searchParams.get("documentType") === "in" ? (
+            <>
+              {/* Production Date */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box sx={{ height: "56px", direction: "ltr" }}>
+                  <CustomDatePicker
+                    label="تاريخ الانتاج"
+                    format="YYYY/MM/DD"
+                    placeholder="تاريخ الانتاج"
+                    required={false}
+                    value={
+                      formData?.production_date
+                        ? formData?.production_date
+                        : null
+                    }
+                    CustomFontSize="14px"
+                    is_dateTime={false}
+                    setValue={(value) =>
+                      handleDateChange("production_date", value)
+                    }
+                    is_Time={false}
+                    borderColor="inherit"
+                  />
+                </Box>
+              </Grid>
 
-        
-          {/* Production Date */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ height: "56px", direction: "ltr" }}>
-              <CustomDatePicker
-                label="تاريخ الانتاج"
-                format="YYYY/MM/DD"
-                placeholder="تاريخ الانتاج"
-                required={false}
-                value={
-                  formData?.production_date ? formData?.production_date : null
-                }
-                CustomFontSize="14px"
-                is_dateTime={false}
-                setValue={(value) => handleDateChange("production_date", value)}
-                is_Time={false}
-                borderColor="inherit"
-              />
-            </Box>
-          </Grid>
+              {/* Expiry Date */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box sx={{ height: "56px", direction: "ltr" }}>
+                  <CustomDatePicker
+                    label="تاريخ نفاذ الصلاحية"
+                    format="YYYY/MM/DD"
+                    placeholder="تاريخ نفاذ الصلاحية"
+                    required={false}
+                    value={formData?.expiry_date ? formData?.expiry_date : null}
+                    CustomFontSize="14px"
+                    is_dateTime={false}
+                    setValue={(value) => handleDateChange("expiry_date", value)}
+                    is_Time={false}
+                    borderColor="inherit"
+                  />
+                </Box>
+              </Grid>
 
-          {/* Expiry Date */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ height: "56px", direction: "ltr" }}>
-              <CustomDatePicker
-                label="تاريخ نفاذ الصلاحية"
-                format="YYYY/MM/DD"
-                placeholder="تاريخ نفاذ الصلاحية"
-                required={false}
-                value={formData?.expiry_date ? formData?.expiry_date : null}
-                CustomFontSize="14px"
-                is_dateTime={false}
-                setValue={(value) => handleDateChange("expiry_date", value)}
-                is_Time={false}
-                borderColor="inherit"
-              />
-            </Box>
-          </Grid>
-
-          {/* Purchase Date */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ height: "56px", direction: "ltr" }}>
-              <CustomDatePicker
-                label="تاريخ شراء المادة"
-                format="YYYY/MM/DD"
-                placeholder="تاريخ شراء المادة"
-                required={false}
-                value={formData?.purchase_date ? formData?.purchase_date : null}
-                CustomFontSize="14px"
-                is_dateTime={false}
-                setValue={(value) => handleDateChange("purchase_date", value)}
-                is_Time={false}
-                borderColor="inherit"
-              />
-            </Box>
-          </Grid>
+              {/* Purchase Date */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box sx={{ height: "56px", direction: "ltr" }}>
+                  <CustomDatePicker
+                    label="تاريخ شراء المادة"
+                    format="YYYY/MM/DD"
+                    placeholder="تاريخ شراء المادة"
+                    required={false}
+                    value={
+                      formData?.purchase_date ? formData?.purchase_date : null
+                    }
+                    CustomFontSize="14px"
+                    is_dateTime={false}
+                    setValue={(value) =>
+                      handleDateChange("purchase_date", value)
+                    }
+                    is_Time={false}
+                    borderColor="inherit"
+                  />
+                </Box>
+              </Grid>
+            </>
+          ) : (
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Box sx={{ height: "56px", direction: "ltr" }}>
+                <CustomDatePicker
+                  label="تاريخ الارجاع"
+                  format="YYYY/MM/DD"
+                  placeholder="تاريخ الارجاع"
+                  required={false}
+                  value={
+                    formData?.return_date ? formData?.return_date : null
+                  }
+                  CustomFontSize="14px"
+                  is_dateTime={false}
+                  setValue={(value) => handleDateChange("return_date", value)}
+                  is_Time={false}
+                  borderColor="inherit"
+                />
+              </Box>
+            </Grid>
+          )}
 
           {/* Notes */}
           <Grid size={{ xs: 12, md: 6 }}>
@@ -219,25 +252,29 @@ export const PurchasesFormPopup = ({
               sx={inputStyles}
             />
           </Grid>
-            {/* Has Inspection Toggle */}
+          {/* Has Inspection Toggle */}
           <Grid size={{ xs: 12 }}>
-           
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={!!formData?.has_inspection}
-                    onChange={handleInspectionToggle}
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography fontWeight="bold" color={formData?.has_inspection ? "primary" : "text.secondary"}>
-                    هل يوجد فحص؟
-                  </Typography>
-                }
-                labelPlacement="start"
-                sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
-              />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={!!formData?.has_inspection}
+                  onChange={handleInspectionToggle}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography
+                  fontWeight="bold"
+                  color={
+                    formData?.has_inspection ? "primary" : "text.secondary"
+                  }
+                >
+                  هل يوجد فحص؟
+                </Typography>
+              }
+              labelPlacement="start"
+              sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
+            />
           </Grid>
 
           {/* Inspection fields — shown only when has_inspection is true */}
@@ -265,10 +302,16 @@ export const PurchasesFormPopup = ({
                     format="YYYY/MM/DD"
                     placeholder="تاريخ الفحص"
                     required={false}
-                    value={formData?.inspection_date ? formData?.inspection_date : null}
+                    value={
+                      formData?.inspection_date
+                        ? formData?.inspection_date
+                        : null
+                    }
                     CustomFontSize="14px"
                     is_dateTime={false}
-                    setValue={(value) => handleDateChange("inspection_date", value)}
+                    setValue={(value) =>
+                      handleDateChange("inspection_date", value)
+                    }
                     is_Time={false}
                     borderColor="inherit"
                   />

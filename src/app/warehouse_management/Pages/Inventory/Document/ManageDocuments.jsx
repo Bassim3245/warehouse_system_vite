@@ -43,8 +43,8 @@ const docTypeConfig = {
   return: {
     icon: <Undo2 size={18} />,
     isExport: false,
-    navigateUrl: "return-material",
-    filedLabel: "المجهز",
+    navigateUrl: "purchases-material",
+    filedLabel: "الجهة الراجعة",
     title: "مستندات الارجاع",
   },
 };

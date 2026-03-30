@@ -13,6 +13,8 @@ const useInvoiceTemplate = () => {
 
     const fetchRenderedDocument = useCallback(
         async (document_id, document_type) => {
+            console.log("document_id", document_id);
+            console.log("document_type", document_type);
             if (!document_id || !document_type) return;
             setLoading(true);
             try {
@@ -31,7 +33,6 @@ const useInvoiceTemplate = () => {
         []
     );
 
-    console.log("renderedHtml", renderedHtml);
     const downloadPdf = useCallback(async (document_id, document_type) => {
         if (!document_id || !document_type) return;
         try {

@@ -23,7 +23,16 @@ const initialState = {
       _id: 4,
       name: "entity_platform_management",
     },
+  HR:{
+    id:5,
+    appke:"HR",
   },
+  
+  },
+
+
+
+
   roles: {
     Add_Data_Users: {
       value: false,

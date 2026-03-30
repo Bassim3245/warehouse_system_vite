@@ -106,7 +106,6 @@ export default function InvoiceTemplateDesigner({ entity_id = null }) {
       setTemplateName(`قالب ${DOCUMENT_TYPES[docTypeTab].label} — مخصص`);
       setEditingId(null);
     } catch(err) {
-        console.log(err);
         toast.error(err?.response?.data?.message || "فشل في تحميل القالب الافتراضي");
     }
   }, [currentDocType, docTypeTab]);

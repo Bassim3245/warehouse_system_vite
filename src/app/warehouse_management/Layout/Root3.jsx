@@ -149,7 +149,7 @@ export default function RootWarehouse() {
         text: t("إغلاق الأشهر"),
         icon: <LockClockIcon sx={{ transition: "transform 0.2s" }} />,
         path: "monthly-locks",
-        checkPermission: roles?.show_page_monthly_lock?._id,
+        checkPermission: roles?.warehouse_page?._id,
       },
       {
         text: t("layout.Notification"),

@@ -34,6 +34,7 @@ import DeleteConfirmDialog from "./deleteConfirmModel";
 import FieldFormDialog from "./documetFildeModel";
 import { DOCUMENT_TYPES, FIELD_TYPES } from "./utils";
 import { ButtonTheme } from "../../../style/ButtomStyle";
+import { typeDocument } from "../../../constants/arrayFuction";
 
 
 export default function DocumentFieldSettings({ entity_id = null }) {
@@ -49,7 +50,7 @@ const companyId = entity_id || userInformation?.entity_id;
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const currentDocType = DOCUMENT_TYPES[activeTab].value;
+  const currentDocType = typeDocument[activeTab].value;
   /* ── Fetch all field definitions ────────────────── */
   const fetchFields = useCallback(async () => {
     setLoading(true);
@@ -292,7 +293,7 @@ const companyId = entity_id || userInformation?.entity_id;
             "& .Mui-selected": { color: "primary.main" },
           }}
         >
-          {DOCUMENT_TYPES.map((dt) => {
+          {typeDocument.map((dt) => {
             const count = fields.filter(
               (f) => f.document_type === dt.value,
             ).length;

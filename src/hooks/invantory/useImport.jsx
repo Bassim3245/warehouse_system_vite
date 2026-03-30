@@ -18,12 +18,8 @@ export const useImportData = ({ searchParams }) => {
   const { document } = useSelector((state) => state.document);
   const { warehouseDataBYId } = useSelector((state) => state.wareHouse);
 
-  const { 
-    dataUserById, 
-    dataUserLab, 
-    stateMaterial, 
-    applicationPermission 
-  } = usePermissionUser();
+  const { dataUserById, dataUserLab, stateMaterial, applicationPermission } =
+    usePermissionUser();
 
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const token = getToken();
@@ -34,21 +30,20 @@ export const useImportData = ({ searchParams }) => {
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [invoiceData, setInvoiceData] = useState([]);
   const [refreshButton, setRefreshButton] = useState(false);
-const [pagination ,setPagination] = useState({
-  page:1,
-  limit:10,
-  total:0,
-  totalPages:0,
-})
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  });
 
   /** ============ INITIAL FORM DATA ============ */
   const initialFormData = useMemo(
     () => ({
       quantity: "",
-      expiry_date: dayjs(),
-      purchase_date: dayjs(),
-      production_date: dayjs(),
-      document_number: "",
+      expiry_date: null,
+      purchase_date: null,
+      production_date: null,
       beneficiary: "",
       state_id: "",
       price: "",
@@ -57,10 +52,12 @@ const [pagination ,setPagination] = useState({
       inventory_id: "",
       note: "",
       inspection_number: "",
-      inspection_date: dayjs(),
+      inspection_date: null,
+      return_date: null,
       has_inspection: false,
+      document_type: searchParams.get("documentType") || "in",
     }),
-    [documentId]
+    [documentId],
   );
 
   const [formData, setFormData] = useState(initialFormData);
@@ -81,7 +78,7 @@ const [pagination ,setPagination] = useState({
             limit: pagination.limit,
           },
           headers: { authorization: token },
-        }
+        },
       );
 
       setInvoiceData(res?.data?.data || []);
@@ -92,7 +89,13 @@ const [pagination ,setPagination] = useState({
     } finally {
       setLoading(false);
     }
-  }, [documentId, applicationPermission?.warehouseSystem?._id, token ,pagination.limit,pagination.page]);
+  }, [
+    documentId,
+    applicationPermission?.warehouseSystem?._id,
+    token,
+    pagination.limit,
+    pagination.page,
+  ]);
 
   /** ============ FORM HANDLERS ============ */
 
@@ -117,11 +120,11 @@ const [pagination ,setPagination] = useState({
       price: "",
       beneficiary: "",
       description: "",
-      document_date: "",
       check_number: "",
       inspection_number: "",
       inspection_date: dayjs(),
       has_inspection: false,
+      return_date: null,
     }));
   }, []);
 
@@ -168,6 +171,6 @@ const [pagination ,setPagination] = useState({
     dataUserFactory,
     warehouseDataBYId,
     pagination,
-    setPagination
+    setPagination,
   };
 };

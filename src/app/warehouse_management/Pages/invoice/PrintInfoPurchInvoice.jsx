@@ -15,6 +15,7 @@ export const PrintPurchases = ({
   documentNumber,
   invoiceDate,
   document_id,
+  searchParams,
 }) => {
   const [open, setOpen] = useState(false);
   const printRef = useRef();
@@ -36,7 +37,7 @@ export const PrintPurchases = ({
   // Fetch rendered document when popup opens
   useEffect(() => {
     if (open && document_id) {
-      fetchRenderedDocument(document_id, "in");
+      fetchRenderedDocument(document_id, searchParams.get("documentType"));
     }
   }, [open, document_id, fetchRenderedDocument]);
 
