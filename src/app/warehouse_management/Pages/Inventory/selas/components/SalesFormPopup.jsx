@@ -70,7 +70,7 @@ export const SalesFormPopup = ({
   // ---------------------------------------------
   const availableMovements = useMemo(() => {
     return materialMovements
-      .filter((m) => m.document_type === "in" && m.remaining_quantity > 0)
+      .filter((m) => (m.document_type === "in" || m.document_type === "return") && m.remaining_quantity > 0)
       .sort((a, b) => new Date(a.purchase_date) - new Date(b.purchase_date));
   }, [materialMovements]);
 

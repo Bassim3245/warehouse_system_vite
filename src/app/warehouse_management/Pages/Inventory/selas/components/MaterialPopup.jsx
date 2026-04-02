@@ -44,6 +44,7 @@ export const MaterialPopup = forwardRef(
       []
     );
 
+
     // -----------------------------------------------------------
     // 📌 Handlers (memoized)
     // -----------------------------------------------------------
@@ -150,6 +151,7 @@ export const MaterialPopup = forwardRef(
               <TableHead>
                 <TableRow>
                   <TableCell>تحديد الكمية</TableCell>
+                  <TableCell>نوع المستند</TableCell>
                   <TableCell>رقم المستند</TableCell>
                   <TableCell>الكمية</TableCell>
                   <TableCell>السعر</TableCell>
@@ -188,6 +190,10 @@ export const MaterialPopup = forwardRef(
                               )
                             }
                           />
+                        </TableCell>
+
+                        <TableCell>
+                          {movement?.document_type === "in" ? "فاتورة مشتريات" : "فاتورة مرتجعات"}
                         </TableCell>
 
                         <TableCell>

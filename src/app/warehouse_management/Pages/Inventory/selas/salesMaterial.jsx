@@ -195,6 +195,7 @@ const SalesMaterial = () => {
           ];
         }
       });
+      console.log("salesToSend", salesToSend)
 
       const response = await axiosInstance.post(
         `${BackendUrl}/api/warehouse/inventoryExportInformationAsLoop`,
