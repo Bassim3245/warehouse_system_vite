@@ -86,7 +86,6 @@ const InfoSelectionDialog = ({
     searchKey: "",
   });
 
-  const [documentType, setDocumentType] = useState(null);
   const [InformationMaterial, setInformationMaterial] = useState(
     InformationMaterialImport
   );
@@ -111,13 +110,7 @@ const InfoSelectionDialog = ({
     selectedInfo.selectReportType === "financial_reports";
   const isMaterialSearch = selectedInfo.selectReportType === "material_search";
   const isExpensesReport = selectedInfo.selectReportType === "expenses_report_entity";
-  useEffect(() => {
-    if (documentType === "in") {
-      setInformationMaterial(InformationMaterialImport);
-    } else {
-      setInformationMaterial(InformationMaterialExport);
-    }
-  }, [documentType]);
+
   const getDisplayInformationByCode = useCallback(() => {
     try {
       const dateFrom = selectedInfo.dateFrom ? selectedInfo.dateFrom.format("YYYY-MM-DD") : "";
@@ -339,8 +332,6 @@ const InfoSelectionDialog = ({
             <GeneralReportSection
               selectedInfo={selectedInfo}
               onInfoCheckboxChange={onInfoCheckboxChange}
-              documentType={documentType}
-              onDocumentTypeChange={(e) => setDocumentType(e.target.value)}
             />
           )}
         </Grid>

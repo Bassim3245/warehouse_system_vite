@@ -18,8 +18,6 @@ import { typeDocument } from "../../../../../constants/arrayFuction";
 const GeneralReportSection = memo(({
     selectedInfo,
     onInfoCheckboxChange,
-    documentType,
-    onDocumentTypeChange,
 }) => {
     const { t } = useTranslation();
     const theme = useTheme();
@@ -81,7 +79,7 @@ const GeneralReportSection = memo(({
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid size={{ xs: 12, md: 4 }}>
+                        {/* <Grid size={{ xs: 12, md: 4 }}>
                             <FormControl fullWidth variant="outlined">
                                 <InputLabel>{t("نوع المستند")}</InputLabel>
                                 <Select
@@ -96,7 +94,7 @@ const GeneralReportSection = memo(({
                                     ))}
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Grid> */}
 
                         <Grid size={{ xs: 12 }}>
                             <TextField
