@@ -33,6 +33,10 @@ export default function useInventoryDocuments({
   const { dataUserLab } = usePermissionUser();
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const [searchTerm, setSearchTerm] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [dateFilterType, setDateFilterType] = useState("document_date"); // 'document_date' or 'created_at'
+
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -42,7 +46,7 @@ export default function useInventoryDocuments({
 
   /** --------------------------------
    *  STATE
-  ----------------------------------*/
+   ----------------------------------*/
   const [documentTypeValue, setDocumentTypeValue] = useState(documentType);
 
   // Sync state with prop if it changes
@@ -79,7 +83,7 @@ export default function useInventoryDocuments({
 
   /** --------------------------------
    *  LABEL BASED ON TYPE
-  ----------------------------------*/
+   ----------------------------------*/
   const activeDocumentType = documentTypeValue;
 
   const documentTypeLabel = useMemo(
@@ -90,7 +94,7 @@ export default function useInventoryDocuments({
 
   /** --------------------------------
    *  BUILD FETCH URL (MEMOIZED)
-  ----------------------------------*/
+   ----------------------------------*/
   const requestUrl = useMemo(() => {
     const base = `${BackendUrl}/api/warehouse/documentGetDataByUserId`;
     const params = new URLSearchParams({
@@ -100,6 +104,16 @@ export default function useInventoryDocuments({
 
     if (warehosueId) {
       params.append("warehouseId", warehosueId);
+    }
+
+    if (startDate) {
+      params.append("startDate", startDate);
+    }
+    if (endDate) {
+      params.append("endDate", endDate);
+    }
+    if (dateFilterType) {
+      params.append("dateFilterType", dateFilterType);
     }
 
     if (has_warehouse && has_factory && has_lab) {
@@ -122,6 +136,9 @@ export default function useInventoryDocuments({
   }, [
     activeDocumentType,
     searchTerm,
+    startDate,
+    endDate,
+    dateFilterType,
     has_factory,
     has_lab,
     has_warehouse,
@@ -275,6 +292,12 @@ export default function useInventoryDocuments({
     completeItem,
     searchTerm,
     setSearchTerm,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    dateFilterType,
+    setDateFilterType,
     pagination,
     setPagination,
   };

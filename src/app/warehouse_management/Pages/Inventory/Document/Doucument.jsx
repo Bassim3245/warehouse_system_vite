@@ -23,8 +23,25 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-import { InputAdornment } from "@mui/material";
-import { Search, Title } from "@mui/icons-material";
+import {
+  Search,
+  Title,
+  FilterList,
+  Close,
+  RestartAlt,
+  CalendarMonth
+} from "@mui/icons-material";
+import {
+  InputAdornment,
+  Drawer,
+  IconButton,
+  Button,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio
+} from "@mui/material";
 
 import DropDownGrid from "../../../../../components/reusableComponent/CustomMennu";
 import {
@@ -46,6 +63,7 @@ import useGetfactoryInformationByUserId from "../../../../../hooks/ManageWarehou
 import useGetAllWarehouse from "../../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
 import { useTranslation } from "react-i18next";
 import CostumePagination from "../../../../../components/reusableComponent/CostumPagination";
+import { ButtonTheme } from "../../../../../style/ButtomStyle";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const buildFieldMap = (fieldValues = []) =>
@@ -119,6 +137,12 @@ function Document({
     completeItem,
     searchTerm,
     setSearchTerm,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    dateFilterType,
+    setDateFilterType,
     pagination,
     setPagination,
 
@@ -138,6 +162,15 @@ function Document({
     refreshButton,
     setRefreshButton,
   });
+
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = React.useState(false);
+
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setStartDate(null);
+    setEndDate(null);
+    setDateFilterType("document_date");
+  };
 
  
 
@@ -318,25 +351,144 @@ function Document({
 
             {/* Search */}
             <Grid size={{ xs: 12, sm: isExport ? 4 : 6 }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="بحث برقم المستند..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search fontSize="small" color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              <Stack direction="row" spacing={1}>
+                <ButtonTheme
+                  onClick={() => setIsFilterDrawerOpen(true)}
+                  
+                >
+                  <FilterList />
+                  تصفية متقدمة
+                </ButtonTheme>
+              </Stack>
             </Grid>
           </Grid>
         </CardContent>
       </Card>
+
+      {/* ── Filter Drawer ─────────────────────────────────────────────────── */}
+      <Drawer
+        anchor="left"
+        open={isFilterDrawerOpen}
+        onClose={() => setIsFilterDrawerOpen(false)}
+        PaperProps={{
+          sx: { width: { xs: "100%", sm: 350 }, p: 3 }
+        }}
+      >
+        <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }} dir="rtl">
+          <Typography variant="h6" fontWeight={700}>فلاتر متقدمة</Typography>
+          <IconButton onClick={() => setIsFilterDrawerOpen(false)}>
+            <Close />
+          </IconButton>
+        </Box>
+
+        <Divider sx={{ mb: 3 }} />
+
+        <Stack spacing={3} dir="rtl">
+          {/* Search by Doc Number */}
+          <Box>
+            <Typography variant="subtitle2" fontWeight={600} gutterBottom>رقم المستند</Typography>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="بحث برقم المستند..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+
+          {/* Date Filter Type */}
+          <FormControl component="fieldset">
+            <FormLabel component="legend" sx={{ fontWeight: 600, fontSize: "0.875rem", mb: 1, color: "text.primary" }}>
+              تصفية التاريخ بناءً على:
+            </FormLabel>
+            <RadioGroup
+              value={dateFilterType}
+              onChange={(e) => setDateFilterType(e.target.value)}
+              row
+            >
+              <FormControlLabel 
+                value="document_date" 
+                control={<Radio size="small" />} 
+                label={<Typography variant="body2">تاريخ المستند</Typography>} 
+              />
+              <FormControlLabel 
+                value="created_at" 
+                control={<Radio size="small" />} 
+                label={<Typography variant="body2">تاريخ الإدخال</Typography>} 
+              />
+            </RadioGroup>
+          </FormControl>
+
+          {/* Start Date */}
+          <Box>
+            <Typography variant="subtitle2" fontWeight={600} gutterBottom>تاريخ البدء</Typography>
+            <TextField
+              fullWidth
+              size="small"
+              type="date"
+              value={startDate || ""}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CalendarMonth fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+            />
+          </Box>
+
+          {/* End Date */}
+          <Box>
+            <Typography variant="subtitle2" fontWeight={600} gutterBottom>تاريخ الانتهاء</Typography>
+            <TextField
+              fullWidth
+              size="small"
+              type="date"
+              value={endDate || ""}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CalendarMonth fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+            />
+          </Box>
+
+          <Box sx={{ pt: 2 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => setIsFilterDrawerOpen(false)}
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
+              تطبيق الفلاتر
+            </Button>
+            <Button
+              fullWidth
+              variant="outlined"
+              color="error"
+              startIcon={<RestartAlt />}
+              onClick={handleResetFilters}
+              sx={{ borderRadius: 2 }}
+            >
+              إعادة تعيين
+            </Button>
+          </Box>
+        </Stack>
+      </Drawer>
 
       {/* ── Documents Table ───────────────────────────────────────────────── */}
       <Card variant="outlined" sx={{ borderRadius: 2, mb: 2 }}>
