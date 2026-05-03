@@ -1,25 +1,68 @@
-import { Box, Stack } from "@mui/material";
-import { Typography } from "@mui/material";
-import { Grid } from "@mui/material";
-import { TextField } from "@mui/material";
-import { Paper } from "@mui/material";
+import { Box, Stack, Autocomplete, TextField, Grid, Paper, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Warehouse } from "lucide-react";
 
-const Step1Content = ({ selectedYear, setSelectedYear, selectedMonth, setSelectedMonth, getPeriodText }) => (
+const Step1Content = ({ 
+  selectedYear, 
+  setSelectedYear, 
+  selectedMonth, 
+  setSelectedMonth, 
+  getPeriodText,
+  selectedWarehouse,
+  handleWarehouseChange,
+  memoWarehouseOptions
+}) => (
   <Box sx={{ p: 2 }} dir="rtl">
     <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
       <DateRangeIcon color="primary" />
       <Typography variant="h6" color="text.primary">
-        اختر الفترة الزمنية للأرشفة
+        اختر المخزن والفترة الزمنية
       </Typography>
     </Stack>
 
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ar">
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
+        {/* Warehouse Selection */}
+        <Grid size={{ xs: 12 }}>
+          <Autocomplete
+            fullWidth
+            options={memoWarehouseOptions}
+            getOptionLabel={(option) => option?.name || ""}
+            value={selectedWarehouse}
+            onChange={handleWarehouseChange}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="اختر المخزن"
+                placeholder="اختر المخزن المستهدف..."
+                size="small"
+                required
+              />
+            )}
+            renderOption={(props, option) => (
+                <Box
+                    key={option.id}
+                    component="li"
+                    {...props}
+                    sx={{ display: "flex", alignItems: "center", gap: 1, p: 1 }}
+                >
+                    <Warehouse size={18} style={{ color: '#1976d2' }} />
+                    <Box sx={{ flex: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: "medium" }}>
+                            {option.name}
+                        </Typography>
+                    </Box>
+                </Box>
+            )}
+            noOptionsText="لا توجد مخازن"
+          />
+        </Grid>
+
+        {/* Period Selection */}
         <Grid size={{ xs: 12, md: 6 }}>
           <DatePicker
             label="اختر السنة"
@@ -71,21 +114,31 @@ const Step1Content = ({ selectedYear, setSelectedYear, selectedMonth, setSelecte
       }}
     >
       <Stack
-        direction="row"
+        direction="column"
         alignItems="center"
         justifyContent="center"
         spacing={1}
       >
-        <DateRangeIcon color="primary" />
-        <Typography variant="subtitle1" color="primary.main" fontWeight={600}>
-          الفترة المحددة: {getPeriodText()}
-        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center">
+            <Warehouse size={20} color="#1976d2" />
+            <Typography variant="subtitle1" color="primary.main" fontWeight={600}>
+                المخزن: {selectedWarehouse?.name || "لم يتم الاختيار"}
+            </Typography>
+        </Stack>
+        
+        <Stack direction="row" spacing={1} alignItems="center">
+            <DateRangeIcon color="primary" sx={{ fontSize: 20 }} />
+            <Typography variant="subtitle1" color="primary.main" fontWeight={600}>
+                الفترة: {getPeriodText()}
+            </Typography>
+        </Stack>
       </Stack>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        اضغط "التالي" لعرض السجلات لهذه الفترة
+        اضغط "عرض السجلات" للمتابعة
       </Typography>
     </Paper>
   </Box>
 );
 
 export default Step1Content;
+

@@ -59,7 +59,7 @@ export default function MonthlyLockForm({
         setFetchingDocs(true);
         try {
             const response = await axiosInstance.get(
-                `${BackendUrl}/api/warehouse/getDocumentToCheckInformation?entityId=${userInformation.entity_id}&year=${selectedYear}&month=${selectedMonth}`,
+                `${BackendUrl}/api/warehouse/getDocumentToCheckInformation?entityId=${userInformation.entity_id}&year=${selectedYear}&month=${selectedMonth}&warehouseId=${warehosueId}`,
                 { headers: { authorization: getToken() } }
             );
             const docs = response?.data?.data || [];
@@ -132,6 +132,10 @@ export default function MonthlyLockForm({
     const handleNext = async () => {
         // When moving from step 0 to step 1, fetch documents
         if (activeStep === 0) {
+            if (!warehosueId) {
+                toast.error("يرجى تحديد المخزن أولاً");
+                return;
+            }
             await fetchDocuments();
         }
         setActiveStep((prev) => prev + 1);
@@ -182,9 +186,18 @@ export default function MonthlyLockForm({
             </Stepper>
 
             {/* Step Content */}
-            {activeStep === 0 && <Step1Content selectedYear={selectedYear} setSelectedYear={setSelectedYear} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} getPeriodText={getPeriodText} />}
+            {activeStep === 0 && <Step1Content 
+                selectedYear={selectedYear} 
+                setSelectedYear={setSelectedYear} 
+                selectedMonth={selectedMonth} 
+                setSelectedMonth={setSelectedMonth} 
+                getPeriodText={getPeriodText}
+                selectedWarehouse={selectedWarehouse}
+                handleWarehouseChange={handleWarehouseChange}
+                memoWarehouseOptions={memoWarehouseOptions}
+            />}
             {activeStep === 1 && <Step2Content getPeriodText={getPeriodText} fetchingDocs={fetchingDocs} incompleteDocs={incompleteDocs} completedDocs={completedDocs} />}
-            {activeStep === 2 && <Step3Content selectedWarehouse={selectedWarehouse} handleWarehouseChange={handleWarehouseChange} memoWarehouseOptions={memoWarehouseOptions} getPeriodText={getPeriodText} completedDocs={completedDocs} />}
+            {activeStep === 2 && <Step3Content selectedWarehouse={selectedWarehouse} getPeriodText={getPeriodText} completedDocs={completedDocs} />}
         </Box>
     );
 
