@@ -1,4 +1,4 @@
-import { Box, Stack, Autocomplete, TextField, Grid, Paper, Typography } from "@mui/material";
+import { Box, Stack, Autocomplete, TextField, Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -6,27 +6,28 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Warehouse } from "lucide-react";
 
-const Step1Content = ({ 
-  selectedYear, 
-  setSelectedYear, 
-  selectedMonth, 
-  setSelectedMonth, 
+const Step1Content = ({
+  selectedYear,
+  setSelectedYear,
+  selectedMonth,
+  setSelectedMonth,
   getPeriodText,
   selectedWarehouse,
   handleWarehouseChange,
   memoWarehouseOptions
 }) => (
-  <Box sx={{ p: 2 }} dir="rtl">
-    <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-      <DateRangeIcon color="primary" />
-      <Typography variant="h6" color="text.primary">
-        اختر المخزن والفترة الزمنية
+  <Box sx={{ p: 1.5 }} dir="rtl">
+
+    <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 1.5 }}>
+      <DateRangeIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+      <Typography variant="subtitle1" fontWeight={500}>
+        اختر المخزن والفترة
       </Typography>
     </Stack>
 
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ar">
-      <Grid container spacing={3}>
-        {/* Warehouse Selection */}
+      <Grid container spacing={1.5}>
+
         <Grid size={{ xs: 12 }}>
           <Autocomplete
             fullWidth
@@ -37,108 +38,81 @@ const Step1Content = ({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="اختر المخزن"
-                placeholder="اختر المخزن المستهدف..."
+                label="المخزن"
+                placeholder="اختر المخزن..."
                 size="small"
                 required
               />
             )}
             renderOption={(props, option) => (
-                <Box
-                    key={option.id}
-                    component="li"
-                    {...props}
-                    sx={{ display: "flex", alignItems: "center", gap: 1, p: 1 }}
-                >
-                    <Warehouse size={18} style={{ color: '#1976d2' }} />
-                    <Box sx={{ flex: 1 }}>
-                        <Typography variant="body2" sx={{ fontWeight: "medium" }}>
-                            {option.name}
-                        </Typography>
-                    </Box>
-                </Box>
+              <Box
+                key={option.id}
+                component="li"
+                {...props}
+                sx={{ display: "flex", alignItems: "center", gap: 1, py: 0.75, px: 1 }}
+              >
+                <Warehouse size={14} style={{ color: '#1976d2', flexShrink: 0 }} />
+                <Typography variant="body2">{option.name}</Typography>
+              </Box>
             )}
             noOptionsText="لا توجد مخازن"
           />
         </Grid>
 
-        {/* Period Selection */}
         <Grid size={{ xs: 12, md: 6 }}>
           <DatePicker
-            label="اختر السنة"
+            label="السنة"
             views={["year"]}
             value={dayjs().year(selectedYear)}
-            onChange={(newValue) => {
-              if (newValue) {
-                setSelectedYear(newValue.year());
-              }
-            }}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                size: "small",
-              },
-            }}
+            onChange={(v) => v && setSelectedYear(v.year())}
+            slotProps={{ textField: { fullWidth: true, size: "small" } }}
             format="YYYY"
           />
         </Grid>
+
         <Grid size={{ xs: 12, md: 6 }}>
           <TextField
             fullWidth
             type="number"
-            label="اختر الشهر (1-12)"
+            label="الشهر"
             value={selectedMonth}
             onChange={(e) => {
-              const value = parseInt(e.target.value);
-              if (value >= 1 && value <= 12) {
-                setSelectedMonth(value);
-              }
+              const v = parseInt(e.target.value);
+              if (v >= 1 && v <= 12) setSelectedMonth(v);
             }}
             inputProps={{ min: 1, max: 12 }}
             size="small"
-            helperText="أدخل رقم الشهر من 1 إلى 12"
+            helperText="1 – 12"
           />
         </Grid>
+
       </Grid>
     </LocalizationProvider>
 
-    {/* Selected Period Preview */}
-    <Paper
-      variant="outlined"
-      sx={{
-        mt: 3,
-        p: 2,
-        bgcolor: "primary.50",
-        borderColor: "primary.200",
-        textAlign: "center",
-      }}
-    >
-      <Stack
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        spacing={1}
-      >
-        <Stack direction="row" spacing={1} alignItems="center">
-            <Warehouse size={20} color="#1976d2" />
-            <Typography variant="subtitle1" color="primary.main" fontWeight={600}>
-                المخزن: {selectedWarehouse?.name || "لم يتم الاختيار"}
-            </Typography>
+    {/* Preview */}
+    <Box sx={{
+      mt: 1.5, px: 1.5, py: 1,
+      border: '0.5px solid', borderColor: 'primary.200',
+      borderRadius: 1, bgcolor: 'primary.50'
+    }}>
+      <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          <Warehouse size={13} color="#1976d2" />
+          <Typography variant="caption" color="primary.main" fontWeight={500}>
+            {selectedWarehouse?.name || "لم يتم الاختيار"}
+          </Typography>
         </Stack>
-        
-        <Stack direction="row" spacing={1} alignItems="center">
-            <DateRangeIcon color="primary" sx={{ fontSize: 20 }} />
-            <Typography variant="subtitle1" color="primary.main" fontWeight={600}>
-                الفترة: {getPeriodText()}
-            </Typography>
+        <Typography variant="caption" color="primary.200">|</Typography>
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          <DateRangeIcon sx={{ fontSize: 13, color: 'primary.main' }} />
+          <Typography variant="caption" color="primary.main" fontWeight={500}>
+            {getPeriodText()}
+          </Typography>
         </Stack>
       </Stack>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        اضغط "عرض السجلات" للمتابعة
-      </Typography>
-    </Paper>
+    </Box>
+
   </Box>
 );
 
 export default Step1Content;
-

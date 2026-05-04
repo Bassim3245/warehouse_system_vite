@@ -24,6 +24,29 @@ export const createMonthlyLock = createAsyncThunk(
     }
   }
 );
+
+export const createMonthlyLockLive = createAsyncThunk(
+  "MonthLock/createMonthlyLockLive",
+  async (formData, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(`/api/warehouse/closeMonthLive`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response) {
+        return response.data.message;
+      }
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      } else {
+        return thunkAPI.rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 export const getAllMonthlyLocksEntityId = createAsyncThunk(
   "MonthLock/getAllMonthlyLocksEntityId",
   async (entity_id, thunkAPI) => {

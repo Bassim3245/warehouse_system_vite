@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createMonthlyLock, getAllMonthlyLocksEntityId } from "./monthLock";
+import { createMonthlyLock, createMonthlyLockLive, getAllMonthlyLocksEntityId } from "./monthLock";
 import { toast } from "react-toastify";
 
 
@@ -27,7 +27,21 @@ const monthLockState = createSlice({
         state.message = payload;
         toast.error(payload);
         state.isLoading = false;
+      })
+      .addCase(createMonthlyLockLive.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createMonthlyLockLive.fulfilled, (state, { payload }) => {
+        state.message = payload;
+        toast.success(payload);
+        state.isLoading = false;
+      })
+      .addCase(createMonthlyLockLive.rejected, (state, { payload }) => {
+        state.message = payload;
+        toast.error(payload);
+        state.isLoading = false;
       });
+
       builder
       .addCase(getAllMonthlyLocksEntityId.pending, (state) => {
         state.isLoading = true;

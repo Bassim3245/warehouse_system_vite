@@ -1,79 +1,68 @@
-import { Archive, Calendar, CheckCircle } from "lucide-react";
-import { Box, Stack } from "@mui/material";
-import { Typography } from "@mui/material";
-import { Autocomplete } from "@mui/material";
-import { TextField } from "@mui/material";
-import { Grid } from "@mui/material";
-import { Divider } from "@mui/material";
-import { Paper } from "@mui/material";
+import { Box, Stack, Paper, Typography, Grid } from "@mui/material";
+import { Archive } from "lucide-react";
 import { Warehouse } from "lucide-react";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 const Step3Content = ({ getPeriodText, completedDocs, selectedWarehouse }) => (
-    <Box sx={{ p: 2 }} dir="rtl">
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-            <Archive color="success" />
-            <Typography variant="h6" color="text.primary">
+    <Box sx={{ p: 1.5 }} dir="rtl">
+
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
+            <Archive size={16} color="var(--mui-palette-success-main, #2e7d32)" />
+            <Typography variant="subtitle1" fontWeight={500}>
                 تأكيد الأرشفة النهائية
             </Typography>
         </Stack>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-            تمت مراجعة جميع السجلات للفترة المحددة. سيتم الآن إجراء الأرشفة النهائية للمستندات المكتملة. 
-            يرجى التأكد من صحة البيانات قبل الضغط على "أرشفة نهائية".
-        </Typography>
-
-        {/* Selected Details Summary */}
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-             <Grid size={{ xs: 12 }}>
-                <Paper variant="outlined" sx={{ p: 2, bgcolor: 'primary.50', borderColor: 'primary.200' }}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                        <Warehouse size={18} style={{ color: '#1976d2' }} />
-                        <Typography variant="body2" fontWeight={600}>
-                            المخزن المختار: {selectedWarehouse?.name || "الكل"}
-                        </Typography>
-                    </Stack>
-                </Paper>
-             </Grid>
-        </Grid>
-
-        {/* Summary */}
-        <Paper
-            variant="outlined"
-            sx={{
-                p: 3,
-                bgcolor: 'grey.50',
-                border: '2px solid',
-                borderColor: 'primary.200'
-            }}
-        >
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                📊 ملخص الأرشفة
+        {/* Info note */}
+        <Box sx={{
+            display: 'flex', alignItems: 'flex-start', gap: 1,
+            bgcolor: 'info.50', borderRadius: 1,
+            px: 1.5, py: 1, mb: 1.5
+        }}>
+            <InfoOutlinedIcon sx={{ fontSize: 15, color: 'info.main', mt: '2px', flexShrink: 0 }} />
+            <Typography variant="caption" color="info.main">
+                سيتم ترحيل الأرصدة للشهر القادم تلقائياً بعد الأرشفة.
             </Typography>
+        </Box>
 
-            <Grid container spacing={2}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'primary.50' }}>
-                        <Calendar color="#1976d2" size={32} style={{ marginBottom: '8px' }} />
-                        <Typography variant="body2" color="text.secondary">الفترة</Typography>
-                        <Typography variant="subtitle1" fontWeight={600}>{getPeriodText()}</Typography>
-                    </Paper>
-                </Grid>
+        {/* Summary rows */}
 
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'success.50' }}>
-                        <CheckCircle color="#2e7d32" size={32} style={{ marginBottom: '8px' }} />
-                        <Typography variant="body2" color="text.secondary">سيتم أرشفته</Typography>
-                        <Typography variant="h5" fontWeight={600} color="success.main">
-                            {completedDocs.length}
-                        </Typography>
-                        <Typography variant="caption">مستند مكتمل</Typography>
-                    </Paper>
-                </Grid>
-            </Grid>
-        </Paper>
+            <Stack direction="row" justifyContent="space-between" alignItems="center"
+                sx={{ px: 1.5, py: 1, borderBottom: '0.5px solid', borderColor: 'divider' }}>
+                <Stack direction="row" alignItems="center" spacing={0.75}>
+                    <Warehouse size={14} color="var(--mui-palette-text-secondary, #666)" />
+                    <Typography variant="caption" color="text.secondary">المخزن</Typography>
+                </Stack>
+                <Typography variant="body2" fontWeight={500}>
+                    {selectedWarehouse?.name || "غير محدد"}
+                </Typography>
+            </Stack>
+
+            <Stack direction="row" justifyContent="space-between" alignItems="center"
+                sx={{ px: 1.5, py: 1, borderBottom: '0.5px solid', borderColor: 'divider' }}>
+                <Stack direction="row" alignItems="center" spacing={0.75}>
+                    <CalendarTodayIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
+                    <Typography variant="caption" color="text.secondary">الفترة</Typography>
+                </Stack>
+                <Typography variant="body2" fontWeight={500}>
+                    {getPeriodText()}
+                </Typography>
+            </Stack>
+
+            <Stack direction="row" justifyContent="space-between" alignItems="center"
+                sx={{ px: 1.5, py: 1 }}>
+                <Stack direction="row" alignItems="center" spacing={0.75}>
+                    <CheckCircleOutlineIcon sx={{ fontSize: 14, color: 'success.main' }} />
+                    <Typography variant="caption" color="text.secondary">سيتم أرشفته</Typography>
+                </Stack>
+                <Typography variant="body2" fontWeight={500} color="success.main">
+                    {completedDocs.length} مستند مكتمل
+                </Typography>
+            </Stack>
+
     </Box>
 );
 
-
-
-    export default Step3Content;
+export default Step3Content;

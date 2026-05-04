@@ -1,108 +1,122 @@
-import { Box } from "@mui/material";
-import { Stack } from "@mui/material";
-import { Typography } from "@mui/material";
-import { Alert } from "@mui/material";
-import { CircularProgress } from "@mui/material";
-import { Grid } from "@mui/material";
-import { AlertTitle } from "@mui/material";
-import { List } from "@mui/material";
-import { ListItem } from "@mui/material";
-import { ListItemIcon } from "@mui/material";
-import { ListItemText } from "@mui/material";
-import { Paper } from "@mui/material";
+import { Box, Stack, Typography, CircularProgress, Grid, List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import dayjs from "dayjs";
-import AssignmentIcon from "@mui/icons-material/Assignment"
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import DescriptionIcon from "@mui/icons-material/Description"
+import DescriptionIcon from "@mui/icons-material/Description";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+
+const docTypeLabel = (type) =>
+    type === 'out' ? 'صادر' : type === 'in' ? 'وارد' : type === 'internal_consumption' ? 'استهلاك داخلي' : 'مستند';
 
 const Step2Content = ({ getPeriodText, fetchingDocs, incompleteDocs, completedDocs }) => (
-    <Box sx={{ p: 2 }} dir="rtl">
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-            <AssignmentIcon color="info" />
-            <Typography variant="h6" color="text.primary">
-                مراجعة السجلات للفترة: {getPeriodText()}
+    <Box sx={{ p: 1.5 }} dir="rtl">
+
+        {/* Header */}
+        <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 1 }}>
+            <AssignmentIcon sx={{ fontSize: 16, color: 'info.main' }} />
+            <Typography variant="subtitle1" fontWeight={500}>
+                مراجعة السجلات — {getPeriodText()}
             </Typography>
+        </Stack>
+
+        <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>
+            يمكنك المتابعة حتى لو وجدت مستندات غير مكتملة.
+        </Typography>
+
+        {fetchingDocs ? (
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ py: 3, justifyContent: 'center' }}>
+                <CircularProgress size={18} />
+                <Typography variant="caption" color="text.secondary">جاري جلب السجلات...</Typography>
             </Stack>
+        ) : (
+            <Grid container spacing={1.5}>
 
-            <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
-                <Typography variant="body2">
-                    يتطلب النظام اكتمال كافة المستندات والقيود للشهر المحدد حتى تتمكن من إجراء عملية الأرشفة والإغلاق لتلك الفترة.
-                </Typography>
-            </Alert>
+                {/* Incomplete */}
+                <Grid size={{ xs: 12, md: 6 }}>
+                    <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 0.75 }}>
+                        <WarningAmberIcon sx={{ fontSize: 14, color: incompleteDocs.length > 0 ? 'warning.main' : 'success.main' }} />
+                        <Typography variant="caption" fontWeight={500}
+                            color={incompleteDocs.length > 0 ? 'warning.dark' : 'success.dark'}>
+                            {incompleteDocs.length > 0
+                                ? `غير مكتملة (${incompleteDocs.length})`
+                                : 'جميع المستندات مكتملة'}
+                        </Typography>
+                    </Stack>
 
-            {fetchingDocs ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                    <CircularProgress />
-                    <Typography sx={{ ml: 2 }}>جاري جلب السجلات...</Typography>
-                </Box>
-            ) : (
-                <Grid container spacing={2}>
-                    {/* Incomplete Documents Warning */}
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        {incompleteDocs.length > 0 ? (
-                            <Alert severity="warning" sx={{ height: '100%' }}>
-                                <AlertTitle>
-                                    ⚠️ مستندات غير مكتملة ({incompleteDocs.length})
-                                </AlertTitle>
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    لا يمكن إتمام الأرشفة بسبب وجود مستندات غير مكتملة. يرجى إكمالها أولاً:
-                                </Typography>
-                                <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                                    {incompleteDocs.map((doc) => (
-                                        <ListItem key={doc.document_id} sx={{ py: 0.5 }}>
-                                            <ListItemIcon sx={{ minWidth: 32 }}>
-                                                <DescriptionIcon fontSize="small" color="warning" />
+                    {incompleteDocs.length > 0 ? (
+                        <Box sx={{
+                            border: '0.5px solid', borderColor: 'warning.200',
+                            borderRadius: 1, maxHeight: 180, overflow: 'auto'
+                        }}>
+                            <List dense disablePadding>
+                                {incompleteDocs.map((doc, i) => (
+                                    <Box key={doc.document_id}>
+                                        {i > 0 && <Divider />}
+                                        <ListItem sx={{ py: 0.5, px: 1 }}>
+                                            <ListItemIcon sx={{ minWidth: 26 }}>
+                                                <DescriptionIcon sx={{ fontSize: 13, color: 'warning.main' }} />
                                             </ListItemIcon>
                                             <ListItemText
-                                                primary={`${doc.document_type === 'out' ? 'صادر' : doc.document_type === 'in' ? 'وارد' : doc.document_type === 'internal_consumption' ? 'استهلاك داخلي' : 'مستند'} #${doc.document_number}`}
-                                                secondary={`${dayjs(doc.document_date).format('YYYY/MM/DD')} - ${doc.warehouse_name} (${doc.incomplete_inventory_count} مادة غير مكتملة)`}
+                                                primary={`${docTypeLabel(doc.document_type)} #${doc.document_number}`}
+                                                secondary={`${dayjs(doc.document_date).format('YYYY/MM/DD')} · ${doc.incomplete_inventory_count} مادة`}
+                                                primaryTypographyProps={{ variant: 'caption', fontWeight: 500 }}
+                                                secondaryTypographyProps={{ variant: 'caption' }}
                                             />
                                         </ListItem>
-                                    ))}
-                                </List>
-                            </Alert>
-                        ) : (
-                            <Alert severity="success" sx={{ height: '100%' }}>
-                                <AlertTitle>✅ لا توجد مستندات غير مكتملة</AlertTitle>
-                                <Typography variant="body2">
-                                    جميع المستندات لهذه الفترة مكتملة ويمكن أرشفتها.
-                                </Typography>
-                            </Alert>
-                        )}
-                    </Grid>
-
-                    {/* Completed Documents */}
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Paper variant="outlined" sx={{ p: 2, height: '100%', bgcolor: 'success.50' }}>
-                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-                                <CheckCircleIcon color="success" />
-                                <Typography variant="subtitle1" fontWeight={600} color="success.dark">
-                                    المستندات المكتملة ({completedDocs.length})
-                                </Typography>
-                            </Stack>
-                            {completedDocs.length > 0 ? (
-                                <List dense sx={{ maxHeight: 200, overflow: 'auto' }}>
-                                    {completedDocs.map((doc) => (
-                                        <ListItem key={doc.document_id} sx={{ py: 0.5 }}>
-                                            <ListItemIcon sx={{ minWidth: 32 }}>
-                                                <CheckCircleIcon fontSize="small" color="success" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={`${doc.document_type === 'out' ? 'صادر' : doc.document_type === 'in' ? 'وارد' : doc.document_type === 'internal_consumption' ? 'استهلاك داخلي' : 'مستند'} #${doc.document_number}`}
-                                                secondary={`${dayjs(doc.document_date).format('YYYY/MM/DD')} - ${doc.warehouse_name}`}
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            ) : (
-                                <Typography variant="body2" color="text.secondary">
-                                    لا توجد مستندات مكتملة لهذه الفترة.
-                                </Typography>
-                            )}
-                        </Paper>
-                    </Grid>
+                                    </Box>
+                                ))}
+                            </List>
+                        </Box>
+                    ) : (
+                        <Typography variant="caption" color="text.secondary">
+                            لا توجد مستندات غير مكتملة.
+                        </Typography>
+                    )}
                 </Grid>
-            )}
-        </Box>
-    );
-    export default Step2Content;
+
+                {/* Completed */}
+                <Grid size={{ xs: 12, md: 6 }}>
+                    <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 0.75 }}>
+                        <CheckCircleIcon sx={{ fontSize: 14, color: 'success.main' }} />
+                        <Typography variant="caption" fontWeight={500} color="success.dark">
+                            مكتملة ({completedDocs.length})
+                        </Typography>
+                    </Stack>
+
+                    {completedDocs.length > 0 ? (
+                        <Box sx={{
+                            border: '0.5px solid', borderColor: 'success.200',
+                            borderRadius: 1, maxHeight: 180, overflow: 'auto'
+                        }}>
+                            <List dense disablePadding>
+                                {completedDocs.map((doc, i) => (
+                                    <Box key={doc.document_id}>
+                                        {i > 0 && <Divider />}
+                                        <ListItem sx={{ py: 0.5, px: 1 }}>
+                                            <ListItemIcon sx={{ minWidth: 26 }}>
+                                                <CheckCircleIcon sx={{ fontSize: 13, color: 'success.main' }} />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={`${docTypeLabel(doc.document_type)} #${doc.document_number}`}
+                                                secondary={`${dayjs(doc.document_date).format('YYYY/MM/DD')} · ${doc.warehouse_name}`}
+                                                primaryTypographyProps={{ variant: 'caption', fontWeight: 500 }}
+                                                secondaryTypographyProps={{ variant: 'caption' }}
+                                            />
+                                        </ListItem>
+                                    </Box>
+                                ))}
+                            </List>
+                        </Box>
+                    ) : (
+                        <Typography variant="caption" color="text.secondary">
+                            لا توجد مستندات مكتملة.
+                        </Typography>
+                    )}
+                </Grid>
+
+            </Grid>
+        )}
+    </Box>
+);
+
+export default Step2Content;

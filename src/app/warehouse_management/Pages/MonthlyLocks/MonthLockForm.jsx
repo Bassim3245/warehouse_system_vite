@@ -18,7 +18,7 @@ import "dayjs/locale/ar";
 import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import { toast } from "react-toastify";
-import { createMonthlyLock } from "../../../../redux/MonthLockState/monthLock";
+import { createMonthlyLock, createMonthlyLockLive } from "../../../../redux/MonthLockState/monthLock";
 import { axiosInstance } from "../../../../redux/api/axiosConfig";
 import { BackendUrl } from "../../../../redux/api/axios";
 import { getToken } from "../../../../utils/handelCookie";
@@ -104,7 +104,7 @@ export default function MonthlyLockForm({
             formData.append("year", selectedYear);
             formData.append("month", selectedMonth);
             formData.append("warehouse_id", warehosueId);
-            dispatch(createMonthlyLock(formData));
+            dispatch(createMonthlyLockLive(formData));
             handleClose();
         } catch (error) {
             toast.error("فشل في الأرشفة");
@@ -231,7 +231,6 @@ export default function MonthlyLockForm({
                     <ButtonTheme
                         variant="contained"
                         onClick={handleNext}
-                        disabled={fetchingDocs || (activeStep === 1 && incompleteDocs.length > 0) || (activeStep === 1 && completedDocs.length === 0)}
                         startIcon={fetchingDocs ? <CircularProgress size={16} color="inherit" /> : <ArrowForwardIcon />}
                         size="small"
                     >
