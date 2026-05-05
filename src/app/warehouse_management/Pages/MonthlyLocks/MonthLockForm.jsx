@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Stepper from "@mui/material/Stepper";
@@ -12,17 +11,21 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import FolderSpecialIcon from "@mui/icons-material/FolderSpecial";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Divider from "@mui/material/Divider";
+import { useNavigate } from "react-router-dom";
 
 import dayjs from "dayjs";
 import "dayjs/locale/ar";
-import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import { toast } from "react-toastify";
-import { createMonthlyLock, createMonthlyLockLive } from "../../../../redux/MonthLockState/monthLock";
-import { axiosInstance } from "../../../../redux/api/axiosConfig";
-import { BackendUrl } from "../../../../redux/api/axios";
-import { getToken } from "../../../../utils/handelCookie";
+import {  createMonthlyLockLive } from "../../../../redux/MonthLockState/monthLock";
 import { useDispatch } from "react-redux";
+import { useMonthlyClose } from "../../../../hooks/useMonthlyClose";
+import useGetAllWarehouse from "../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
+import { getUserInformation } from "../../../../utils/handelCookie";
+import Header from "../../../../components/reusableComponent/HeaderComponent";
 import Step1Content from "./step1";
 import Step2Content from "./step2";
 import Step3Content from "./step3";
@@ -30,15 +33,13 @@ import Step3Content from "./step3";
 // Step labels - 3 خطوات
 const steps = ["اختيار الفترة", "مراجعة السجلات", "تأكيد الأرشفة"];
 
-export default function MonthlyLockForm({
-    wareHouseData = {},
-    userInformation = {},
-}) {
+export default function MonthlyLockForm() {
     const { t } = useTranslation();
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [fetchingDocs, setFetchingDocs] = useState(false);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const userInformation = getUserInformation();
+    const { wareHouseData } = useGetAllWarehouse();
+    const [loading, setLoading] = useState(false);
 
     // Stepper state
     const [activeStep, setActiveStep] = useState(0);
@@ -48,35 +49,14 @@ export default function MonthlyLockForm({
     const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
     const [warehosueId, setWaerhouseId] = useState("");
 
-    // Documents data
-    const [completedDocs, setCompletedDocs] = useState([]);
-    const [incompleteDocs, setIncompleteDocs] = useState([]);
+    // Hook for monthly close logic
+    const { isFetching: fetchingDocs, docs, materialSnapshots, fetchStep2Data } = useMonthlyClose();
+    const { completed: completedDocs, incomplete: incompleteDocs } = docs;
 
     // Fetch documents for selected period
     const fetchDocuments = useCallback(async () => {
-        if (!userInformation?.entity_id) return;
-
-        setFetchingDocs(true);
-        try {
-            const response = await axiosInstance.get(
-                `${BackendUrl}/api/warehouse/getDocumentToCheckInformation?entityId=${userInformation.entity_id}&year=${selectedYear}&month=${selectedMonth}&warehouseId=${warehosueId}`,
-                { headers: { authorization: getToken() } }
-            );
-            const docs = response?.data?.data || [];
-
-            // Separate completed and incomplete based on is_fully_completed
-            const completed = docs.filter(doc => doc.is_fully_completed === 1);
-            const incomplete = docs.filter(doc => doc.is_fully_completed === 0);
-
-            setCompletedDocs(completed);
-            setIncompleteDocs(incomplete);
-        } catch (error) {
-            console.error("Error fetching documents:", error);
-            toast.error("فشل في جلب المستندات");
-        } finally {
-            setFetchingDocs(false);
-        }
-    }, [userInformation?.entity_id, selectedYear, selectedMonth]);
+        await fetchStep2Data(userInformation?.entity_id, selectedYear, selectedMonth, warehosueId);
+    }, [userInformation?.entity_id, selectedYear, selectedMonth, warehosueId, fetchStep2Data]);
 
     const getPeriodText = () => {
         const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
@@ -105,7 +85,7 @@ export default function MonthlyLockForm({
             formData.append("month", selectedMonth);
             formData.append("warehouse_id", warehosueId);
             dispatch(createMonthlyLockLive(formData));
-            handleClose();
+            navigate(-1);
         } catch (error) {
             toast.error("فشل في الأرشفة");
         } finally {
@@ -113,20 +93,8 @@ export default function MonthlyLockForm({
         }
     }, [selectedYear, selectedMonth, warehosueId, userInformation?.entity_id, dispatch]);
 
-    const handleOpen = () => {
-        setOpen(true);
-        setActiveStep(0);
-        setCompletedDocs([]);
-        setIncompleteDocs([]);
-    };
-
     const handleClose = () => {
-        if (!loading) {
-            setOpen(false);
-            setActiveStep(0);
-            setCompletedDocs([]);
-            setIncompleteDocs([]);
-        }
+        navigate(-1);
     };
 
     const handleNext = async () => {
@@ -186,18 +154,20 @@ export default function MonthlyLockForm({
             </Stepper>
 
             {/* Step Content */}
-            {activeStep === 0 && <Step1Content 
-                selectedYear={selectedYear} 
-                setSelectedYear={setSelectedYear} 
-                selectedMonth={selectedMonth} 
-                setSelectedMonth={setSelectedMonth} 
-                getPeriodText={getPeriodText}
-                selectedWarehouse={selectedWarehouse}
-                handleWarehouseChange={handleWarehouseChange}
-                memoWarehouseOptions={memoWarehouseOptions}
-            />}
-            {activeStep === 1 && <Step2Content getPeriodText={getPeriodText} fetchingDocs={fetchingDocs} incompleteDocs={incompleteDocs} completedDocs={completedDocs} />}
-            {activeStep === 2 && <Step3Content selectedWarehouse={selectedWarehouse} getPeriodText={getPeriodText} completedDocs={completedDocs} />}
+            <Box sx={{ minHeight: "300px" }}>
+                {activeStep === 0 && <Step1Content
+                    selectedYear={selectedYear}
+                    setSelectedYear={setSelectedYear}
+                    selectedMonth={selectedMonth}
+                    setSelectedMonth={setSelectedMonth}
+                    getPeriodText={getPeriodText}
+                    selectedWarehouse={selectedWarehouse}
+                    handleWarehouseChange={handleWarehouseChange}
+                    memoWarehouseOptions={memoWarehouseOptions}
+                />}
+                {activeStep === 1 && <Step2Content getPeriodText={getPeriodText} fetchingDocs={fetchingDocs} incompleteDocs={incompleteDocs} completedDocs={completedDocs} materialSnapshots={materialSnapshots} />}
+                {activeStep === 2 && <Step3Content selectedWarehouse={selectedWarehouse} getPeriodText={getPeriodText} completedDocs={completedDocs} />}
+            </Box>
         </Box>
     );
 
@@ -259,25 +229,17 @@ export default function MonthlyLockForm({
     );
 
     return (
-        <div>
-            <Tooltip title="إكمال الجرد الشهري وأرشفة المستندات المكتملة">
-                <ButtonTheme
-                    onClick={handleOpen}
-                    startIcon={<ArchiveIcon />}
-                >
-                    أرشفة نهائية
-                </ButtonTheme>
-            </Tooltip>
-            <PopupForm
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Header
                 title="إكمال الجرد الشهري وأرشفة المستندات"
-                open={open}
-                onClose={handleClose}
-                setOpen={setOpen}
-                icon={<ArchiveIcon />}
-                width="100%"
-                content={<FormContent />}
-                footer={<FormActions />}
+                icon={<ArchiveIcon sx={{ fontSize: 40, color: 'primary.main' }} />}
             />
-        </div>
+
+            <Paper elevation={3} sx={{ p: { xs: 2, md: 4 }, borderRadius: 2 }}>
+                <FormContent />
+                <Divider sx={{ my: 4 }} />
+                <FormActions />
+            </Paper>
+        </Container>
     );
 }

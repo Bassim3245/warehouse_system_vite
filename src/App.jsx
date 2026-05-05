@@ -254,6 +254,9 @@ const InvoiceTemplateDesigner = React.lazy(
 const MonthlyLocks = React.lazy(
   () => import("./app/warehouse_management/Pages/MonthlyLocks/MonthlyLocks"),
 );
+const MonthLockForm = React.lazy(
+  () => import("./app/warehouse_management/Pages/MonthlyLocks/MonthLockForm"),
+);
 const UnlockRequests = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/UnlockRequests/UnlockRequests"),
@@ -542,6 +545,7 @@ export default function App() {
 
                     {/* Month Lock System Routes */}
                     <Route path="monthly-locks" element={<MonthlyLocks />} />
+                    <Route path="monthly-locks/add" element={<MonthLockForm />} />
                     <Route
                       path="unlock-requests"
                       element={<UnlockRequests />}
