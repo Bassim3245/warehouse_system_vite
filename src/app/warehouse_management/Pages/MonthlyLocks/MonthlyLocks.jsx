@@ -34,7 +34,7 @@ const MonthlyLocks = () => {
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
   const { wareHouseData } = useGetAllWarehouse();
   const { lockData, isLoading } = useSelector((state) => state?.monthLock);
-  const [isAlart, setAlart] = useState(true);
+  const [isAlart, setAlart] = useState(false);
   const userInformation = getUserInformation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -107,7 +107,6 @@ const MonthlyLocks = () => {
           <UserGuid />
 
           {/* New Archiving Button */}
-          <Box sx={{ mb: 3, display: "flex", justifyContent: "flex-end" }}>
             <ButtonTheme
               variant="contained"
               startIcon={<LockIcon />}
@@ -116,7 +115,6 @@ const MonthlyLocks = () => {
             >
               إنشاء أرشفة جديدة (إغلاق شهر)
             </ButtonTheme>
-          </Box>
 
           {/* Warehouse Filter */}
           <Paper sx={{ p: 3, mb: 3 }}>

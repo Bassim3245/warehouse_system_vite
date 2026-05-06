@@ -39,9 +39,9 @@ const getInventoryArchiveMonthly = createAsyncThunk(
         queryParams.append("selectFactory", String(selectFactory))
       if (selectLab)
         queryParams.append("selectLab", String(selectLab))
-      if (pagination.page)
+      if (pagination?.page)
         queryParams.append("page", String(pagination.page));
-      if (pagination.limit)
+      if (pagination?.limit)
         queryParams.append("limit", String(pagination.limit));
       const response = await axiosInstance.get(
         `${BackendUrl}/api/warehouse/getInventoryArchiveMonthly?${queryParams.toString()}`,
@@ -86,9 +86,9 @@ const getInventoryArchiveAnnual = createAsyncThunk(
       if (filterDocumentType && filterDocumentType !== "") {
         queryParams.append("filterDocumentType", String(filterDocumentType));
       }
-      if (pagination.page)
+      if (pagination?.page)
         queryParams.append("page", String(pagination.page));
-      if (pagination.limit)
+      if (pagination?.limit)
         queryParams.append("limit", String(pagination.limit));
       const response = await axiosInstance.get(
         `${BackendUrl}/api/warehouse/getInventoryArchiveAnnual?${queryParams.toString()}`,

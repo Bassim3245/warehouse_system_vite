@@ -194,7 +194,8 @@ function Document({
   const staticHeaders = [
     "#",
     "رقم المستند",
-    "حالة",
+    'الحالة',
+    "حالة المستند",
     "تاريخ المستند",
     "تاريخ الإدخال",
     "الجهة",
@@ -549,6 +550,31 @@ function Document({
                             label={item.is_complete ? "مكتمل" : "غير مكتمل"}
                             size="small"
                             color={item.is_complete ? "success" : "warning"}
+                          />
+                        </StyledTableCell>
+
+                        <StyledTableCell>
+                          <Chip
+                            label={
+                              item.status === "active"
+                                ? "قيد العمل"
+                                : item.status === "moved"
+                                ? "مرحل"
+                                : item.status === "closed"
+                                ? "مغلق"
+                                : item.status || "—"
+                            }
+                            size="small"
+                            variant="outlined"
+                            color={
+                              item.status === "active"
+                                ? "info"
+                                : item.status === "moved"
+                                ? "secondary"
+                                : item.status === "closed"
+                                ? "default"
+                                : "default"
+                            }
                           />
                         </StyledTableCell>
 

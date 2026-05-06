@@ -19,7 +19,7 @@ import {
   FormatDataNumber,
   formatDateYearsMonth,
 } from "../../../../utils/formatData";
-import { cellStyles, InfoRow, TableHeader } from "./utils";
+import { cellStyles, getDocumentLabel, InfoRow, TableHeader } from "./utils";
 import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import { useTranslation } from "react-i18next";
@@ -185,10 +185,13 @@ const PrintDialogInventory = ({
                       {formatDateYearsMonth(item?.document_date) || "---"}
                     </StyledTableCell>
                     <StyledTableCell sx={cellStyles} align="center">
-                      {item?.document_type}
+                      {getDocumentLabel(item?.document_type)}
                     </StyledTableCell>
                     <StyledTableCell sx={cellStyles} align="center">
-                      {item?.quantity}
+                      {FormatDataNumber(item?.quantity)}
+                    </StyledTableCell>
+                    <StyledTableCell sx={cellStyles} align="center">
+                      {FormatDataNumber(item?.balance)}
                     </StyledTableCell>
                     <StyledTableCell sx={cellStyles} align="right">
                       {item?.specification}

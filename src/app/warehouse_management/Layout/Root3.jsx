@@ -53,17 +53,17 @@ export default function RootWarehouse() {
         checkPermission: roles?.show_page_report_warehouse?._id,
       },
       {
-        text: t("الارشفة الشهرية"),
+        text: t("إدارة الأشهر المغلقة"),
         icon: <CalendarTodayIcon sx={{ transition: "transform 0.2s" }} />,
         path: "monthly-inventory",
         checkPermission: roles?.show_page_monthly_inventory?._id,
       },
       {
-        text: t("ارشفة المواد"),
+        text: t("أرشيف المواد"),
         icon: <CalendarTodayIcon sx={{ transition: "transform 0.2s" }} />,
         path: "inventory-archive-monthly",
         checkPermission: roles?.show_page_monthly_inventory?._id,
-      },
+      }
     ],
     [roles, t],
   );
@@ -79,7 +79,8 @@ export default function RootWarehouse() {
         text: t("إدارة المستندات"),
         icon: <GridViewIcon sx={{ transition: "transform 0.2s" }} />,
         path: "manage-documents",
-        checkPermission: roles?.show_page_purchase?._id || roles?.show_page_sales?._id,
+        checkPermission:
+          roles?.show_page_purchase?._id || roles?.show_page_sales?._id,
       });
     }
 

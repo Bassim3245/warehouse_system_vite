@@ -31,13 +31,13 @@ const InventoryImportArchiveMonthly = () => {
   const documentId = searchParams.get("documentId"); // Optional - may be null
 
   const fetchData = useCallback(() => {
-    if (!warehouseId) return;
+    if (!dataUserById?.entity_id || !warehouseId) return;
 
     const param = {
       entity_id: dataUserById?.entity_id,
       warehouse_id: warehouseId,
       filterDocumentType: documentType,
-      documentId: documentId || null,
+      documentId: documentId,
     };
     dispatch(getInventoryArchiveMonthly(param));
   }, [
@@ -46,6 +46,7 @@ const InventoryImportArchiveMonthly = () => {
     warehouseId,
     documentType,
     documentId,
+    refreshKey,
   ]);
 
   useEffect(() => {

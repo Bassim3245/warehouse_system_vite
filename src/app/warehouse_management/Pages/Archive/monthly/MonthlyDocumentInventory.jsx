@@ -32,11 +32,16 @@ import { useInventoryArchiveMonthly } from "../hook/useInventory";
 import Header from "../../../../../components/reusableComponent/HeaderComponent";
 import layoutStyle from "../../../../../style/layoutStyle";
 import { useNavigate } from "react-router-dom";
-import { Autocomplete, Chip, InputAdornment, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Chip,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Warehouse } from "@mui/icons-material";
 import { Search } from "lucide-react";
 import useGetAllWarehouse from "../../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
-
 
 const DocumentTypeButton = React.memo(({ docType, isActive, onClick }) => (
   <Button
@@ -91,7 +96,7 @@ const MonthlyInventory = () => {
       setPage(1); // Reset to first page
       setRefreshKey((prev) => prev + 1); // Trigger data refresh
     },
-    [setSelectedWarehouse, setRefreshKey]
+    [setSelectedWarehouse, setRefreshKey],
   );
 
   // Handle search change with debouncing
@@ -113,7 +118,8 @@ const MonthlyInventory = () => {
     if (filterDocumentType && filterDocumentType !== "") {
       params.append("filterDocumentType", String(filterDocumentType));
     }
-    if (selectedWarehouse) params.append("warehouseId", String(selectedWarehouse));
+    if (selectedWarehouse)
+      params.append("warehouseId", String(selectedWarehouse));
     if (searchTerm && searchTerm.trim() !== "") {
       params.append("searchTerm", searchTerm.trim());
     }
@@ -131,12 +137,12 @@ const MonthlyInventory = () => {
 
   const memoWarehouseOptions = useMemo(
     () => wareHouseData || [],
-    [wareHouseData]
+    [wareHouseData],
   );
 
   const selectedWarehouseObj = useMemo(
     () => memoWarehouseOptions.find((w) => w.id === selectedWarehouse) || null,
-    [memoWarehouseOptions, selectedWarehouse]
+    [memoWarehouseOptions, selectedWarehouse],
   );
 
   // Set default warehouse to first warehouse when data loads
@@ -167,7 +173,7 @@ const MonthlyInventory = () => {
         {
           headers: { authorization: token },
           signal: abortControllerRef.current.signal,
-        }
+        },
       );
 
       if (response?.data) {
@@ -190,23 +196,29 @@ const MonthlyInventory = () => {
     } finally {
       setDataLoaded(false);
     }
-  }, [queryParams, token, searchTerm, selectedWarehouse, selectedMonth, selectedYear, filterDocumentType, page, limit]);
-
-
+  }, [
+    queryParams,
+    token,
+    searchTerm,
+    selectedWarehouse,
+    selectedMonth,
+    selectedYear,
+    filterDocumentType,
+    page,
+    limit,
+  ]);
 
   // Effect with proper cleanup
   useEffect(() => {
     fetchDocumentData();
-  }, [
-    fetchDocumentData
-  ]);
+  }, [fetchDocumentData]);
   const openMovement = useCallback(
     (id) => {
       navigate(
-        `${filterDocumentType === "in" ? "inventory-import-archive-monthly" : "inventory-export-archive-monthly"}?documentId=${id}&documentType=${filterDocumentType}&warehouseId=${selectedWarehouse}`
+        `${filterDocumentType === "in" || filterDocumentType === "return" ? "inventory-import-archive-monthly" : "inventory-export-archive-monthly"}?documentId=${id}&documentType=${filterDocumentType}&warehouseId=${selectedWarehouse}`,
       );
     },
-    [navigate, filterDocumentType, selectedWarehouse]
+    [navigate, filterDocumentType, selectedWarehouse],
   );
   const handleDateChange = useCallback(
     (newDate) => {
@@ -215,7 +227,7 @@ const MonthlyInventory = () => {
         setPage(1); // Reset page when date changes
       }
     },
-    [setSelectedDate]
+    [setSelectedDate],
   );
 
   // Memoized columns to prevent re-calculation on every render
@@ -233,7 +245,15 @@ const MonthlyInventory = () => {
         documentType: filterDocumentType,
         warehouseId: selectedWarehouse,
       }),
-    [t, roles, applicationPermission, setRefreshKey, token, filterDocumentType, openMovement]
+    [
+      t,
+      roles,
+      applicationPermission,
+      setRefreshKey,
+      token,
+      filterDocumentType,
+      openMovement,
+    ],
   );
 
   // Memoized rows data
@@ -243,7 +263,7 @@ const MonthlyInventory = () => {
         index: (page - 1) * limit + index + 1, // Correct index calculation for pagination
         ...item,
       })) || [],
-    [documentArchiveMonthly, page, limit]
+    [documentArchiveMonthly, page, limit],
   );
 
   // Memoized refresh button click handler
@@ -408,7 +428,7 @@ const MonthlyInventory = () => {
         btn={<RefreshButtonData onClick={handleRefreshClick} />}
         isPagination={true}
       />
-    </Box >
+    </Box>
   );
 };
 
