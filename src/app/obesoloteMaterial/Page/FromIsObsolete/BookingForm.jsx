@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BookOnline from "@mui/icons-material/BookOnline";
-import CustomTextField from "../../../../components/CustomTextField";
-import CustomeSelectField from "../../../../components/CustomeSelectField";
 import PopupForm from "../../../../components/PopupForm";
 import { getDataMinistries } from "../../../../redux/MinistriesState/MinistresAction";
 import { getDataEntities } from "../../../../redux/EntitiesState/EntitiesAction";
@@ -83,34 +82,51 @@ export default function BookingForm({
   const renderFormContent = () => (
     <Box component="form" sx={{ margin: "10px" }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", mb: 2, mt: 2 }} dir="rtl">
-        <CustomTextField
+        <TextField
+          fullWidth
           label={t("Stagnant.quantity")}
-          value={quantity}
+          value={quantity || ""}
           onChange={(e) => setQuantity(e.target.value)}
-          onClearClick={() => setQuantity("")}
-          customWidth="100%"
           required
         />
-        <CustomeSelectField
+        <TextField
+          select
+          fullWidth
           label={t("Select Ministry")}
-          value={ministriesId}
-          customWidth="100%"
-          list={Ministries || []}
-          customGetOptionLabel={(option) => option?.ministries || ""}
-          onChange={(e, newValue) => setMinistriesId(newValue)}
-          onClearClick={() => setMinistriesId("")}
+          value={ministriesId?.id || ""}
+          onChange={(e) => {
+            const selectedItem = Ministries?.find(
+              (item) => item.id === e.target.value
+            );
+            setMinistriesId(selectedItem || "");
+          }}
           required
-        />
-        <CustomeSelectField
+        >
+          {Ministries?.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.ministries}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          fullWidth
           label={t("Select Entity")}
-          value={entitiesId}
-          customWidth="100%"
-          list={filterData || []}
-          customGetOptionLabel={(option) => option?.Entities_name || ""}
-          onChange={(e, newValue) => setEntitiesId(newValue)}
-          onClearClick={() => setEntitiesId("")}
+          value={entitiesId?.entities_id || ""}
+          onChange={(e) => {
+            const selectedItem = filterData?.find(
+              (item) => item.entities_id === e.target.value
+            );
+            setEntitiesId(selectedItem || "");
+          }}
           required
-        />
+        >
+          {filterData?.map((option) => (
+            <MenuItem key={option.entities_id} value={option.entities_id}>
+              {option.Entities_name}
+            </MenuItem>
+          ))}
+        </TextField>
       </Box>
     </Box>
   );

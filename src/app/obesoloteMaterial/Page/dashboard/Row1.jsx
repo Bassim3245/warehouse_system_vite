@@ -1,4 +1,4 @@
-import {  Grid, useTheme } from "@mui/material";
+import {  useTheme } from "@mui/material";
 import Card from "./card";
 import { data1, data2, data3 } from "./data";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import entitiesImage from "../../../../assets/image/entrepreneur_1358584.png";
 import productImage from "../../../../assets/image/boxes_6690949.png";
 import productTransaction from "../../../../assets/image/transaction.png";
 import { getToken } from "../../../../utils/handelCookie";
+import  Grid  from "@mui/material/Grid";
 
 const Row1 = ({ reportEntity, entity_id }) => {
   const [countData, setCountData] = useState(0);
@@ -53,7 +54,7 @@ const Row1 = ({ reportEntity, entity_id }) => {
   return (
     <Grid container spacing={3}>
       {!reportEntity && (
-        <Grid item xs={12} sm={6} md={4} lg={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
           <Card
             image={userImage}
             subTitle={"عدد المستخدمين"}
@@ -66,7 +67,7 @@ const Row1 = ({ reportEntity, entity_id }) => {
         </Grid>
       )}
       {!reportEntity && (
-        <Grid item xs={12} sm={6} md={4} lg={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
           <Card
             image={productImage}
             subTitle={"العدد الكلي للمواد داخل المنصة"}
@@ -78,7 +79,7 @@ const Row1 = ({ reportEntity, entity_id }) => {
           />
         </Grid>
       )}
-      <Grid item xs={12} sm={6} md={4} lg={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
         <Card
           image={ministriesImage}
           subTitle={"عدد الوزارات و المؤسسات المستقلة  "}
@@ -89,7 +90,7 @@ const Row1 = ({ reportEntity, entity_id }) => {
           color={theme.palette.info.main}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
         <Card
           image={entitiesImage}
           subTitle={"الجهات او الدوائر"}
@@ -100,7 +101,7 @@ const Row1 = ({ reportEntity, entity_id }) => {
           color={theme.palette.success.main}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
         <Card
           image={productImage}
           subTitle={"مواد الشهر الحالي"}
@@ -111,7 +112,7 @@ const Row1 = ({ reportEntity, entity_id }) => {
           color={theme.palette.warning.main}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
         <Card
           image={productTransaction}
           subTitle={"عدد الصفقات الكلي"}

@@ -36,11 +36,11 @@ function OtherApplication({ navigate }) {
       path: "warehouse-management",
       icon: <Warehouse sx={{ fontSize: 28 }} />,
     },
-    // {
-    //   label: t("نظام المواد الراكدة وبطيئة الحركة"),
-    //   path: "stagnant-materials",
-    //   icon: <BiSolidCategory style={{ fontSize: "28px" }} />,
-    // },
+    {
+      label: t("نظام المواد الراكدة وبطيئة الحركة"),
+      path: "stagnant-materials",
+      icon: <BiSolidCategory style={{ fontSize: "28px" }} />,
+    },
     {
       label: t("اعدادات"),
       path: "customer-platform-management",

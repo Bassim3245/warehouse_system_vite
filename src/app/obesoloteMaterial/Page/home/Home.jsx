@@ -288,7 +288,7 @@ export default function ObsoleteMaterialSystem() {
                       gap: 2,
                     }}
                   >
-                    {/* <Box
+                    <Box
                       sx={{
                         fontSize: "5rem",
                         mb: 1,
@@ -299,8 +299,8 @@ export default function ObsoleteMaterialSystem() {
                       }}
                     >
                       📦
-                    </Box> */}
-                    <LogoNew color={"#ffff"} />
+                    </Box>
+                    {/* <LogoNew color={"#ffff"} /> */}
                   </Box>
                 </Box>
               </LogoContainer>

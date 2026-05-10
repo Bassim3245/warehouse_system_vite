@@ -26,26 +26,20 @@ import {
   Zoom,
   alpha,
   useTheme,
+  TextField,
 } from "@mui/material";
 
 // Material UI Icons
 import {
   Add,
   CalendarToday,
-  Category,
   CheckCircle,
-  Description,
-  FormatListNumbered,
   Info,
-  Inventory,
-  Label,
   ModeEditOutlined,
 } from "@mui/icons-material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 
 // Custom Components
-import CustomTextField from "../../../../components/reusableComponent/CustomTextField";
-import CustomeSelectField from "../../../../components/reusableComponent/CustomeSelectField";
 import CustomDatePicker from "../../../../components/reusableComponent/CustomDatePicker";
 import FileUploadComponent from "../../../../components/reusableComponent/FileUplodComponent";
 import { BackendUrl } from "../../../../redux/api/axios";
@@ -589,28 +583,26 @@ function FromIsDeleted({
                         <Box>
                           <Zoom in={true} style={{ transitionDelay: "100ms" }}>
                             <div>
-                              <CustomeSelectField
-                                label={"أختيار الصنف  الرئيسي "}
-                                haswidth={true}
-                                value={main_class}
-                                hasMultipleLine={true}
-                                customPadding={"0px"}
-                                list={dataMainClass ? dataMainClass : []}
-                                customGetOptionLabel={(option) =>
-                                  option?.main_Class_name || ""
-                                }
-                                multiple={false}
+                              <TextField
+                                select
+                                fullWidth
+                                label="أختيار الصنف  الرئيسي "
+                                value={main_class?.mainClass_id || ""}
                                 required
-                                readOnly={false}
-                                onChange={(e, newValue) => {
-                                  setMain_class(newValue);
+                                onChange={(e) => {
+                                  const selectedItem = dataMainClass?.find(
+                                    (item) => item.mainClass_id === e.target.value
+                                  );
+                                  setMain_class(selectedItem || "");
                                   setFormTouched(true);
                                 }}
-                                onClearClick={() => {
-                                  setMain_class("");
-                                }}
-                                startIcon={<Category fontSize="small" />}
-                              />
+                              >
+                                {dataMainClass?.map((option) => (
+                                  <MenuItem key={option.mainClass_id} value={option.mainClass_id}>
+                                    {option.main_Class_name}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
                             </div>
                           </Zoom>
                         </Box>
@@ -618,30 +610,26 @@ function FromIsDeleted({
                         <Box>
                           <Zoom in={true} style={{ transitionDelay: "150ms" }}>
                             <div>
-                              <CustomeSelectField
-                                label={"أختيار الصنف الخاص بالرئيسي "}
-                                haswidth={true}
-                                value={sub_class}
-                                hasMultipleLine={true}
-                                customPadding={"0px"}
-                                list={filterDatSuClass ? filterDatSuClass : []}
-                                customGetOptionLabel={(option) =>
-                                  option?.sub_class_name || ""
-                                }
-                                multiple={false}
+                              <TextField
+                                select
+                                fullWidth
+                                label="أختيار الصنف الخاص بالرئيسي "
+                                value={sub_class?.subClass_id || ""}
                                 required
-                                readOnly={false}
-                                onChange={(e, newValue) => {
-                                  setSub_class(newValue);
+                                onChange={(e) => {
+                                  const selectedItem = filterDatSuClass?.find(
+                                    (item) => item.subClass_id === e.target.value
+                                  );
+                                  setSub_class(selectedItem || "");
                                   setFormTouched(true);
                                 }}
-                                onClearClick={() => {
-                                  setSub_class("");
-                                }}
-                                startIcon={
-                                  <FormatListNumbered fontSize="small" />
-                                }
-                              />
+                              >
+                                {filterDatSuClass?.map((option) => (
+                                  <MenuItem key={option.subClass_id} value={option.subClass_id}>
+                                    {option.sub_class_name}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
                             </div>
                           </Zoom>
                         </Box>
@@ -649,26 +637,23 @@ function FromIsDeleted({
                         <Box>
                           <Zoom in={true} style={{ transitionDelay: "200ms" }}>
                             <div>
-                              <CustomeSelectField
-                                label={"اختيار نوع المادة"}
-                                haswidth={true}
+                              <TextField
+                                select
+                                fullWidth
+                                label="اختيار نوع المادة"
                                 value={typMartials || ""}
-                                hasMultipleLine={true}
-                                customPadding={"0px"}
-                                list={typeMaterilAarry}
-                                customGetOptionLabel={(option) => option || ""}
-                                multiple={false}
                                 required
-                                readOnly={false}
-                                onChange={(e, newValue) => {
-                                  setTypMartials(newValue);
+                                onChange={(e) => {
+                                  setTypMartials(e.target.value);
                                   setFormTouched(true);
                                 }}
-                                onClearClick={() => {
-                                  setTypMartials("");
-                                }}
-                                startIcon={<Inventory fontSize="small" />}
-                              />
+                              >
+                                {typeMaterilAarry?.map((option, index) => (
+                                  <MenuItem key={index} value={option}>
+                                    {option}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
                             </div>
                           </Zoom>
                         </Box>
@@ -676,22 +661,15 @@ function FromIsDeleted({
                         <Box>
                           <Zoom in={true} style={{ transitionDelay: "250ms" }}>
                             <div>
-                              <CustomTextField
-                                label={"أسم المادة حسب الادخال الرسمي"}
-                                haswidth={true}
-                                value={nameMartials}
-                                hasMultipleLine={false}
-                                paddingHorizontal={"0px"}
+                              <TextField
+                                fullWidth
+                                label="أسم المادة حسب الادخال الرسمي"
+                                value={nameMartials || ""}
                                 required
-                                readOnly={false}
                                 onChange={(e) => {
                                   setNameMartials(e.target.value);
                                   setFormTouched(true);
                                 }}
-                                onClearClick={() => {
-                                  setNameMartials("");
-                                }}
-                                startIcon={<Label fontSize="small" />}
                               />
                             </div>
                           </Zoom>
@@ -704,24 +682,15 @@ function FromIsDeleted({
                         <Box>
                           <Zoom in={true} style={{ transitionDelay: "300ms" }}>
                             <div>
-                              <CustomTextField
-                                label={"الكمية"}
-                                haswidth={true}
-                                value={Quantity}
-                                hasMultipleLine={false}
-                                paddingHorizontal={"0px"}
-                                readOnly={false}
+                              <TextField
+                                fullWidth
+                                type="number"
+                                label="الكمية"
+                                value={Quantity || ""}
                                 onChange={(e) => {
                                   setQuantity(e.target.value);
                                   setFormTouched(true);
                                 }}
-                                onClearClick={() => {
-                                  setQuantity("");
-                                }}
-                                type="number"
-                                startIcon={
-                                  <FormatListNumbered fontSize="small" />
-                                }
                               />
                             </div>
                           </Zoom>
@@ -730,30 +699,26 @@ function FromIsDeleted({
                         <Box>
                           <Zoom in={true} style={{ transitionDelay: "350ms" }}>
                             <div>
-                              <CustomeSelectField
-                                label={"أختيار وحدة المادة"}
-                                haswidth={true}
-                                value={measuring_unit}
-                                hasMultipleLine={true}
-                                customPadding={"0px"}
-                                list={
-                                  dataUnitMeasuring ? dataUnitMeasuring : []
-                                }
-                                customGetOptionLabel={(option) =>
-                                  option?.measuring_unit || ""
-                                }
-                                multiple={false}
+                              <TextField
+                                select
+                                fullWidth
+                                label="أختيار وحدة المادة"
+                                value={measuring_unit?.unit_id || ""}
                                 required
-                                readOnly={false}
-                                onChange={(e, newValue) => {
-                                  setMeasuring_unit(newValue);
+                                onChange={(e) => {
+                                  const selectedItem = dataUnitMeasuring?.find(
+                                    (item) => item.unit_id === e.target.value
+                                  );
+                                  setMeasuring_unit(selectedItem || "");
                                   setFormTouched(true);
                                 }}
-                                onClearClick={() => {
-                                  setMeasuring_unit("");
-                                }}
-                                startIcon={<Inventory fontSize="small" />}
-                              />
+                              >
+                                {dataUnitMeasuring?.map((option) => (
+                                  <MenuItem key={option.unit_id} value={option.unit_id}>
+                                    {option.measuring_unit}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
                             </div>
                           </Zoom>
                         </Box>
@@ -761,28 +726,26 @@ function FromIsDeleted({
                         <Box>
                           <Zoom in={true} style={{ transitionDelay: "400ms" }}>
                             <div>
-                              <CustomeSelectField
-                                label={"أختيار  حالة المادة"}
-                                haswidth={true}
-                                value={status_martials}
-                                hasMultipleLine={true}
-                                customPadding={"0px"}
-                                list={stateMaterial ? stateMaterial : []}
-                                customGetOptionLabel={(option) =>
-                                  option?.state_name || ""
-                                }
-                                multiple={false}
+                              <TextField
+                                select
+                                fullWidth
+                                label="أختيار  حالة المادة"
+                                value={status_martials?.id || ""}
                                 required
-                                readOnly={false}
-                                onChange={(e, newValue) => {
-                                  setStatus_martials(newValue);
+                                onChange={(e) => {
+                                  const selectedItem = stateMaterial?.find(
+                                    (item) => item.id === e.target.value
+                                  );
+                                  setStatus_martials(selectedItem || "");
                                   setFormTouched(true);
                                 }}
-                                onClearClick={() => {
-                                  setStatus_martials("");
-                                }}
-                                startIcon={<Info fontSize="small" />}
-                              />
+                              >
+                                {stateMaterial?.map((option) => (
+                                  <MenuItem key={option.id} value={option.id}>
+                                    {option.state_name}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
                             </div>
                           </Zoom>
                         </Box>
@@ -824,22 +787,16 @@ function FromIsDeleted({
                   <Box sx={{ width: "100%", mb: "15px" }}>
                     <Zoom in={true} style={{ transitionDelay: "500ms" }}>
                       <div>
-                        <CustomTextField
-                          label={"ملاحظات حول المادة "}
-                          haswidth={true}
-                          value={description}
-                          hasMultipleLine={true}
-                          paddingHorizontal={"0px"}
-                          readOnly={false}
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={4}
+                          label="ملاحظات حول المادة "
+                          value={description || ""}
                           onChange={(e) => {
                             setDescription(e.target.value);
                             setFormTouched(true);
                           }}
-                          onClearClick={() => {
-                            setDescription("");
-                          }}
-                          startIcon={<Description fontSize="small" />}
-                          rows={4}
                         />
                       </div>
                     </Zoom>
