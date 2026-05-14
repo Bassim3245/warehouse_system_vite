@@ -31,6 +31,18 @@ const Factories = () => {
   const theme = useTheme();
   const [refreshKey, setRefreshKey] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   useEffect(() => {
     dispatch(
       getAllFactory({
@@ -105,6 +117,10 @@ const Factories = () => {
           roles?.add_factory?._id,
           permissionData
         )}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
       />
     </Box>
   );

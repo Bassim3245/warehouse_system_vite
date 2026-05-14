@@ -4,19 +4,38 @@ import { getToken } from "../../utils/handelCookie";
 const getAllWarehouse = createAsyncThunk(
   "warehouse/getAllWarehouse",
   async (
-    { entity_id, warehouse_type = "", roles, applicationPermission },
-    { rejectWithValue }
+    {
+      entity_id,
+      warehouse_type = "",
+      roles,
+      applicationPermission,
+      labId,
+      factoryId,
+    },
+    { rejectWithValue },
   ) => {
+    let param = {
+      entity_id,
+
+      checkPermissionUser: roles?.get_all_report_for_factory_lab_warehouse?._id,
+      applicationPermission: applicationPermission.warehouseSystem._id,
+    };
+    if (warehouse_type) {
+      param.warehouse_type = warehouse_type;
+    }
+    if (labId) {
+      param.lab_id = labId;
+    }
+    if (factoryId) {
+      param.factory_id = factoryId;
+    }
+
     try {
       const response = await axiosInstance({
         method: "GET",
         url: "/api/warehouse/getAllWarehouseData",
         params: {
-          entity_id,
-          warehouse_type,
-          checkPermissionUser:
-            roles?.get_all_report_for_factory_lab_warehouse?._id,
-          applicationPermission: applicationPermission.warehouseSystem._id,
+          ...param,
         },
       });
       return response?.data?.data;
@@ -28,7 +47,7 @@ const getAllWarehouse = createAsyncThunk(
         return rejectWithValue(error.message);
       }
     }
-  }
+  },
 );
 const getWarehouseByLabId = createAsyncThunk(
   "warehouse/getWarehouseByLabId",
@@ -52,14 +71,14 @@ const getWarehouseByLabId = createAsyncThunk(
         return rejectWithValue(error.message);
       }
     }
-  }
+  },
 );
 
 const getAllWarehouseByFactoryAndLab = createAsyncThunk(
   "warehouse/getAllWarehouseByFactoryAndLab",
   async (
     { entity_id, lab_id, factory_id, warehouseType },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await axiosInstance({
@@ -81,7 +100,7 @@ const getAllWarehouseByFactoryAndLab = createAsyncThunk(
         return rejectWithValue(error.message);
       }
     }
-  }
+  },
 );
 const getWarehouseDataByUserId = createAsyncThunk(
   "warehouse/getWarehouseDataByUserId",
@@ -101,7 +120,7 @@ const getWarehouseDataByUserId = createAsyncThunk(
         return rejectWithValue(error.message);
       }
     }
-  }
+  },
 );
 export const getWarehouseDataById = createAsyncThunk(
   "warehouse/getWarehouseDataById",
@@ -125,7 +144,7 @@ export const getWarehouseDataById = createAsyncThunk(
         return rejectWithValue(error.message);
       }
     }
-  }
+  },
 );
 // Removed duplicate thunk
 export {
