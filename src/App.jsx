@@ -223,6 +223,10 @@ const MainPageForReport = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/managermantReports/mainPageReport"),
 );
+const InfoSelectionPage = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managermantReports/InfoSelectionPage"),
+);
 const MonthlyInventory = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/Archive/monthly/MonthlyDocumentInventory"),
@@ -507,6 +511,10 @@ export default function App() {
                     <Route
                       path="main-page-report"
                       element={<MainPageForReport />}
+                    />
+                    <Route
+                      path="main-page-report/info-selection"
+                      element={<InfoSelectionPage />}
                     />
                     <Route
                       path="monthly-inventory"

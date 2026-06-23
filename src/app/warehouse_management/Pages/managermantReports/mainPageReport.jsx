@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -11,15 +11,9 @@ import Assessment from "@mui/icons-material/Assessment";
 import Settings from "@mui/icons-material/Settings";
 import Analytics from "@mui/icons-material/Analytics";
 import { useTranslation } from "react-i18next";
-import InfoSelectionDialog from "./InfoSelectionDialog";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useReportLogic } from "../../../../hooks/useReportLogicWarhouse";
-import {
-  handleOpenInfoDialog,
-  handleCloseInfoDialog,
-  handleInfoCheckboxChange,
-  handleToggleSection,
-  handleApplySelections,
-} from "../../../../utils/reportUtils/reportHandlers";
+
 import {
   softColors,
   statisticDataBox,
@@ -40,10 +34,10 @@ import { QuickStat, StatCard } from "../../../../style/reportStyle";
 
 export default function MainPageReport() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const {
-    showInfoDialog,
-    setShowInfoDialog,
     labData,
     factoryData,
     wareHouseData,
@@ -51,10 +45,7 @@ export default function MainPageReport() {
     setSelectedInfo,
     expandedSections,
     setExpandedSections,
-    dataUserById,
-    applicationPermission,
     selectedReportType,
-    setSelectedReportType,
   } = useReportLogic();
 
   const {
@@ -67,30 +58,35 @@ export default function MainPageReport() {
     chartDataMaterialImport,
     chartDataMaterialExport,
   } = useDashboard();
-  console.log("chartDocumentData", chartDocumentData , "chartDataMaterialImport", chartDataMaterialImport , "chartDataMaterialExport", chartDataMaterialExport);
+
+  // Read updated state returning from InfoSelectionPage
+  useEffect(() => {
+    if (location.state?.updatedInfo) {
+      setSelectedInfo(location.state.updatedInfo);
+    }
+    if (location.state?.updatedExpandedSections) {
+      setExpandedSections(location.state.updatedExpandedSections);
+    }
+
+    // Clear the state so it doesn't persist on refresh
+    if (location.state?.updatedInfo || location.state?.updatedExpandedSections) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, setSelectedInfo, setExpandedSections, navigate, location.pathname]);
 
   // Memoize callback handlers to prevent recreation on every render
-  const onOpenInfoDialog = useCallback(
-    () => handleOpenInfoDialog(setShowInfoDialog),
-    [setShowInfoDialog]
-  );
-  const onCloseInfoDialog = useCallback(
-    () => handleCloseInfoDialog(setShowInfoDialog),
-    [setShowInfoDialog]
-  );
-  const onInfoCheckboxChange = useCallback(
-    (category, itemId, itemlabel = null) =>
-      handleInfoCheckboxChange(category, itemId, setSelectedInfo, itemlabel),
-    [setSelectedInfo]
-  );
-  const onToggleSection = useCallback(
-    (section) => handleToggleSection(section, setExpandedSections),
-    [setExpandedSections]
-  );
-  const onApplySelections = useCallback(
-    () => handleApplySelections(selectedInfo, setShowInfoDialog, dataUserById),
-    [selectedInfo, setShowInfoDialog, dataUserById]
-  );
+  const onOpenInfoDialog = useCallback(() => {
+    navigate("info-selection", {
+      state: {
+        selectedInfo,
+        expandedSections,
+        wareHouseData,
+        labData,
+        factoryData,
+        selectedReportType,
+      }
+    });
+  }, [navigate, selectedInfo, expandedSections, wareHouseData, labData, factoryData, selectedReportType]);
 
   // Memoize chart data transformation to avoid recalculation on every render
   const transformedChartData = useMemo(() => {
@@ -260,7 +256,7 @@ export default function MainPageReport() {
           p: { xs: 2, sm: 3, md: 4 },
           mb: 3,
           backgroundColor: softColors.cardBg,
-          borderRadius: 4,
+          borderRadius: 1,
           border: `1px solid ${softColors.primary}20`,
           position: "relative",
           overflow: "hidden",
@@ -284,7 +280,7 @@ export default function MainPageReport() {
               <Box
                 sx={{
                   p: 1.5,
-                  borderRadius: 3,
+                  borderRadius: 1,
                   backgroundColor: `${softColors.primary}10`,
                   color: softColors.primary,
                   display: { xs: "none", sm: "flex" },
@@ -336,7 +332,7 @@ export default function MainPageReport() {
                         size: "small",
                         sx: {
                           "& .MuiOutlinedInput-root": {
-                            borderRadius: 2,
+                            borderRadius: 1,
                             backgroundColor: softColors.cardBg,
                           },
                         },
@@ -360,7 +356,7 @@ export default function MainPageReport() {
                         size: "small",
                         sx: {
                           "& .MuiOutlinedInput-root": {
-                            borderRadius: 2,
+                            borderRadius: 1,
                             backgroundColor: softColors.cardBg,
                           },
                         },
@@ -376,7 +372,7 @@ export default function MainPageReport() {
                 startIcon={<Settings />}
                 onClick={onOpenInfoDialog}
                 sx={{
-                  borderRadius: 2,
+                  borderRadius: 1,
                   textTransform: "none",
                   fontWeight: "500",
                   px: 2.5,
@@ -390,7 +386,7 @@ export default function MainPageReport() {
                   },
                 }}
               >
-                {t("اختيار المعلومات")}
+                {t("انشاء تقرير")}
               </Button>
             </Box>
           </Grid>
@@ -424,7 +420,7 @@ export default function MainPageReport() {
             sx={{
               height: "100%",
               p: 2.5,
-              borderRadius: 3,
+              borderRadius: 1,
               backgroundColor: softColors.cardBg,
               border: `1px solid ${softColors.neutral}20`,
             }}
@@ -435,7 +431,7 @@ export default function MainPageReport() {
               <Box
                 sx={{
                   p: 1,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   backgroundColor: `${softColors.info}15`,
                 }}
               >
@@ -472,22 +468,6 @@ export default function MainPageReport() {
         </Grid>
       </Grid>
 
-      <InfoSelectionDialog
-        open={showInfoDialog}
-        onClose={onCloseInfoDialog}
-        selectedInfo={selectedInfo}
-        onInfoCheckboxChange={onInfoCheckboxChange}
-        expandedSections={expandedSections}
-        onToggleSection={onToggleSection}
-        onApplySelections={onApplySelections}
-        wareHouseData={wareHouseData}
-        labData={labData}
-        factoryData={factoryData}
-        warehouseReports={warehouseReports}
-        applicationPermission={applicationPermission}
-        selectedReportType={selectedReportType}
-        setSelectedReportType={setSelectedReportType}
-      />
     </Box>
   );
 }
