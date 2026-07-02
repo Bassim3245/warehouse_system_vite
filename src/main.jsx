@@ -69,6 +69,9 @@ createRoot(document.getElementById('root')).render(
             </button>
           )}
         />
+
+
+        
       </I18nextProvider>
     </Provider>
   </StrictMode>,

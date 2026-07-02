@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getRoleAndUserId } from "./rolAction";
 const initialState = {
   Permission: [],
-
   isError: false,
   isSuccess: false,
   loading: false,
@@ -29,10 +28,6 @@ const initialState = {
   },
   
   },
-
-
-
-
   roles: {
     Add_Data_Users: {
       value: false,
