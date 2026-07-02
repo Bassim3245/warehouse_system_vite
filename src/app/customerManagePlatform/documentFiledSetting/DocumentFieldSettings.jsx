@@ -2,18 +2,9 @@ import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 import Tab from "@mui/material/Tab";
 import Table from "@mui/material/Table";
@@ -23,11 +14,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tabs from "@mui/material/Tabs";
-import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
-import Alert from "@mui/material/Alert";
 
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -41,299 +30,33 @@ import { toast } from "react-toastify";
 import { axiosInstance } from "../../../redux/api/axiosConfig";
 import { BackendUrl } from "../../../redux/api/axios";
 import { getUserInformation } from "../../../utils/handelCookie";
+import DeleteConfirmDialog from "./deleteConfirmModel";
+import FieldFormDialog from "./documetFildeModel";
+import { DOCUMENT_TYPES, FIELD_TYPES } from "./utils";
+import { ButtonTheme } from "../../../style/ButtomStyle";
+import { typeDocument } from "../../../constants/arrayFuction";
 
-/* ====================================================
-   Constants
-   ==================================================== */
-const DOCUMENT_TYPES = [
-  { value: "in", label: "وارد" },
-  { value: "out", label: "صادر" },
-  { value: "internal_transfer", label: "تحويل داخلي" },
-  { value: "production_entry", label: "إنتاج" },
-  { value: "internal_consumption", label: "استهلاك داخلي" },
-];
 
-const FIELD_TYPES = [
-  { value: "text", label: "نص" },
-  { value: "number", label: "رقم" },
-  { value: "date", label: "تاريخ" },
-  { value: "select", label: "قائمة اختيار" },
-  { value: "textarea", label: "نص متعدد الأسطر" },
-];
-
-const EMPTY_FORM = {
-  document_type: "in",
-  field_key: "",
-  field_label: "",
-  field_type: "text",
-  is_required: false,
-  display_order: 0,
-  is_active: true,
-};
-
-/* ====================================================
-   Field Form Dialog
-   ==================================================== */
-const FieldFormDialog = memo(
-  ({ open, onClose, onSave, initialData, loading }) => {
-    const [form, setForm] = useState(EMPTY_FORM);
-
-    useEffect(() => {
-      if (open) {
-        setForm(
-          initialData
-            ? {
-                document_type: initialData.document_type,
-                field_key: initialData.field_key,
-                field_label: initialData.field_label,
-                field_type: initialData.field_type,
-                is_required: Boolean(initialData.is_required),
-                display_order: initialData.display_order,
-                is_active: Boolean(initialData.is_active),
-              }
-            : EMPTY_FORM,
-        );
-      }
-    }, [open, initialData]);
-
-    const handleChange = (e) => {
-      const { name, value, type, checked } = e.target;
-      setForm((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }));
-    };
-
-    const handleSubmit = () => {
-      if (!form.field_key.trim()) {
-        toast.error("يرجى إدخال مفتاح الحقل");
-        return;
-      }
-      if (!form.field_label.trim()) {
-        toast.error("يرجى إدخال تسمية الحقل");
-        return;
-      }
-      onSave(form);
-    };
-
-    return (
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: { borderRadius: 3, dir: "rtl" },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            pb: 1,
-            background: "linear-gradient(135deg, #1976d2 0%, #1565c0 100%)",
-            color: "white",
-            borderRadius: "12px 12px 0 0",
-          }}
-        >
-          <TuneIcon />
-          {initialData ? "تعديل الحقل" : "إضافة حقل جديد"}
-        </DialogTitle>
-
-        <DialogContent sx={{ pt: 3, pb: 2 }}>
-          <Grid container spacing={2} direction="column">
-            {/* Document Type */}
-            <Grid item xs={12}>
-              <FormControl fullWidth size="small">
-                <InputLabel>نوع المستند</InputLabel>
-                <Select
-                  name="document_type"
-                  value={form.document_type}
-                  label="نوع المستند"
-                  onChange={handleChange}
-                >
-                  {DOCUMENT_TYPES.map((dt) => (
-                    <MenuItem key={dt.value} value={dt.value}>
-                      {dt.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            {/* Field Key */}
-            <Grid item xs={12}>
-              <TextField
-                name="field_key"
-                label="مفتاح الحقل (field_key)"
-                value={form.field_key}
-                onChange={handleChange}
-                fullWidth
-                size="small"
-                helperText="مثال: account_number (بدون مسافات، بالإنجليزية)"
-              />
-            </Grid>
-
-            {/* Field Label */}
-            <Grid item xs={12}>
-              <TextField
-                name="field_label"
-                label="تسمية الحقل (field_label)"
-                value={form.field_label}
-                onChange={handleChange}
-                fullWidth
-                size="small"
-                helperText="مثال: رقم الحساب"
-              />
-            </Grid>
-
-            {/* Field Type */}
-            <Grid item xs={12}>
-              <FormControl fullWidth size="small">
-                <InputLabel>نوع البيانات</InputLabel>
-                <Select
-                  name="field_type"
-                  value={form.field_type}
-                  label="نوع البيانات"
-                  onChange={handleChange}
-                >
-                  {FIELD_TYPES.map((ft) => (
-                    <MenuItem key={ft.value} value={ft.value}>
-                      {ft.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            {/* Display Order */}
-            <Grid item xs={12}>
-              <TextField
-                name="display_order"
-                label="ترتيب العرض"
-                type="number"
-                value={form.display_order}
-                onChange={handleChange}
-                fullWidth
-                size="small"
-                inputProps={{ min: 0 }}
-              />
-            </Grid>
-
-            {/* Switches */}
-            <Grid item xs={12}>
-              <Box sx={{ display: "flex", gap: 3 }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      name="is_required"
-                      checked={form.is_required}
-                      onChange={handleChange}
-                      color="warning"
-                    />
-                  }
-                  label="مطلوب"
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      name="is_active"
-                      checked={form.is_active}
-                      onChange={handleChange}
-                      color="success"
-                    />
-                  }
-                  label="مفعّل"
-                />
-              </Box>
-            </Grid>
-          </Grid>
-        </DialogContent>
-
-        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} /> : null}
-            sx={{ borderRadius: 2 }}
-          >
-            {initialData ? "حفظ التعديل" : "إضافة"}
-          </Button>
-          <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 2 }}>
-            إلغاء
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  },
-);
-FieldFormDialog.displayName = "FieldFormDialog";
-
-/* ====================================================
-   Delete Confirm Dialog
-   ==================================================== */
-const DeleteConfirmDialog = memo(
-  ({ open, onClose, onConfirm, fieldLabel, loading }) => (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="xs"
-      fullWidth
-      PaperProps={{ sx: { borderRadius: 3 } }}
-    >
-      <DialogTitle>تأكيد الحذف</DialogTitle>
-      <DialogContent>
-        <Alert severity="warning">
-          هل تريد حذف الحقل <strong>«{fieldLabel}»</strong>؟
-          <br />
-          سيتم حذف جميع القيم المخزنة لهذا الحقل في المستندات القديمة.
-        </Alert>
-      </DialogContent>
-      <DialogActions sx={{ px: 2, pb: 2, gap: 1 }}>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={onConfirm}
-          disabled={loading}
-          startIcon={loading ? <CircularProgress size={16} /> : null}
-          sx={{ borderRadius: 2 }}
-        >
-          حذف
-        </Button>
-        <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 2 }}>
-          إلغاء
-        </Button>
-      </DialogActions>
-    </Dialog>
-  ),
-);
-DeleteConfirmDialog.displayName = "DeleteConfirmDialog";
-
-/* ====================================================
-   Main Page
-   ==================================================== */
-export default function DocumentFieldSettings() {
+export default function DocumentFieldSettings({ entity_id = null }) {
   const [activeTab, setActiveTab] = useState(0);
   const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-
+  const userInformation = getUserInformation();
+const companyId = entity_id || userInformation?.entity_id;
   // Dialog state
   const [formOpen, setFormOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const currentDocType = DOCUMENT_TYPES[activeTab].value;
-  const userInformation = getUserInformation();
+  const currentDocType = typeDocument[activeTab].value;
   /* ── Fetch all field definitions ────────────────── */
   const fetchFields = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axiosInstance.get(
-        `${BackendUrl}/api/warehouse/fieldDefinitions?entity_id=${userInformation.entity_id}`,
+        `/api/warehouse/fieldDefinitions?entity_id=${companyId}&document_type=${currentDocType}`,
       );
       setFields(res.data?.data || []);
     } catch (err) {
@@ -341,17 +64,13 @@ export default function DocumentFieldSettings() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentDocType]);
 
   useEffect(() => {
     fetchFields();
   }, [fetchFields]);
 
-  /* ── Filter fields for current tab ──────────────── */
-  const filteredFields = useMemo(
-    () => fields.filter((f) => f.document_type === currentDocType),
-    [fields, currentDocType],
-  );
+
 
   /* ── Create Field ────────────────────────────────── */
   const handleCreate = useCallback(
@@ -360,7 +79,7 @@ export default function DocumentFieldSettings() {
       try {
         await axiosInstance.post(
           `${BackendUrl}/api/warehouse/fieldDefinitions`,
-          formData,
+          { ...formData, entity_id: companyId },
         );
         toast.success("تم إنشاء الحقل بنجاح");
         setFormOpen(false);
@@ -416,7 +135,7 @@ export default function DocumentFieldSettings() {
   const handleDeleteConfirm = useCallback(async () => {
     setActionLoading(true);
     try {
-      await axiosInstance.delete(
+      await axiosInstance.get(
         `${BackendUrl}/api/warehouse/fieldDefinitions/${deleteTarget.id}`,
       );
       toast.success("تم حذف الحقل بنجاح");
@@ -433,7 +152,7 @@ export default function DocumentFieldSettings() {
   /* ── Reorder (move up/down) ──────────────────────── */
   const handleReorder = useCallback(
     async (field, direction) => {
-      const sorted = [...filteredFields].sort(
+      const sorted = [...fields].sort(
         (a, b) => a.display_order - b.display_order,
       );
       const idx = sorted.findIndex((f) => f.id === field.id);
@@ -459,7 +178,7 @@ export default function DocumentFieldSettings() {
         toast.error("خطأ في ترتيب الحقول");
       }
     },
-    [filteredFields, fetchFields],
+    [fetchFields],
   );
 
   return (
@@ -497,22 +216,16 @@ export default function DocumentFieldSettings() {
           </Box>
         </Box>
 
-        <Button
+        <ButtonTheme
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => {
             setEditTarget(null);
             setFormOpen(true);
           }}
-          sx={{
-            borderRadius: 2,
-            background: "linear-gradient(135deg, #1976d2, #1565c0)",
-            boxShadow: "0 4px 16px rgba(25,118,210,0.35)",
-            "&:hover": { boxShadow: "0 6px 20px rgba(25,118,210,0.45)" },
-          }}
         >
           إضافة حقل جديد
-        </Button>
+        </ButtonTheme>
       </Box>
 
       {/* ── Stats Cards ─────────────────────────────── */}
@@ -580,7 +293,7 @@ export default function DocumentFieldSettings() {
             "& .Mui-selected": { color: "primary.main" },
           }}
         >
-          {DOCUMENT_TYPES.map((dt) => {
+          {typeDocument.map((dt) => {
             const count = fields.filter(
               (f) => f.document_type === dt.value,
             ).length;
@@ -633,7 +346,7 @@ export default function DocumentFieldSettings() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredFields.length === 0 ? (
+                {fields.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
                       <Box
@@ -664,7 +377,7 @@ export default function DocumentFieldSettings() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  [...filteredFields]
+                  [...fields]
                     .sort((a, b) => a.display_order - b.display_order)
                     .map((field, idx) => (
                       <TableRow
@@ -742,7 +455,7 @@ export default function DocumentFieldSettings() {
                                 <IconButton
                                   size="small"
                                   onClick={() => handleReorder(field, "down")}
-                                  disabled={idx === filteredFields.length - 1}
+                                  disabled={idx === fields.length - 1}
                                 >
                                   <KeyboardArrowDownIcon fontSize="small" />
                                 </IconButton>

@@ -1,24 +1,13 @@
-import React, {
-    useState,
-    useEffect,
-    useCallback,
-    useMemo,
-    memo,
-} from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
-import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -26,508 +15,608 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 
 import DescriptionIcon from "@mui/icons-material/Description";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import RestoreIcon from "@mui/icons-material/Restore";
 import SaveIcon from "@mui/icons-material/Save";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import RestoreIcon from "@mui/icons-material/Restore";
+import PreviewIcon from "@mui/icons-material/Preview";
+import CodeIcon from "@mui/icons-material/Code";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import PaletteIcon from "@mui/icons-material/Palette";
 import TableChartIcon from "@mui/icons-material/TableChart";
-import ViewListIcon from "@mui/icons-material/ViewList";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../../redux/api/axiosConfig";
 import { BackendUrl } from "../../../redux/api/axios";
 import { getToken, getUserInformation } from "../../../utils/handelCookie";
-import {
-    buildDefaultConfig,
-    DEFAULT_EXPORT_COLUMNS,
-    DEFAULT_IMPORT_COLUMNS,
-    DEFAULT_HEADER_FIELDS,
-    DEFAULT_HEADER_TEXT,
-} from "../../../hooks/invantory/useInvoiceTemplate";
+import { typeDocument } from "../../../constants/arrayFuction";
+import { AVAILABLE_VARIABLES } from "../../../constants/invoiceDocument";
+import TableColumnDesigner from "./tableColumnDesigner";
+import HeaderStyleEditor from "./headerStyleEditor";
+import DynamicFieldDesigner from "./dynamicFieldDesigner";
 
-const DOCUMENT_TYPES = [
-    { value: "in", label: "مستند وارد" },
-    { value: "out", label: "مستند صادر" },
-    { value: "internal_transfer", label: "تحويل داخلي" },
-    { value: "production_entry", label: "إدخال إنتاج" },
-    { value: "internal_consumption", label: "استهلاك داخلي" },
-];
+/* ══════════════════════════════════════════════════════
+   TABLE COLUMN DESIGNER — DND + Loop-Based HTML
+   ══════════════════════════════════════════════════════ */
 
-/* ──────────────────────────────────────────
-   Reusable: a single draggable/orderable row
-   ────────────────────────────────────────── */
-const FieldRow = memo(({ item, index, total, onToggle, onLabelChange, onMoveUp, onMoveDown }) => (
-    <Paper
+export default function InvoiceTemplateDesigner({ entity_id = null }) {
+  const user = getUserInformation();
+  const companyId = entity_id || user?.entity_id;
+
+  const [docTypeTab, setDocTypeTab] = useState(0);
+  const [sideTab, setSideTab] = useState(0);
+
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [editingId, setEditingId] = useState(null);
+  const [templateName, setTemplateName] = useState("");
+  const [htmlContent, setHtmlContent] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [newTemplateName, setNewTemplateName] = useState("");
+
+  const currentDocType = typeDocument[docTypeTab].value;
+
+  const loadTemplates = useCallback(async () => {
+    if (!companyId) return;
+    setLoading(true);
+    try {
+      const res = await axiosInstance.get(
+        `${BackendUrl}/api/warehouse/documentTemplates/${companyId}`,
+        { headers: { authorization: getToken() } },
+      );
+      setTemplates(res.data?.data || []);
+    } catch {
+      setTemplates([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [companyId]);
+
+  useEffect(() => {
+    loadTemplates();
+  }, [loadTemplates]);
+
+  const filteredTemplates = useMemo(
+    () => templates.filter((t) => t.document_type === currentDocType),
+    [templates, currentDocType],
+  );
+
+  const loadDefault = useCallback(async () => {
+    try {
+      const res = await axiosInstance.get(
+        `${BackendUrl}/api/warehouse/defaultTemplate/${currentDocType}`,
+        { headers: { authorization: getToken() } },
+      );
+      setHtmlContent(res.data?.data?.html_content || "");
+      setTemplateName(`قالب ${DOCUMENT_TYPES[docTypeTab].label} — مخصص`);
+      setEditingId(null);
+    } catch(err) {
+        toast.error(err?.response?.data?.message || "فشل في تحميل القالب الافتراضي");
+    }
+  }, [currentDocType, docTypeTab]);
+
+  const handleEdit = useCallback(async (template) => {
+    try {
+      const res = await axiosInstance.get(
+        `${BackendUrl}/api/warehouse/documentTemplate/${template.id}`,
+        { headers: { authorization: getToken() } },
+      );
+      const data = res.data?.data;
+      if (data) {
+        setHtmlContent(data.html_content || "");
+        setTemplateName(data.template_name || "");
+        setEditingId(data.id);
+      }
+    } catch {
+      toast.error("فشل في تحميل القالب");
+    }
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    if (!htmlContent.trim()) {
+      toast.warning("القالب فارغ");
+      return;
+    }
+    if (!templateName.trim()) {
+      toast.warning("أدخل اسم القالب");
+      return;
+    }
+    setSaving(true);
+    try {
+      await axiosInstance.post(
+        `${BackendUrl}/api/warehouse/documentTemplate`,
+        {
+          id: editingId || undefined,
+          template_name: templateName,
+          document_type: currentDocType,
+          entity_id: companyId,
+          html_content: htmlContent,
+        },
+        { headers: { authorization: getToken() } },
+      );
+      toast.success("تم حفظ القالب بنجاح");
+      loadTemplates();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "حدث خطأ أثناء الحفظ");
+    } finally {
+      setSaving(false);
+    }
+  }, [
+    htmlContent,
+    templateName,
+    editingId,
+    currentDocType,
+    companyId,
+    loadTemplates,
+  ]);
+
+  const handleDelete = useCallback(
+    async (id) => {
+      try {
+        await axiosInstance.get(
+          `${BackendUrl}/api/warehouse/removeDocumentTemplate/${id}`,
+          { headers: { authorization: getToken() } },
+        );
+        toast.success("تم حذف القالب");
+        if (editingId === id) {
+          setEditingId(null);
+          setHtmlContent("");
+          setTemplateName("");
+        }
+        loadTemplates();
+      } catch (err) {
+        toast.error(
+          err?.response?.data?.message || "لا يمكن حذف القالب الافتراضي",
+        );
+      }
+    },
+    [editingId, loadTemplates],
+  );
+
+  const copyVariable = useCallback((key) => {
+    navigator.clipboard.writeText(`{{${key}}}`);
+    toast.info(`تم نسخ {{${key}}}`);
+  }, []);
+
+  const handleNewTemplate = useCallback(() => {
+    setNameDialogOpen(true);
+    setNewTemplateName(`قالب ${DOCUMENT_TYPES[docTypeTab].label} — مخصص`);
+  }, [docTypeTab]);
+
+  const confirmNewTemplate = useCallback(async () => {
+    setNameDialogOpen(false);
+    setTemplateName(newTemplateName);
+    setEditingId(null);
+    await loadDefault();
+  }, [newTemplateName, loadDefault]);
+
+  const SIDE_TABS = [
+    { label: "القوالب", icon: <DescriptionIcon sx={{ fontSize: 14 }} /> },
+    { label: "المتغيرات", icon: <CodeIcon sx={{ fontSize: 14 }} /> },
+    { label: "أعمدة الجدول", icon: <TableChartIcon sx={{ fontSize: 14 }} /> },
+    { label: "تنسيق", icon: <PaletteIcon sx={{ fontSize: 14 }} /> },
+    { label: "حقول ديناميكية", icon: <ViewColumnIcon sx={{ fontSize: 14 }} /> },
+  ];
+
+  return (
+    <Box dir="rtl" sx={{ p: { xs: 2, md: 3 } }}>
+      {/* ── Page Header ── */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
+        <Box
+          sx={{
+            p: 1.2,
+            borderRadius: 2,
+            background: "linear-gradient(135deg,#1976d2,#1565c0)",
+            color: "white",
+            display: "flex",
+          }}
+        >
+          <DescriptionIcon />
+        </Box>
+        <Box>
+          <Typography variant="h5" fontWeight={700}>
+            مصمّم قوالب الطباعة
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            تحكّم في كل تفاصيل الاستمارة — الأعمدة، التسميات، الألوان، التوقيعات
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* ── Document type tabs ── */}
+      <Paper
         elevation={0}
         sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            p: 1,
-            mb: 0.5,
-            border: "1px solid",
-            borderColor: item.visible ? "primary.light" : "divider",
-            borderRadius: 2,
-            bgcolor: item.visible ? "primary.50" : "grey.50",
-            opacity: item.visible ? 1 : 0.6,
-            transition: "all 0.2s",
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 3,
+          mb: 2,
         }}
-    >
-        {/* Order arrows */}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <IconButton size="small" onClick={() => onMoveUp(index)} disabled={index === 0}>
-                <KeyboardArrowUpIcon fontSize="small" />
-            </IconButton>
-            <IconButton size="small" onClick={() => onMoveDown(index)} disabled={index === total - 1}>
-                <KeyboardArrowDownIcon fontSize="small" />
-            </IconButton>
-        </Box>
-
-        {/* Order badge */}
-        <Chip label={index + 1} size="small" sx={{ minWidth: 28, fontSize: "0.7rem" }} />
-
-        {/* Editable label */}
-        <TextField
-            value={item.label}
-            onChange={(e) => onLabelChange(index, e.target.value)}
-            size="small"
-            variant="outlined"
-            sx={{ flex: 1 }}
-            label="التسمية"
-            disabled={!item.visible}
-        />
-
-        {/* Visibility toggle */}
-        <Tooltip title={item.visible ? "إخفاء" : "إظهار"}>
-            <IconButton
-                size="small"
-                color={item.visible ? "primary" : "default"}
-                onClick={() => onToggle(index)}
-            >
-                {item.visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
-            </IconButton>
-        </Tooltip>
-    </Paper>
-));
-FieldRow.displayName = "FieldRow";
-
-/* ──────────────────────────────────────────
-   List of rows with move up/down helpers
-   ────────────────────────────────────────── */
-const FieldList = ({ items, onChange }) => {
-    const handleToggle = useCallback((idx) => {
-        const updated = items.map((f, i) =>
-            i === idx ? { ...f, visible: !f.visible } : f
-        );
-        onChange(updated);
-    }, [items, onChange]);
-
-    const handleLabelChange = useCallback((idx, value) => {
-        const updated = items.map((f, i) => (i === idx ? { ...f, label: value } : f));
-        onChange(updated);
-    }, [items, onChange]);
-
-    const handleMove = useCallback((idx, dir) => {
-        const arr = [...items];
-        const target = dir === "up" ? idx - 1 : idx + 1;
-        [arr[idx], arr[target]] = [arr[target], arr[idx]];
-        onChange(arr.map((f, i) => ({ ...f, order: i + 1 })));
-    }, [items, onChange]);
-
-    return (
-        <Box>
-            {items.map((item, idx) => (
-                <FieldRow
-                    key={item.key}
-                    item={item}
-                    index={idx}
-                    total={items.length}
-                    onToggle={handleToggle}
-                    onLabelChange={handleLabelChange}
-                    onMoveUp={(i) => handleMove(i, "up")}
-                    onMoveDown={(i) => handleMove(i, "down")}
-                />
-            ))}
-        </Box>
-    );
-};
-
-/* ──────────────────────────────────────────
-   Mini print preview panel
-   ────────────────────────────────────────── */
-const PreviewPanel = ({ config, documentType }) => {
-    if (!config) return null;
-    const visibleHeader = (config.headerFields || []).filter((f) => f.visible);
-    const visibleCols = (config.tableColumns || []).filter((c) => c.visible);
-
-    return (
-        <Paper
-            elevation={2}
-            sx={{
-                p: 2,
-                border: "2px dashed",
-                borderColor: "primary.light",
-                borderRadius: 2,
-                bgcolor: "#fafafa",
-                minHeight: 300,
-                fontFamily: "Arial, sans-serif",
-                direction: "rtl",
-            }}
+      >
+        <Tabs
+          value={docTypeTab}
+          onChange={(_, v) => {
+            setDocTypeTab(v);
+            setEditingId(null);
+            setHtmlContent("");
+            setTemplateName("");
+          }}
+          variant="scrollable"
+          scrollButtons="auto"
         >
-            <Typography variant="caption" color="primary" fontWeight={700} sx={{ display: "block", mb: 1 }}>
-                معاينة مبسطة
-            </Typography>
-            <Divider sx={{ mb: 1 }} />
+          {typeDocument.map((dt) => (
+            <Tab
+              key={dt.value}
+              label={
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  {dt.label}
+                  <Chip
+                    label={
+                      templates.filter((t) => t.document_type === dt.value)
+                        .length
+                    }
+                    size="small"
+                    sx={{ height: 18, fontSize: "0.7rem" }}
+                  />
+                </Box>
+              }
+            />
+          ))}
+        </Tabs>
+      </Paper>
 
-            {/* Header text */}
-            <Box sx={{ textAlign: "center", mb: 1 }}>
-                <Typography sx={{ fontSize: "11px", fontWeight: "bold" }}>
-                    {config.header?.line1}
-                </Typography>
-                <Typography sx={{ fontSize: "10px" }}>{config.header?.line2}</Typography>
-                <Typography sx={{ fontSize: "10px", color: "#666" }}>
-                    {config.header?.title}
-                </Typography>
-            </Box>
-            <Divider sx={{ mb: 1 }} />
-
-            {/* Header fields chips */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1 }}>
-                {visibleHeader.map((f) => (
-                    <Chip key={f.key} label={f.label} size="small" variant="outlined" sx={{ fontSize: "9px" }} />
-                ))}
-            </Box>
-
-            {/* Table column headers */}
-            <Box
-                sx={{
-                    display: "flex",
-                    gap: 0.5,
-                    bgcolor: "#2c3e50",
-                    borderRadius: 1,
-                    p: 0.5,
-                    flexWrap: "wrap",
-                }}
+      <Grid container spacing={2}>
+        {/* ── LEFT SIDEBAR ── */}
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Card variant="outlined" sx={{ borderRadius: 3 }}>
+            <Tabs
+              value={sideTab}
+              onChange={(_, v) => setSideTab(v)}
+              variant="fullWidth"
+              sx={{
+                borderBottom: "1px solid",
+                borderColor: "divider",
+                "& .MuiTab-root": { minHeight: 38, fontSize: "10px", gap: 0.3 },
+              }}
             >
-                {visibleCols.map((c) => (
-                    <Chip
-                        key={c.key}
-                        label={c.label}
-                        size="small"
-                        sx={{ fontSize: "8px", bgcolor: "white", height: 18 }}
-                    />
-                ))}
-            </Box>
+              {SIDE_TABS.map((t, i) => (
+                <Tab key={i} icon={t.icon} label={t.label} iconPosition="top" />
+              ))}
+            </Tabs>
 
-            {config.dynamicFieldsVisible && (
-                <Typography sx={{ fontSize: "9px", color: "#888", mt: 1 }}>
-                    ✓ الحقول الديناميكية مرئية
-                </Typography>
-            )}
-        </Paper>
-    );
-};
-
-/* ══════════════════════════════════════════
-   MAIN COMPONENT
-   ══════════════════════════════════════════ */
-export default function InvoiceTemplateDesigner() {
-    const user = getUserInformation();
-    const entityId = user?.entity_id;
-
-    const [activeTab, setActiveTab] = useState(0);
-    const [config, setConfig] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [hasCustom, setHasCustom] = useState(false);
-    const [sectionTab, setSectionTab] = useState(0);
-
-    const currentDocType = DOCUMENT_TYPES[activeTab].value;
-
-    /* ── Fetch saved template or fall back to default ── */
-    const loadTemplate = useCallback(async () => {
-        if (!entityId) return;
-        setLoading(true);
-        try {
-            const res = await axiosInstance.get(
-                `${BackendUrl}/api/warehouse/invoiceTemplate/${entityId}/${currentDocType}`,
-                { headers: { authorization: getToken() } }
-            );
-            const saved = res.data?.data;
-            if (saved && saved.config) {
-                setConfig(saved.config);
-                setHasCustom(true);
-            } else {
-                setConfig(buildDefaultConfig(currentDocType));
-                setHasCustom(false);
-            }
-        } catch {
-            setConfig(buildDefaultConfig(currentDocType));
-            setHasCustom(false);
-        } finally {
-            setLoading(false);
-        }
-    }, [entityId, currentDocType]);
-
-    useEffect(() => {
-        loadTemplate();
-        setSectionTab(0);
-    }, [loadTemplate]);
-
-    /* ── Save ── */
-    const handleSave = useCallback(async () => {
-        setSaving(true);
-        try {
-            await axiosInstance.post(
-                `${BackendUrl}/api/warehouse/invoiceTemplate`,
-                { entity_id: entityId, document_type: currentDocType, config },
-                { headers: { authorization: getToken() } }
-            );
-            toast.success("تم حفظ قالب الفاتورة بنجاح");
-            setHasCustom(true);
-        } catch (err) {
-            toast.error(err?.response?.data?.message || "حدث خطأ أثناء الحفظ");
-        } finally {
-            setSaving(false);
-        }
-    }, [entityId, currentDocType, config]);
-
-    /* ── Reset to default ── */
-    const handleReset = useCallback(async () => {
-        try {
-            await axiosInstance.delete(
-                `${BackendUrl}/api/warehouse/invoiceTemplate/${entityId}/${currentDocType}`,
-                { headers: { authorization: getToken() } }
-            );
-            setConfig(buildDefaultConfig(currentDocType));
-            setHasCustom(false);
-            toast.success("تم إعادة القالب الافتراضي");
-        } catch {
-            // Template didn't exist, just reset locally
-            setConfig(buildDefaultConfig(currentDocType));
-            setHasCustom(false);
-        }
-    }, [entityId, currentDocType]);
-
-    /* ── Config updaters ── */
-    const setHeaderText = useCallback(
-        (field, value) =>
-            setConfig((prev) => ({ ...prev, header: { ...prev.header, [field]: value } })),
-        []
-    );
-    const setHeaderFields = useCallback(
-        (fields) => setConfig((prev) => ({ ...prev, headerFields: fields })),
-        []
-    );
-    const setTableColumns = useCallback(
-        (cols) => setConfig((prev) => ({ ...prev, tableColumns: cols })),
-        []
-    );
-
-    const sectionTabs = useMemo(
-        () => [
-            { label: "الرأسية", icon: <PaletteIcon fontSize="small" /> },
-            { label: "الحقول", icon: <ViewListIcon fontSize="small" /> },
-            { label: "الأعمدة", icon: <TableChartIcon fontSize="small" /> },
-        ],
-        []
-    );
-
-    return (
-        <Box dir="rtl" sx={{ p: { xs: 2, md: 3 } }}>
-            {/* ── Page Header ── */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
-                <Box
+            <CardContent sx={{ p: 1.5 }}>
+              {/* Tab 0 — Templates list */}
+              {sideTab === 0 && (
+                <>
+                  <Box
                     sx={{
-                        p: 1,
-                        borderRadius: 2,
-                        background: "linear-gradient(135deg,#1976d2,#1565c0)",
-                        color: "white",
-                        display: "flex",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mb: 1,
                     }}
-                >
-                    <DescriptionIcon />
-                </Box>
-                <Box>
-                    <Typography variant="h5" fontWeight={700}>
-                        مصمم قالب الفاتورة
+                  >
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      القوالب
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        خصص تصميم الفاتورة لكل نوع مستند
-                    </Typography>
-                </Box>
-                <Box sx={{ ml: "auto", display: "flex", gap: 1 }}>
-                    {hasCustom && (
-                        <Chip
-                            label="قالب مخصص محفوظ"
-                            color="success"
-                            size="small"
-                            variant="outlined"
-                        />
-                    )}
-                    <Tooltip title="حذف التخصيص والرجوع للافتراضي">
-                        <Button
-                            variant="outlined"
-                            color="warning"
-                            startIcon={<RestoreIcon />}
-                            onClick={handleReset}
-                            size="small"
-                        >
-                            افتراضي
-                        </Button>
-                    </Tooltip>
                     <Button
-                        variant="contained"
-                        startIcon={saving ? <CircularProgress size={14} color="inherit" /> : <SaveIcon />}
-                        onClick={handleSave}
-                        disabled={saving || loading || !config}
-                        sx={{
-                            background: "linear-gradient(135deg,#1976d2,#1565c0)",
-                            boxShadow: "0 4px 16px rgba(25,118,210,0.35)",
-                        }}
+                      size="small"
+                      startIcon={<AddIcon />}
+                      onClick={handleNewTemplate}
                     >
-                        حفظ التغييرات
+                      جديد
                     </Button>
-                </Box>
-            </Box>
-
-            {!hasCustom && (
-                <Alert severity="info" sx={{ mb: 2 }}>
-                    يستخدم النظام حالياً القالب الافتراضي. يمكنك تخصيصه وحفظه ليظهر عند الطباعة.
-                </Alert>
-            )}
-
-            <Grid container spacing={2}>
-                {/* ── Left: Editor ── */}
-                <Grid size={{ xs: 12, md: 8 }}>
-                    {/* Document type tabs */}
-                    <Paper
-                        elevation={0}
-                        sx={{ border: "1px solid", borderColor: "divider", borderRadius: 3, mb: 2 }}
-                    >
-                        <Tabs
-                            value={activeTab}
-                            onChange={(_, v) => setActiveTab(v)}
-                            variant="scrollable"
-                            scrollButtons="auto"
-                            sx={{ borderBottom: "1px solid", borderColor: "divider" }}
+                  </Box>
+                  <Divider sx={{ mb: 1 }} />
+                  {loading ? (
+                    <Box sx={{ textAlign: "center", py: 3 }}>
+                      <CircularProgress size={24} />
+                    </Box>
+                  ) : filteredTemplates.length === 0 ? (
+                    <Alert severity="info" sx={{ fontSize: "11px" }}>
+                      لا توجد قوالب. اضغط "جديد".
+                    </Alert>
+                  ) : (
+                    <List dense>
+                      {filteredTemplates.map((t) => (
+                        <ListItem
+                          key={t.id}
+                          selected={editingId === t.id}
+                          onClick={() => handleEdit(t)}
+                          sx={{
+                            borderRadius: 1,
+                            mb: 0.5,
+                            cursor: "pointer",
+                            "&:hover": { bgcolor: "action.hover" },
+                          }}
                         >
-                            {DOCUMENT_TYPES.map((dt) => (
-                                <Tab key={dt.value} label={dt.label} />
-                            ))}
-                        </Tabs>
+                          <ListItemText
+                            primary={t.template_name}
+                            secondary={t.is_default ? "افتراضي" : "مخصص"}
+                            slotProps={{
+                              primary: { sx: { fontSize: "12px" } },
+                              secondary: { sx: { fontSize: "10px" } },
+                            }}
+                          />
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              size="small"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(t);
+                              }}
+                            >
+                              <EditIcon sx={{ fontSize: 14 }} />
+                            </IconButton>
+                            {!t.is_default && (
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(t.id);
+                                }}
+                              >
+                                <DeleteIcon sx={{ fontSize: 14 }} />
+                              </IconButton>
+                            )}
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      ))}
+                    </List>
+                  )}
+                </>
+              )}
 
-                        {loading ? (
-                            <Box sx={{ display: "flex", justifyContent: "center", p: 6 }}>
-                                <CircularProgress />
-                            </Box>
-                        ) : config ? (
-                            <Box sx={{ p: 2 }}>
-                                {/* Section sub-tabs */}
-                                <Tabs
-                                    value={sectionTab}
-                                    onChange={(_, v) => setSectionTab(v)}
-                                    sx={{ mb: 2 }}
-                                    variant="fullWidth"
-                                >
-                                    {sectionTabs.map((st, i) => (
-                                        <Tab key={i} label={st.label} icon={st.icon} iconPosition="start" />
-                                    ))}
-                                </Tabs>
+              {/* Tab 1 — Variables */}
+              {sideTab === 1 && (
+                <>
+                  <Typography
+                    variant="subtitle2"
+                    fontWeight={600}
+                    sx={{ mb: 1 }}
+                  >
+                    اضغط لنسخ
+                  </Typography>
+                  <Box sx={{ maxHeight: 480, overflow: "auto" }}>
+                    {AVAILABLE_VARIABLES.map((v) => (
+                      <Box
+                        key={v.key}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          p: 0.5,
+                          mb: 0.3,
+                          borderRadius: 1,
+                          "&:hover": { bgcolor: "action.hover" },
+                        }}
+                      >
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: "11px",
+                              fontFamily: "monospace",
+                              color: "primary.main",
+                            }}
+                          >
+                            {`{{${v.key}}}`}
+                          </Typography>
+                          <Typography
+                            sx={{ fontSize: "10px", color: "text.secondary" }}
+                          >
+                            {v.desc}
+                          </Typography>
+                        </Box>
+                        <Tooltip title="نسخ">
+                          <IconButton
+                            size="small"
+                            onClick={() => copyVariable(v.key)}
+                          >
+                            <ContentCopyIcon sx={{ fontSize: 13 }} />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    ))}
+                  </Box>
+                </>
+              )}
 
-                                {/* ── Section 0: Header text ── */}
-                                {sectionTab === 0 && (
-                                    <Box>
-                                        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-                                            نصوص رأس الفاتورة (السطور العلوية)
-                                        </Typography>
-                                        <Grid container spacing={2}>
-                                            {[
-                                                { key: "line1", label: "السطر الأول" },
-                                                { key: "line2", label: "السطر الثاني" },
-                                                { key: "title", label: "عنوان المستند" },
-                                                { key: "systemName", label: "اسم النظام" },
-                                            ].map((f) => (
-                                                <Grid size={{ xs: 12, sm: 6 }} key={f.key}>
-                                                    <TextField
-                                                        label={f.label}
-                                                        value={config.header?.[f.key] || ""}
-                                                        onChange={(e) => setHeaderText(f.key, e.target.value)}
-                                                        fullWidth
-                                                        size="small"
-                                                    />
-                                                </Grid>
-                                            ))}
-                                        </Grid>
-                                    </Box>
-                                )}
+              {/* Tab 2 — Column Designer */}
+              {sideTab === 2 && (
+                <TableColumnDesigner
+                  htmlContent={htmlContent}
+                  onApply={setHtmlContent}
+                />
+              )}
 
-                                {/* ── Section 1: Header fields ── */}
-                                {sectionTab === 1 && (
-                                    <Box>
-                                        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
-                                            <Typography variant="subtitle2" color="text.secondary">
-                                                حقول معلومات المستند (الهيدر)
-                                            </Typography>
-                                            <FormControlLabel
-                                                control={
-                                                    <Switch
-                                                        checked={!!config.dynamicFieldsVisible}
-                                                        onChange={(e) =>
-                                                            setConfig((prev) => ({
-                                                                ...prev,
-                                                                dynamicFieldsVisible: e.target.checked,
-                                                            }))
-                                                        }
-                                                        size="small"
-                                                        color="success"
-                                                    />
-                                                }
-                                                label={
-                                                    <Typography variant="caption">
-                                                        إظهار الحقول الديناميكية
-                                                    </Typography>
-                                                }
-                                            />
-                                        </Box>
-                                        <FieldList
-                                            items={config.headerFields || []}
-                                            onChange={setHeaderFields}
-                                        />
-                                    </Box>
-                                )}
+              {/* Tab 3 — Style Editor */}
+              {sideTab === 3 && (
+                <HeaderStyleEditor
+                  htmlContent={htmlContent}
+                  onApply={setHtmlContent}
+                />
+              )}
 
-                                {/* ── Section 2: Table columns ── */}
-                                {sectionTab === 2 && (
-                                    <Box>
-                                        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-                                            أعمدة جدول المواد
-                                        </Typography>
-                                        <FieldList
-                                            items={config.tableColumns || []}
-                                            onChange={setTableColumns}
-                                        />
-                                    </Box>
-                                )}
-                            </Box>
-                        ) : null}
-                    </Paper>
-                </Grid>
+              {/* Tab 4 — Dynamic Field Designer */}
+              {sideTab === 4 && (
+                <DynamicFieldDesigner
+                  htmlContent={htmlContent}
+                  onApply={setHtmlContent}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
 
-                {/* ── Right: Preview ── */}
-                <Grid size={{ xs: 12, md: 4 }}>
-                    <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
-                        معاينة حية
+        {/* ── RIGHT: Editor + Preview ── */}
+        <Grid size={{ xs: 12, md: 9 }}>
+          {htmlContent ? (
+            <Card variant="outlined" sx={{ borderRadius: 3 }}>
+              <CardContent>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                    mb: 2,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <TextField
+                    label="اسم القالب"
+                    value={templateName}
+                    onChange={(e) => setTemplateName(e.target.value)}
+                    size="small"
+                    sx={{ flexGrow: 1, minWidth: 200 }}
+                  />
+                  <Button
+                    variant={showPreview ? "contained" : "outlined"}
+                    startIcon={showPreview ? <CodeIcon /> : <PreviewIcon />}
+                    onClick={() => setShowPreview(!showPreview)}
+                    size="small"
+                  >
+                    {showPreview ? "كود" : "معاينة"}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="warning"
+                    startIcon={<RestoreIcon />}
+                    onClick={loadDefault}
+                    size="small"
+                  >
+                    استعادة الافتراضي
+                  </Button>
+                  <Button
+                    variant="contained"
+                    startIcon={
+                      saving ? (
+                        <CircularProgress size={14} color="inherit" />
+                      ) : (
+                        <SaveIcon />
+                      )
+                    }
+                    onClick={handleSave}
+                    disabled={saving}
+                    size="small"
+                    sx={{
+                      background: "linear-gradient(135deg,#1976d2,#1565c0)",
+                      boxShadow: "0 4px 16px rgba(25,118,210,0.3)",
+                    }}
+                  >
+                    حفظ القالب
+                  </Button>
+                </Box>
+
+                {showPreview ? (
+                  <Paper
+                    elevation={1}
+                    sx={{
+                      p: 2,
+                      border: "2px dashed",
+                      borderColor: "primary.light",
+                      borderRadius: 2,
+                      minHeight: 400,
+                      overflow: "auto",
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      color="primary"
+                      fontWeight={700}
+                      sx={{ display: "block", mb: 1 }}
+                    >
+                      معاينة الهيكل (المتغيرات ستظهر كنص)
                     </Typography>
-                    <PreviewPanel config={config} documentType={currentDocType} />
-                </Grid>
-            </Grid>
-        </Box>
-    );
+                    <Divider sx={{ mb: 1 }} />
+                    <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                  </Paper>
+                ) : (
+                  <TextField
+                    multiline
+                    minRows={22}
+                    maxRows={50}
+                    value={htmlContent}
+                    onChange={(e) => setHtmlContent(e.target.value)}
+                    fullWidth
+                    placeholder="اكتب كود HTML هنا..."
+                    slotProps={{
+                      input: {
+                        sx: {
+                          fontFamily: '"Fira Code","Consolas",monospace',
+                          fontSize: "13px",
+                          lineHeight: 1.6,
+                          direction: "ltr",
+                          textAlign: "left",
+                        },
+                      },
+                    }}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <Card variant="outlined" sx={{ borderRadius: 3 }}>
+              <CardContent sx={{ textAlign: "center", py: 10 }}>
+                <DescriptionIcon sx={{ fontSize: 64, color: "#ccc", mb: 2 }} />
+                <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
+                  اختر قالباً أو أنشئ قالباً جديداً
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
+                  اضغط "جديد" لتحميل القالب الافتراضي وتخصيصه
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={handleNewTemplate}
+                >
+                  إنشاء قالب جديد
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </Grid>
+      </Grid>
+
+      {/* ── New template name dialog ── */}
+      <Dialog open={nameDialogOpen} onClose={() => setNameDialogOpen(false)}>
+        <DialogTitle>إنشاء قالب جديد</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            label="اسم القالب"
+            value={newTemplateName}
+            onChange={(e) => setNewTemplateName(e.target.value)}
+            sx={{ mt: 1 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNameDialogOpen(false)}>إلغاء</Button>
+          <Button variant="contained" onClick={confirmNewTemplate}>
+            إنشاء
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
 }

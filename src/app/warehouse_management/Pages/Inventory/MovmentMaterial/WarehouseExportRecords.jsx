@@ -1,4 +1,4 @@
-import  { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { ButtonTheme } from "../../../../../style/ButtomStyle";
 import { BackendUrl } from "../../../../../redux/api/axios";
@@ -10,7 +10,7 @@ import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import {useTheme} from "@mui/material/styles";import Chip from "@mui/material/Chip";
+import { useTheme } from "@mui/material/styles"; import Chip from "@mui/material/Chip";
 import FileDownloadOutlined from "@mui/icons-material/FileDownloadOutlined";
 
 import ExcelJS from "exceljs";
@@ -26,7 +26,9 @@ import {
   StyledTableRow,
 } from "../../../../../style/generalStyle";
 import {
+  formatCurrency,
   FormatDataNumber,
+  formatDateAr,
   formatDateYearsMonth,
 } from "../../../../../utils/formatData";
 import { axiosInstance } from "../../../../../redux/api/axiosConfig";
@@ -117,7 +119,7 @@ export default function MaterialMovementExport() {
           name_of_material: movement?.name_of_material || "N/A",
           document_type2: movement?.document_type || "N/A",
           document_number2: movement?.document_number || "N/A",
-          quantity: movement?.quantity || "0",
+          quantity: movement?.total_quantity || "0",
           measuring_unit: movement?.measuring_unit || "N/A",
           price: movement?.price ? `${movement.price} دينار` : "N/A",
           production_date:
@@ -159,9 +161,8 @@ export default function MaterialMovementExport() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `warehouse-export-records-${
-        new Date().toISOString().split("T")[0]
-      }.xlsx`;
+      link.download = `warehouse-export-records-${new Date().toISOString().split("T")[0]
+        }.xlsx`;
       link.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -173,15 +174,14 @@ export default function MaterialMovementExport() {
     <div className="w-100">
       {loading && <Loader />}
       <div
-        className={`p-3 rad-10 ${
-          theme?.palette?.mode === "dark" ? "bg-dark" : "bg-white"
-        }`}
+        className={`p-3 rad-10 ${theme?.palette?.mode === "dark" ? "bg-dark" : "bg-white"
+          }`}
         ref={componentRef}
       >
         <Box className="d-flex justify-content-end">
           <Header
             title={t("معلومات المادة")}
-            // subTitle={t("معلومات المادة التفصيلية")}
+          // subTitle={t("معلومات المادة التفصيلية")}
           />
         </Box>
         <div
@@ -266,12 +266,6 @@ export default function MaterialMovementExport() {
                           className="header"
                           sx={{ minWidth: 120 }}
                         >
-                          {t("تاريخ البيع")}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          className="header"
-                          sx={{ minWidth: 120 }}
-                        >
                           {t("تاريخ الإدخال")}
                         </StyledTableCell>
                         <StyledTableCell
@@ -287,69 +281,75 @@ export default function MaterialMovementExport() {
                     </TableHead>
                     <TableBody>
                       {materialMovements.length > 0 ? (
-                        materialMovements.map((movement, index) => (
-                          <StyledTableRow key={index} hover>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>
-                              {index + 1}
+                        <>
+                          {materialMovements.map((movement, index) => (
+                            <StyledTableRow key={index} hover>
+                              <StyledTableCell sx={{ fontWeight: "bold" }}>
+                                {index + 1}
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                <Chip
+                                  label={movement?.cod_material || "N/A"}
+                                  size="small"
+                                  color="primary"
+                                  variant="outlined"
+                                />
+                              </StyledTableCell>
+                              <StyledTableCell sx={{ fontWeight: "medium" }}>
+                                {movement?.name_of_material || "N/A"}
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                <Chip
+                                  label={movement?.document_type || "N/A"}
+                                  size="small"
+                                  color={
+                                    movement?.document_type === "مستند وارد"
+                                      ? "success"
+                                      : "info"
+                                  }
+                                  variant="filled"
+                                />
+                              </StyledTableCell>
+                              <StyledTableCell sx={{ fontFamily: "monospace" }}>
+                                {movement?.document_number || "N/A"}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{ fontWeight: "bold", color: "success.main" }}
+                              >
+                                {FormatDataNumber(movement?.quantity) || "0"}
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                {movement?.measuring_unit || "N/A"}
+                              </StyledTableCell>
+                              <StyledTableCell
+                                sx={{ fontWeight: "bold", color: "success.main" }}
+                              >
+                                {movement?.price
+                                  ? `${formatCurrency(movement.price)} دينار`
+                                  : "N/A"}
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                {formatDateAr(movement?.created_at) ||
+                                  "N/A"}
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                {movement?.beneficiary ||
+                                  movement?.beneficiary ||
+                                  "N/A"}
+                              </StyledTableCell>
+                              <StyledTableCell>---</StyledTableCell>
+                            </StyledTableRow>
+                          ))}
+                          <StyledTableRow sx={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}>
+                            <StyledTableCell colSpan={5} sx={{ textAlign: "center", fontWeight: "bold", fontSize: "1.1rem" }}>
+                              {t("إجمالي الكمية:")}
                             </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={movement?.cod_material || "N/A"}
-                                size="small"
-                                color="primary"
-                                variant="outlined"
-                              />
+                            <StyledTableCell sx={{ fontWeight: "bold", color: "primary.main", fontSize: "1.1rem" }}>
+                              {FormatDataNumber(materialMovements.reduce((acc, curr) => acc + (Number(curr?.total_quantity) || 0), 0))}
                             </StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "medium" }}>
-                              {movement?.name_of_material || "N/A"}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={movement?.document_type || "N/A"}
-                                size="small"
-                                color={
-                                  movement?.document_type === "مستند وارد"
-                                    ? "success"
-                                    : "info"
-                                }
-                                variant="filled"
-                              />
-                            </StyledTableCell>
-                            <StyledTableCell sx={{ fontFamily: "monospace" }}>
-                              {movement?.document_number || "N/A"}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{ fontWeight: "bold", color: "success.main" }}
-                            >
-                              {movement?.quantity || "0"}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              {movement?.measuring_unit || "N/A"}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              sx={{ fontWeight: "bold", color: "success.main" }}
-                            >
-                              {movement?.price
-                                ? `${FormatDataNumber(movement.price)} دينار`
-                                : "N/A"}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              {formatDateYearsMonth(
-                                movement?.production_date
-                              ) || "N/A"}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              {formatDateYearsMonth(movement?.export_date) ||
-                                "N/A"}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              {movement?.beneficiary ||
-                                movement?.beneficiary ||
-                                "N/A"}
-                            </StyledTableCell>
-                            <StyledTableCell>---</StyledTableCell>
+                            <StyledTableCell colSpan={5}></StyledTableCell>
                           </StyledTableRow>
-                        ))
+                        </>
                       ) : (
                         <StyledTableRow>
                           <StyledTableCell colSpan={12}>

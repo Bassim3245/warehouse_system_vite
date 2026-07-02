@@ -118,12 +118,13 @@ const DataCard = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data
-                    ?.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                    .map((item, index) => (
+                  {(onPageChange
+                    ? data?.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : data
+                  )?.map((item, index) => (
                       <TableRow
                         hover
                         key={item.id || index}

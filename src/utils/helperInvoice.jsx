@@ -1,4 +1,4 @@
-import { formatCurrency, FormatDataNumber, formatDateAr } from "../utils/formatData";
+import { formatCurrency, FormatDataNumber, formatDateAr } from "./formatData";
 
 /* ──────────────────────────────────────────────────────────
    Resolve a header field key → actual document value
@@ -37,6 +37,7 @@ const resolveColumnValue = (key, item, index) => {
         }
         case "purchase_date": return formatDateAr(item?.purchase_date);
         case "supplier": return item?.beneficiary || "---";
+        case "item_note": return item?.note || "---";
         default: return item?.[key] ?? "---";
     }
 };

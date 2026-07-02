@@ -1,9 +1,9 @@
 import React, { useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
 import Inventory2 from "@mui/icons-material/Inventory2";
 import LockOutlined from "@mui/icons-material/LockOutlined";
 import LockOpenOutlined from "@mui/icons-material/LockOpenOutlined";
-
 import OpenInNew from "@mui/icons-material/OpenInNew";
 import Warehouse from "@mui/icons-material/Warehouse";
 import Box from "@mui/material/Box";
@@ -21,46 +21,59 @@ import { useTheme } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import {
+  Search,
+  Title,
+  FilterList,
+  Close,
+  RestartAlt,
+  CalendarMonth
+} from "@mui/icons-material";
+import {
+  InputAdornment,
+  Drawer,
+  IconButton,
+  Button,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio
+} from "@mui/material";
 
-import Loader from "../../../../../components/reusableComponent/Loader";
 import DropDownGrid from "../../../../../components/reusableComponent/CustomMennu";
-
 import {
   CustomNoRowsOverlay,
   getHeaderStyle,
   renderMenuItem,
 } from "../../../../../utils/Function";
-
 import {
   StyledTableCell,
   StyledTableRow,
 } from "../../../../../style/generalStyle";
-
 import { formatCurrency, formatDateAr } from "../../../../../utils/formatData";
 import DocumentModel from "./DoucumentModel";
 import { usePermissionsStructure } from "../../../../../hooks/useStructureCompany";
-import MonthlyInventory from "../../Archive/monthly/ComplmentMontlyInventory";
 import useInventoryDocuments from "../../../../../hooks/invantory/useInventoryDocuments";
 import UseFullScreen from "../../../../../hooks/useFullScreen";
 import Header from "../../../../../components/reusableComponent/HeaderComponent";
 import useGetfactoryInformationByUserId from "../../../../../hooks/ManageWarehouseSetting/useGetfactoryInformationByUserId";
 import useGetAllWarehouse from "../../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
-import { typeDocument } from "../../../../../constants/arrayFuction";
 import { useTranslation } from "react-i18next";
-import { InputAdornment, MenuItem } from "@mui/material";
-import { Search } from "@mui/icons-material";
 import CostumePagination from "../../../../../components/reusableComponent/CostumPagination";
+import { ButtonTheme } from "../../../../../style/ButtomStyle";
 
-// ─── Helper: convert field_values array → { field_key: value } map ───────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const buildFieldMap = (fieldValues = []) =>
   fieldValues.reduce((acc, fv) => {
     acc[fv.field_key] = fv.value;
     return acc;
   }, {});
 
-// ─── Helper: extract unique dynamic columns from all documents ────────────────
 const extractDynamicColumns = (documents = []) => {
-  const seen = new Map(); // field_key → field_label
+  const seen = new Map();
   documents.forEach((doc) => {
     (doc.field_values || []).forEach(({ field_key, field_label, display_order }) => {
       if (!seen.has(field_key)) {
@@ -68,15 +81,30 @@ const extractDynamicColumns = (documents = []) => {
       }
     });
   });
-  // Sort by display_order so columns appear in the right order
   return Array.from(seen.entries())
     .sort((a, b) => a[1].display_order - b[1].display_order)
     .map(([field_key, { field_label }]) => ({ field_key, field_label }));
 };
 
+// ─── Loading skeleton for table rows ─────────────────────────────────────────
+const TableSkeleton = ({ cols = 8 }) => (
+  <>
+    {[...Array(5)].map((_, i) => (
+      <TableRow key={i}>
+        {[...Array(cols)].map((__, j) => (
+          <StyledTableCell key={j}>
+            <Skeleton variant="text" width="80%" />
+          </StyledTableCell>
+        ))}
+      </TableRow>
+    ))}
+  </>
+);
+
 function Document({
   token,
   documentType,
+  documentTypeLabel: initialDocumentTypeLabel,
   setRefreshButton,
   refreshButton,
   dataUserById,
@@ -87,17 +115,17 @@ function Document({
   isExport = false,
 }) {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { has_lab, has_factory, has_warehouse, has_production_warehouse } =
     usePermissionsStructure();
 
   const { dataUserFactory } = useGetfactoryInformationByUserId();
-  const { wareHouseData } = useGetAllWarehouse();
+  const { wareHouseData, loading: warehouseLoading } = useGetAllWarehouse();
 
   const {
     documentTypeValue,
-    setDocumentTypeValue,
     documentTypeLabel,
     loading,
     documentMaterials,
@@ -109,12 +137,20 @@ function Document({
     completeItem,
     searchTerm,
     setSearchTerm,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    dateFilterType,
+    setDateFilterType,
     pagination,
     setPagination,
+
   } = useInventoryDocuments({
     token,
     navigateUrl,
     documentType,
+    documentTypeLabel: initialDocumentTypeLabel,
     isExport,
     dataUserById,
     dataUserLab,
@@ -127,27 +163,39 @@ function Document({
     setRefreshButton,
   });
 
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = React.useState(false);
+
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setStartDate(null);
+    setEndDate(null);
+    setDateFilterType("document_date");
+  };
+
+ 
+
   // ─── Memoized Data ────────────────────────────────────────────────────────
   const memoWarehouseOptions = useMemo(() => wareHouseData || [], [wareHouseData]);
 
+  // ✅ FIX: isOptionEqualToValue ensures Autocomplete finds the saved option
+  //         even if the object reference is different across renders
   const selectedWarehouse = useMemo(
-    () => memoWarehouseOptions.find((w) => w.id === warehosueId) || null,
-    [memoWarehouseOptions, warehosueId],
+    () => memoWarehouseOptions.find((w) => String(w.id) === String(warehosueId)) || null,
+    [memoWarehouseOptions, warehosueId]
   );
 
   const memoDocuments = useMemo(() => documentMaterials || [], [documentMaterials]);
 
-  // ─── Dynamic columns derived from all loaded documents ───────────────────
   const dynamicColumns = useMemo(
     () => extractDynamicColumns(memoDocuments),
-    [memoDocuments],
+    [memoDocuments]
   );
 
-  // ─── Static columns (always shown) ───────────────────────────────────────
   const staticHeaders = [
     "#",
     "رقم المستند",
-    "حالة",
+    'الحالة',
+    "حالة المستند",
     "تاريخ المستند",
     "تاريخ الإدخال",
     "الجهة",
@@ -155,11 +203,13 @@ function Document({
     "ملاحظات",
   ];
 
-  // ─── Memoized Event Handlers ──────────────────────────────────────────────
+  const totalCols = staticHeaders.length + dynamicColumns.length + 1;
+
+  // ─── Handlers ─────────────────────────────────────────────────────────────
   const handleDocDelete = useCallback((id) => deleteDocument(id), [deleteDocument]);
   const handleDocComplete = useCallback(
     (id, is_complete) => completeItem(id, is_complete),
-    [completeItem],
+    [completeItem]
   );
 
   const renderRowMenu = useCallback(
@@ -171,19 +221,11 @@ function Document({
           gloablTextColor: "#666666",
         }}
       >
-        {renderMenuItem(
-          "informationProduct",
-          () => openMovement(item.id),
-          OpenInNew,
-          documentTypeLabel,
-        )}
+        {renderMenuItem("informationProduct", () => {
+          navigate(`${navigateUrl}?id=${item.id}&documentType=${documentType}&warehouseId=${warehosueId}`);
+        }, OpenInNew, title)}
         <Divider />
-        {renderMenuItem(
-          "delete",
-          () => handleDocDelete(item.id),
-          DeleteOutlined,
-          "حذف",
-        )}
+        {renderMenuItem("delete", () => handleDocDelete(item.id), DeleteOutlined, "حذف")}
         <Divider />
         <DocumentModel
           documentType={documentTypeValue}
@@ -206,36 +248,25 @@ function Document({
           item.is_complete ? "unlock" : "complete",
           () => handleDocComplete(item.id, item.is_complete),
           item.is_complete ? LockOpenOutlined : LockOutlined,
-          item.is_complete ? "إلغاء القفل" : "قفل المستند",
+          item.is_complete ? "فتح القفل" : "قفل المستند"
         )}
       </DropDownGrid>
     ),
     [
-      openMovement,
-      handleDocDelete,
-      handleDocComplete,
-      documentTypeValue,
-      dataUserById,
-      dataUserLab,
-      filedLabel,
-      memoWarehouseOptions,
-      dataUserFactory,
-      has_factory,
-      has_lab,
-      has_warehouse,
-      has_production_warehouse,
-      setRefreshButton,
-      documentTypeLabel,
-    ],
+      openMovement, handleDocDelete, handleDocComplete,
+      documentTypeValue, dataUserById, dataUserLab, filedLabel,
+      memoWarehouseOptions, dataUserFactory, has_factory, has_lab,
+      has_warehouse, has_production_warehouse, setRefreshButton, documentTypeLabel,
+    ]
   );
 
   // ─── JSX ──────────────────────────────────────────────────────────────────
   return (
-    <div className="m-2" dir="rtl">
-      {loading && <Loader />}
+    <Box sx={{ m: 2 }} dir="rtl">
       <Header title={title} icon={<Inventory2 />} dir="rtl" />
 
-      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1 }}>
+      {/* ── Action Bar ────────────────────────────────────────────────────── */}
+      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}>
         <DocumentModel
           documentTypeValue={documentTypeValue}
           editMode={false}
@@ -253,139 +284,264 @@ function Document({
           documentType={documentType}
           isExport={isExport}
         />
-        <MonthlyInventory
-          documentMaterials={memoDocuments}
-          dataUserById={dataUserById}
-        />
-        <UseFullScreen
-          setRefreshButton={setRefreshButton}
-          refreshing={refreshButton}
-        />
+        {/* <MonthlyInventory documentMaterials={memoDocuments} dataUserById={dataUserById} /> */}
+        <UseFullScreen setRefreshButton={setRefreshButton} refreshing={refreshButton} />
       </Box>
 
-      <Grid container spacing={1} alignItems="center" dir="rtl">
-        {isExport && (
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <TextField
-              name="documentType"
-              label="نوع المستند"
-              value={documentTypeValue}
-              onChange={(e) => setDocumentTypeValue(e.target.value)}
-              fullWidth
-              select
-            >
-              {typeDocument
-                .filter((item) =>
-                  ["internal_consumption", "out"].includes(item.value),
-                )
-                .map((item) => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-            </TextField>
-          </Grid>
-        )}
-
-        <Grid size={{ xs: 12, sm: 4 }}>
-          <Autocomplete
-            fullWidth
-            options={memoWarehouseOptions}
-            getOptionLabel={(option) => option?.name || ""}
-            value={selectedWarehouse}
-            onChange={handleWarehouseChange}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="تصفية حسب المخزن"
-                placeholder="اختر مخزن للتصفية أو اتركه فارغاً لعرض الكل..."
-                sx={{ borderRadius: 2 }}
+      {/* ── Filters Card ──────────────────────────────────────────────────── */}
+      <Card
+        variant="outlined"
+        sx={{
+          mb: 2,
+          borderRadius: 2,
+          background: theme.palette.mode === "dark"
+            ? "rgba(255,255,255,0.03)"
+            : "rgba(0,0,0,0.01)",
+        }}
+      >
+        <CardContent sx={{ pb: "12px !important" }}>
+          <Grid container spacing={2} alignItems="center" dir="rtl">
+            <Grid size={{ xs: 12, sm: isExport ? 4 : 6 }}>
+              <Autocomplete
+                fullWidth
+                options={memoWarehouseOptions}
+                getOptionLabel={(option) => option?.name || ""}
+                // ✅ KEY FIX: compare by id string so saved value is matched
+                isOptionEqualToValue={(option, value) =>
+                  String(option?.id) === String(value?.id)
+                }
+                value={selectedWarehouse}
+                onChange={handleWarehouseChange}
+                loading={warehouseLoading}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    size="small"
+                    label="تصفية حسب المخزن"
+                    placeholder="اختر مخزناً أو اتركه فارغاً لعرض الكل"
+                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                  />
+                )}
+                renderOption={(props, option) => (
+                  <Box
+                    key={option.id}
+                    component="li"
+                    {...props}
+                    sx={{ display: "flex", alignItems: "center", gap: 1, py: 1, px: 1.5 }}
+                  >
+                    <Warehouse sx={{ color: "primary.main", fontSize: 20, flexShrink: 0 }} />
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="body2" fontWeight={600} noWrap>
+                        {option.name}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" noWrap>
+                        {option.location} · {option.user_name}
+                      </Typography>
+                    </Box>
+                    <Chip
+                      label={option.status}
+                      color={option.status === "ممتلئ" ? "error" : "success"}
+                      size="small"
+                      sx={{ flexShrink: 0 }}
+                    />
+                  </Box>
+                )}
+                noOptionsText="لا توجد مخازن"
               />
-            )}
-            renderOption={(props, option) => (
-              <Box
-                key={option.id}
-                component="li"
-                {...props}
-                sx={{ display: "flex", alignItems: "center", gap: 1, p: 1 }}
-              >
-                <Warehouse sx={{ color: "primary.main", fontSize: 18 }} />
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ fontWeight: "medium" }}>
-                    {option.name}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {option.location} - {option.user_name}
-                  </Typography>
-                </Box>
-                <Chip
-                  label={option.status}
-                  color={option.status === "ممتلئ" ? "error" : "success"}
-                  size="small"
-                />
-              </Box>
-            )}
-            noOptionsText="لا توجد مخازن"
-          />
-        </Grid>
+            </Grid>
 
-        <Grid size={{ xs: 12, sm: 4 }}>
-          <TextField
-            fullWidth
-            placeholder="بحث بستخدام رقم المستند ..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
+            {/* Search */}
+            <Grid size={{ xs: 12, sm: isExport ? 4 : 6 }}>
+              <Stack direction="row" spacing={1}>
+                <ButtonTheme
+                  onClick={() => setIsFilterDrawerOpen(true)}
+                  
+                >
+                  <FilterList />
+                  تصفية متقدمة
+                </ButtonTheme>
+              </Stack>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
 
-      <Card sx={{ mb: 1 }}>
-        <CardContent>
+      {/* ── Filter Drawer ─────────────────────────────────────────────────── */}
+      <Drawer
+        anchor="left"
+        open={isFilterDrawerOpen}
+        onClose={() => setIsFilterDrawerOpen(false)}
+        PaperProps={{
+          sx: { width: { xs: "100%", sm: 350 }, p: 3 }
+        }}
+      >
+        <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }} dir="rtl">
+          <Typography variant="h6" fontWeight={700}>فلاتر متقدمة</Typography>
+          <IconButton onClick={() => setIsFilterDrawerOpen(false)}>
+            <Close />
+          </IconButton>
+        </Box>
+
+        <Divider sx={{ mb: 3 }} />
+
+        <Stack spacing={3} dir="rtl">
+          {/* Search by Doc Number */}
+          <Box>
+            <Typography variant="subtitle2" fontWeight={600} gutterBottom>رقم المستند</Typography>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="بحث برقم المستند..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+
+          {/* Date Filter Type */}
+          <FormControl component="fieldset">
+            <FormLabel component="legend" sx={{ fontWeight: 600, fontSize: "0.875rem", mb: 1, color: "text.primary" }}>
+              تصفية التاريخ بناءً على:
+            </FormLabel>
+            <RadioGroup
+              value={dateFilterType}
+              onChange={(e) => setDateFilterType(e.target.value)}
+              row
+            >
+              <FormControlLabel 
+                value="document_date" 
+                control={<Radio size="small" />} 
+                label={<Typography variant="body2">تاريخ المستند</Typography>} 
+              />
+              <FormControlLabel 
+                value="created_at" 
+                control={<Radio size="small" />} 
+                label={<Typography variant="body2">تاريخ الإدخال</Typography>} 
+              />
+            </RadioGroup>
+          </FormControl>
+
+          {/* Start Date */}
+          <Box>
+            <Typography variant="subtitle2" fontWeight={600} gutterBottom>تاريخ البدء</Typography>
+            <TextField
+              fullWidth
+              size="small"
+              type="date"
+              value={startDate || ""}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CalendarMonth fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+            />
+          </Box>
+
+          {/* End Date */}
+          <Box>
+            <Typography variant="subtitle2" fontWeight={600} gutterBottom>تاريخ الانتهاء</Typography>
+            <TextField
+              fullWidth
+              size="small"
+              type="date"
+              value={endDate || ""}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CalendarMonth fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+            />
+          </Box>
+
+          <Box sx={{ pt: 2 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => setIsFilterDrawerOpen(false)}
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
+              تطبيق الفلاتر
+            </Button>
+            <Button
+              fullWidth
+              variant="outlined"
+              color="error"
+              startIcon={<RestartAlt />}
+              onClick={handleResetFilters}
+              sx={{ borderRadius: 2 }}
+            >
+              إعادة تعيين
+            </Button>
+          </Box>
+        </Stack>
+      </Drawer>
+
+      {/* ── Documents Table ───────────────────────────────────────────────── */}
+      <Card variant="outlined" sx={{ borderRadius: 2, mb: 2 }}>
+        <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
           <TableContainer dir="rtl">
-            <Table>
+            <Table size="small">
               <TableHead>
                 <TableRow sx={getHeaderStyle(theme)}>
-                  {/* Static headers */}
                   {staticHeaders.map((h, idx) => (
-                    <StyledTableCell key={`static-${idx}`} sx={getHeaderStyle(theme)}>
+                    <StyledTableCell key={`s-${idx}`} sx={getHeaderStyle(theme)}>
                       {h}
                     </StyledTableCell>
                   ))}
-
-                  {/* ✅ Dynamic headers from field_values */}
                   {dynamicColumns.map(({ field_key, field_label }) => (
                     <StyledTableCell key={field_key} sx={getHeaderStyle(theme)}>
                       {field_label}
                     </StyledTableCell>
                   ))}
-
                   <StyledTableCell sx={getHeaderStyle(theme)}>إجراءات</StyledTableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {memoDocuments.length > 0 ? (
+                {loading ? (
+                  <TableSkeleton cols={totalCols} />
+                ) : memoDocuments.length > 0 ? (
                   memoDocuments.map((item, index) => {
-                    // Build a quick lookup map for this row's field values
                     const fieldMap = buildFieldMap(item.field_values);
-
                     return (
-                      <StyledTableRow key={item.id}>
-                        {/* Static cells */}
-                        <StyledTableCell>{index + 1}</StyledTableCell>
+                      <StyledTableRow
+                        key={item.id}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor:
+                              theme.palette.mode === "dark"
+                                ? "rgba(255,255,255,0.04)"
+                                : "rgba(0,0,0,0.02)",
+                          },
+                        }}
+                      >
+                        <StyledTableCell>
+                          <Typography variant="caption" color="text.secondary">
+                            {(pagination.page - 1) * pagination.limit + index + 1}
+                          </Typography>
+                        </StyledTableCell>
 
                         <StyledTableCell>
                           <Chip
                             label={item.document_number}
                             size="small"
                             color="primary"
+                            variant="outlined"
                           />
                         </StyledTableCell>
 
@@ -398,29 +554,52 @@ function Document({
                         </StyledTableCell>
 
                         <StyledTableCell>
-                          {formatDateAr(item.document_date)}
+                          <Chip
+                            label={
+                              item.status === "active"
+                                ? "قيد العمل"
+                                : item.status === "moved"
+                                ? "مرحل"
+                                : item.status === "closed"
+                                ? "مغلق"
+                                : item.status || "—"
+                            }
+                            size="small"
+                            variant="outlined"
+                            color={
+                              item.status === "active"
+                                ? "info"
+                                : item.status === "moved"
+                                ? "secondary"
+                                : item.status === "closed"
+                                ? "default"
+                                : "default"
+                            }
+                          />
                         </StyledTableCell>
 
+                        <StyledTableCell>{formatDateAr(item.document_date)}</StyledTableCell>
+                        <StyledTableCell>{formatDateAr(item.created_at)}</StyledTableCell>
+                        <StyledTableCell>{item.beneficiary || "—"}</StyledTableCell>
                         <StyledTableCell>
-                          {formatDateAr(item.created_at)}
+                          <Typography variant="body2" fontWeight={500}>
+                            {formatCurrency(item.total_amount || 0)}
+                          </Typography>
                         </StyledTableCell>
-
                         <StyledTableCell>
-                          {item.beneficiary || "-"}
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ maxWidth: 160, display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                            title={item.description}
+                          >
+                            {item.description || "—"}
+                          </Typography>
                         </StyledTableCell>
 
-                        <StyledTableCell>
-                          {formatCurrency(item.total_amount || 0)}
-                        </StyledTableCell>
-
-                        <StyledTableCell>
-                          {item.description || "-"}
-                        </StyledTableCell>
-
-                        {/* ✅ Dynamic cells — render value by field_key */}
                         {dynamicColumns.map(({ field_key }) => (
                           <StyledTableCell key={field_key}>
-                            {fieldMap[field_key] ?? "-"}
+                            {fieldMap[field_key] ?? "—"}
                           </StyledTableCell>
                         ))}
 
@@ -430,9 +609,7 @@ function Document({
                   })
                 ) : (
                   <StyledTableRow>
-                    <StyledTableCell
-                      colSpan={staticHeaders.length + dynamicColumns.length + 1}
-                    >
+                    <StyledTableCell colSpan={totalCols}>
                       <CustomNoRowsOverlay />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -441,25 +618,41 @@ function Document({
             </Table>
           </TableContainer>
 
-          <CostumePagination
-            page={pagination?.page}
-            totalPages={pagination?.totalPages}
-            totalItems={pagination?.total}
-            limit={pagination?.limit}
-            setPage={(page) => setPagination((prev) => ({ ...prev, page }))}
-            setLimit={(limit) => handleLimitChange(limit)}
-          />
+          <Box sx={{ px: 2, py: 1 }}>
+            <CostumePagination
+              page={pagination?.page}
+              totalPages={pagination?.totalPages}
+              totalItems={pagination?.total}
+              limit={pagination?.limit}
+              setPage={(page) => setPagination((prev) => ({ ...prev, page }))}
+              setLimit={(limit) => handleLimitChange(limit)}
+            />
+          </Box>
         </CardContent>
       </Card>
 
-      <Card dir="rtl">
-        <CardContent>
-          <Typography>
-            {t("عدد المواد الموجودة في الجدول")} ({memoDocuments.length})
-          </Typography>
+      {/* ── Summary Footer ────────────────────────────────────────────────── */}
+      <Card variant="outlined" sx={{ borderRadius: 2 }} dir="rtl">
+        <CardContent sx={{ py: "10px !important" }}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography variant="body2" color="text.secondary">
+              {t("عدد المواد الموجودة في الجدول")}
+            </Typography>
+            <Chip
+              label={memoDocuments.length}
+              size="small"
+              color="primary"
+              variant="outlined"
+            />
+            {pagination.total > 0 && (
+              <Typography variant="caption" color="text.secondary">
+                من أصل {pagination.total} مستند
+              </Typography>
+            )}
+          </Stack>
         </CardContent>
       </Card>
-    </div>
+    </Box>
   );
 }
 

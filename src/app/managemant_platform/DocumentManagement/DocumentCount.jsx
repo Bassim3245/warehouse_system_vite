@@ -19,6 +19,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -34,7 +35,7 @@ import CustomDatePicker from "../../../components/reusableComponent/CustomDatePi
 import dayjs from "dayjs";
 
 const DocumentCount = () => {
-  const { get, post, loading } = useApi();
+  const { get, post, delete: del, loading } = useApi();
   const [filters, setFilters] = useState({
     entity_id: "",
     year: dayjs(),
@@ -46,6 +47,8 @@ const DocumentCount = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [newCountValue, setNewCountValue] = useState("");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [warehouseToDelete, setWarehouseToDelete] = useState(null);
 
   const fetchAllCounts = useCallback(async () => {
     try {
@@ -95,6 +98,24 @@ const DocumentCount = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "حدث خطأ أثناء التحديث");
+    }
+  };
+
+  const handleOpenDelete = (warehouse_id) => {
+    setWarehouseToDelete(warehouse_id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteEntity = async () => {
+    try {
+      const response = await del(`/api/warehouse/deleteAllByWarehouseId?warehouse_id=${warehouseToDelete}`);
+      if (response) {
+        toast.success("تم حذف جميع بيانات المستودع بنجاح");
+        setDeleteConfirmOpen(false);
+        fetchAllCounts();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "حدث خطأ أثناء الحذف");
     }
   };
 
@@ -219,6 +240,9 @@ const DocumentCount = () => {
                       <IconButton color="primary" onClick={() => handleOpenEdit(row)}>
                         <EditIcon />
                       </IconButton>
+                      <IconButton color="error" onClick={() => handleOpenDelete(row.warehouse_id)}>
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))
@@ -263,6 +287,32 @@ const DocumentCount = () => {
             onClick={handleUpdateCount}
           >
             حفظ التغييرات
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)} dir="rtl">
+        <DialogTitle sx={{ textAlign: "right", fontWeight: "bold", color: "error.main" }}>
+          تأكيد الحذف النهائي
+        </DialogTitle>
+        <DialogContent sx={{ minWidth: 300, mt: 1 }}>
+          <Typography variant="body1" gutterBottom>
+            هل أنت متأكد من رغبتك في حذف <strong>جميع البيانات</strong> المتعلقة بهذا المستودع؟
+          </Typography>
+          <Typography variant="body2" color="error" sx={{ mt: 1, fontWeight: "bold" }}>
+            تحذير: هذا الإجراء سيقوم بحذف كافة (المواد، المستندات، الوارد، الصادر) لهذا المستودع فقط ولا يمكن التراجع عنه.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setDeleteConfirmOpen(false)} color="inherit">إلغاء</Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleDeleteEntity}
+          >
+            تأكيد الحذف الشامل
           </Button>
         </DialogActions>
       </Dialog>

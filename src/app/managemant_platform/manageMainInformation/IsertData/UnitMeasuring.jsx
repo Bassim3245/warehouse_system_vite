@@ -14,6 +14,7 @@ import Loader from "../../../../components/reusableComponent/Loader";
 import { TextField } from "@mui/material";
 function UnitMeasuring(props) {
   const [unitMeasuring, setUnitMeasuring] = useState("");
+  const [UnitSymbol, setUnitSymbol] = useState("");
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const token = getToken();

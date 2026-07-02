@@ -23,6 +23,8 @@ import useAppInitialization from "./hooks/useAppInitialization";
 import HomeObesoloteMaterial from "./app/obesoloteMaterial/Page/home/Home";
 import HomeWharhouse from "./app/warehouse_management/Pages/Home/Home";
 import InventoryExportArchiveMonthly from "./app/warehouse_management/Pages/Archive/commen/inventoryExportArchiveMonthly";
+import OpeningBalanceImport from "./app/warehouse_management/Pages/excelForm/uploadFileExcelPage";
+import InventoryReturnManagement from "./app/warehouse_management/Pages/Inventory/return/InventoryReturnManagement";
 
 // Lazy loaded components - Dashboard Pages
 const Dashboard = React.lazy(
@@ -132,18 +134,15 @@ const Factories = React.lazy(
 );
 
 // Lazy loaded components - Inventory & Documents
-const DocumentPurchase = React.lazy(
+const ManageDocuments = React.lazy(
   () =>
-    import("./app/warehouse_management/Pages/Inventory/Purchases/DoucumentPurchases"),
+    import("./app/warehouse_management/Pages/Inventory/Document/ManageDocuments"),
 );
 const PurchasesData = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/Inventory/Purchases/PurchasesData"),
 );
-const DocumentSales = React.lazy(
-  () =>
-    import("./app/warehouse_management/Pages/Inventory/selas/DoucumentSelas"),
-);
+// DocumentSales removed as it is now part of ManageDocuments
 const SalesMaterial = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/Inventory/selas/salesMaterial"),
@@ -196,7 +195,7 @@ const DocumentCount = React.lazy(
 );
 const DocumentFieldSettings = React.lazy(
   () =>
-    import("./app/managemant_platform/DocumentManagement/DocumentFieldSettings"),
+    import("./app/customerManagePlatform/documentFiledSetting/DocumentFieldSettings"),
 );
 
 // Lazy loaded components - Permissions
@@ -224,6 +223,10 @@ const MainPageForReport = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/managermantReports/mainPageReport"),
 );
+const InfoSelectionPage = React.lazy(
+  () =>
+    import("./app/warehouse_management/Pages/managermantReports/InfoSelectionPage"),
+);
 const MonthlyInventory = React.lazy(
   () =>
     import("./app/warehouse_management/Pages/Archive/monthly/MonthlyDocumentInventory"),
@@ -248,14 +251,15 @@ const InventoryArchiveAnnual = React.lazy(
 // Lazy loaded components - Invoice Template Designer
 const InvoiceTemplateDesigner = React.lazy(
   () =>
-    import(
-      "./app/customerManagePlatform/InvoiceTemplateDesigner/InvoiceTemplateDesigner"
-    ),
+    import("./app/customerManagePlatform/InvoiceTemplateDesigner/InvoiceTemplateDesigner"),
 );
 
 // Lazy loaded components - Month Lock System
 const MonthlyLocks = React.lazy(
   () => import("./app/warehouse_management/Pages/MonthlyLocks/MonthlyLocks"),
+);
+const MonthLockForm = React.lazy(
+  () => import("./app/warehouse_management/Pages/MonthlyLocks/MonthLockForm"),
 );
 const UnlockRequests = React.lazy(
   () =>
@@ -469,21 +473,23 @@ export default function App() {
                     />
                     {/*  document purchase */}
                     <Route
-                      path="document-purchase"
-                      element={<DocumentPurchase />}
+                      path="manage-documents"
+                      element={<ManageDocuments />}
                     />
                     <Route
-                      path="document-purchase/purchases-material"
+                      path="manage-documents/purchases-material"
                       element={<PurchasesData />}
                     />
 
                     {/* document sales */}
 
-                    <Route path="document-sales" element={<DocumentSales />} />
-                    <Route path="manage-document" element={<DocumentSales />} />
                     <Route
-                      path="document-sales/sales-material"
+                      path="manage-documents/sales-material"
                       element={<SalesMaterial />}
+                    />
+                       <Route
+                      path="manage-documents/return-material"
+                      element={<InventoryReturnManagement />}
                     />
 
                     <Route
@@ -505,6 +511,10 @@ export default function App() {
                     <Route
                       path="main-page-report"
                       element={<MainPageForReport />}
+                    />
+                    <Route
+                      path="main-page-report/info-selection"
+                      element={<InfoSelectionPage />}
                     />
                     <Route
                       path="monthly-inventory"
@@ -543,6 +553,7 @@ export default function App() {
 
                     {/* Month Lock System Routes */}
                     <Route path="monthly-locks" element={<MonthlyLocks />} />
+                    <Route path="monthly-locks/add" element={<MonthLockForm />} />
                     <Route
                       path="unlock-requests"
                       element={<UnlockRequests />}
@@ -554,8 +565,8 @@ export default function App() {
                       element={<WarehouseMange />}
                     />
                     <Route
-                      path="document-field-settings"
-                      element={<DocumentFieldSettings />}
+                      path="opening-balance-import"
+                      element={<OpeningBalanceImport />}
                     />
 
                     <Route path="lab-manage" element={<LabsEntity />} />
@@ -606,10 +617,6 @@ export default function App() {
                   />
                   <Route path="document-edit" element={<DocumentEdit />} />
                   <Route path="document-count" element={<DocumentCount />} />
-                  <Route
-                    path="document-field-settings"
-                    element={<DocumentFieldSettings />}
-                  />
                 </Route>
               </Route>
               <Route element={<ProtectedApplicationRoute applicationId={4} />}>
@@ -632,7 +639,10 @@ export default function App() {
                     path="invoice-template-designer"
                     element={<InvoiceTemplateDesigner />}
                   />
-
+                  <Route
+                    path="document-field-settings"
+                    element={<DocumentFieldSettings />}
+                  />
                   <Route path="help-platform" element={<HelpAboutProject />} />
                 </Route>
               </Route>

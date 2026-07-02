@@ -39,7 +39,6 @@ const useStoreData = ({ selectedWarehouse }) => {
   const handelSearch = useCallback(() => {
     setPage(1);
   }, []);
-
   const openMovement = useCallback(
     (id, url) => {
       navigate(`${url}?material_id=${id}`);

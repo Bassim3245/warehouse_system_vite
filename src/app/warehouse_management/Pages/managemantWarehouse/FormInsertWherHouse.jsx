@@ -158,7 +158,6 @@ function WarehouseModel({
     const required = [
       { field: "name", msg: "اسم المخزن مطلوب" },
       { field: "code", msg: "رمز المخزن مطلوب" },
-      { field: "location", msg: "موقع المخزن مطلوب" },
     ];
 
     const errors = required

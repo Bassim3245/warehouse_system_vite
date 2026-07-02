@@ -2,6 +2,7 @@ import Typography from "@mui/material/Typography";
 import TableHead from "@mui/material/TableHead";
 import { useMemo } from "react";
 import { StyledTableCell, StyledTableRow } from "../../../../style/generalStyle";
+import { typeDocument } from "../../../../constants/arrayFuction";
 
 // تبسيط الستايلات
 const cellStyles = {
@@ -86,4 +87,12 @@ const InfoRow = ({ label, value }) => (
     {label}: <span>{value || "---"}</span>
   </Typography>
 );
-export { InfoRow, TableHeader, getTableHeaders, cellStyles };
+
+const documentMap = Object.fromEntries(
+  typeDocument.map((d) => [d.value, d.label])
+);
+
+ const getDocumentLabel = (type) => {
+  return documentMap[type] || type;
+};
+export { InfoRow, TableHeader, getTableHeaders, cellStyles  ,getDocumentLabel};

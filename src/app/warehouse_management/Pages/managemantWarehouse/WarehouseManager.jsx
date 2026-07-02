@@ -1,7 +1,18 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
-import {useTheme} from "@mui/material/styles";import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
+import { useTheme } from "@mui/material/styles";
+import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useApi } from "../../../../hooks/useApi";
+import { toast } from "react-toastify";
+import Divider from "@mui/material/Divider";
 
 import DataCard from "../../../../components/reusableComponent/DataCard";
 import WarehouseModel from "./FormInsertWherHouse";
@@ -23,6 +34,7 @@ const WarehouseMange = () => {
   // ===== HOOKS =====
   const { t } = useTranslation();
   const theme = useTheme();
+  const { delete: del } = useApi();
 
   const {
     roles,
@@ -55,6 +67,37 @@ const WarehouseMange = () => {
 
   // ===== STATE MANAGEMENT =====
   const [anchorEl, setAnchorEl] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [warehouseToDelete, setWarehouseToDelete] = useState(null);
+
+  const handleOpenDeleteAll = (warehouse_id) => {
+    setWarehouseToDelete(warehouse_id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteAllEntityData = async () => {
+    try {
+      const response = await del(`/api/warehouse/deleteAllByWarehouseId?warehouse_id=${warehouseToDelete}`);
+      if (response) {
+        toast.success("تم حذف جميع بيانات المستودع بنجاح");
+        setDeleteConfirmOpen(false);
+        setRefreshKey((prev) => !prev);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "حدث خطأ أثناء الحذف");
+    }
+  };
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const token = useMemo(() => getToken(), []);
 
@@ -176,6 +219,20 @@ const WarehouseMange = () => {
             permissionData={permissionData}
           />
         )}
+
+        {/* زر حذف كافة البيانات - متاح فقط لمالك النظام */}
+        {/* {dataUserById?.group_name === "systemOwner" && ( */}
+          {/* <>
+            <Divider sx={{ my: 1 }} />
+            {renderMenuItem(
+              "delete_all",
+              () => handleOpenDeleteAll(item.id),
+              DeleteIcon,
+              "حذف شامل لكافة البيانات",
+              { color: "error.main" }
+            )}
+          </> */}
+        {/* )} */}
       </>
     );
   };
@@ -191,7 +248,8 @@ const WarehouseMange = () => {
       case "factory_lab": // State 1: Show model information
         baseFields.push(
           { key: "Factories_name", label: "المصنع" },
-          { key: "Laboratory_name", label: "المعمل" }
+          { key: "Laboratory_name", label: "المعمل" },
+          
         );
         break;
 
@@ -211,7 +269,12 @@ const WarehouseMange = () => {
         break;
 
       default: // No permission state
-        baseFields.push({ key: "warehouse_type", label: "نوع المخزن" });
+        baseFields.push(
+          { key: "warehouse_type", label: "نوع المخزن" },
+          { key: "code", label: "رمز المخزن" }
+        
+        );
+        
         break;
     }
 
@@ -269,7 +332,37 @@ const WarehouseMange = () => {
         has_factory={has_factory}
         has_warehouse={has_warehouse}
         has_branch_warehouse={has_branch_warehouse}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)} dir="rtl">
+        <DialogTitle sx={{ textAlign: "right", fontWeight: "bold", color: "error.main" }}>
+          تحذير: حذف شامل لكافة البيانات
+        </DialogTitle>
+        <DialogContent sx={{ minWidth: 300, mt: 1 }}>
+          <Typography variant="body1" gutterBottom>
+            هل أنت متأكد من رغبتك في حذف <strong>جميع البيانات التشغيلية</strong> المتعلقة بهذا المستودع؟
+          </Typography>
+          <Typography variant="body2" color="error" sx={{ mt: 1, fontWeight: "bold" }}>
+            سيتم حذف (المواد، المستندات، الوارد، الصادر) لهذا المستودع بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setDeleteConfirmOpen(false)} color="inherit">إلغاء</Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleDeleteAllEntityData}
+          >
+            تأكيد الحذف الشامل
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

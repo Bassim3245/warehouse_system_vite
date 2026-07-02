@@ -21,7 +21,6 @@ import { useSearchParams } from "react-router-dom";
 
 const PurchasesData = () => {
   const { rtl } = useSelector((state) => state?.language);
-  const printRef = React.useRef();
   const [searchParams] = useSearchParams();
 
   // -----------------------------
@@ -42,6 +41,8 @@ const PurchasesData = () => {
     setSelectedMaterial,
     dataUserFactory,
     warehouseDataBYId,
+    pagination,
+    setPagination,
   } = useImportData({ searchParams });
 
   const [materialsList, setMaterialsList] = useState([]);
@@ -57,9 +58,9 @@ const PurchasesData = () => {
     () =>
       invoiceData.reduce(
         (sum, item) => sum + parseFloat(item.quantity || 0),
-        0
+        0,
       ),
-    [invoiceData]
+    [invoiceData],
   );
 
   const totalPrice = useMemo(
@@ -69,23 +70,23 @@ const PurchasesData = () => {
         const quantity = parseFloat(item.quantity || 0);
         return sum + price * quantity;
       }, 0),
-    [invoiceData]
+    [invoiceData],
   );
 
   const totalAmount = useMemo(
     () => materialsList.reduce((sum, item) => sum + (item.total || 0), 0),
-    [materialsList]
+    [materialsList],
   );
 
   const invoiceDate = useMemo(
     () => (invoiceData.length > 0 ? invoiceData[0].purchase_date : new Date()),
-    [invoiceData]
+    [invoiceData],
   );
 
   const documentNumber = useMemo(
     () =>
       invoiceData.length > 0 ? invoiceData[0].document_number : "غير متوفر",
-    [invoiceData]
+    [invoiceData],
   );
 
   // -----------------------------
@@ -104,10 +105,17 @@ const PurchasesData = () => {
       price: formData.price || null,
       total: price * quantity,
       description: formData.description,
-      expiry_date: formData.expiry_date,
-      purchase_date: formData.purchase_date,
-      production_date: formData.production_date,
+      expiry_date: formData.expiry_date || null,
+      purchase_date: formData.purchase_date || null,
+      production_date: formData.production_date || null,
       state_id: formData.state_id,
+      note: formData.note,
+      check_number: formData.check_number,
+      inspection_number: formData.inspection_number,
+      inspection_date: formData.inspection_date || null,
+      has_inspection: formData.has_inspection,
+      document_type: formData.document_type || searchParams.get("documentType") || "in",
+      return_date: formData.return_date || null,
     };
 
     setMaterialsList((prev) => [...prev, newMaterial]);
@@ -159,6 +167,13 @@ const PurchasesData = () => {
           purchase_date: materialItem?.purchase_date,
           production_date: materialItem?.production_date,
           state_id: materialItem?.state_id,
+          note: materialItem?.note,
+          check_number: materialItem?.check_number,
+          inspection_number: materialItem?.inspection_number,
+          inspection_date: materialItem?.inspection_date,
+          has_inspection: materialItem?.has_inspection,
+          document_type: materialItem?.document_type || searchParams.get("documentType") || "in",
+          return_date: materialItem?.return_date || null,
         };
       });
 
@@ -174,7 +189,7 @@ const PurchasesData = () => {
           ministry_id: dataUserById?.minister_id,
           entity_id: dataUserById?.entity_id,
         },
-        { headers: { authorization: getToken() } }
+        { headers: { authorization: getToken() } },
       );
 
       if (response?.data) {
@@ -205,7 +220,7 @@ const PurchasesData = () => {
       {loadingData && <Loader />}
 
       <Header
-        title={`تعزيز  المواد - ${warehouseDataBYId?.name}`}
+        title={`${searchParams.get("documentType") === "in" ? "مستندات الوارد" : "مستندات  أرجاع"}- ${warehouseDataBYId?.name}`}
         dir={rtl?.dir}
       />
 
@@ -218,6 +233,7 @@ const PurchasesData = () => {
           totalPrice={totalPrice}
           totalAmount={totalAmount}
           document_id={searchParams.get("id")}
+          searchParams={searchParams}
           documentInfo={document}
         />
 
@@ -255,18 +271,15 @@ const PurchasesData = () => {
       </Grid>
 
       <ImportManagement
-        documentId={searchParams.get("id")}
         invoiceData={invoiceData}
         documentNumber={documentNumber}
         invoiceDate={invoiceDate}
-        totalQuantity={totalQuantity}
-        totalPrice={totalPrice}
-        totalAmount={totalAmount}
-        printRef={printRef}
-        refreshButton={refreshButton}
         setRefreshButton={setRefreshButton}
         loading={loadingData}
         document={document}
+        pagination={pagination}
+        setPagination={setPagination}
+        searchParams={searchParams}
       />
     </Box>
   );

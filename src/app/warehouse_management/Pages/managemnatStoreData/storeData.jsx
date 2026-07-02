@@ -150,16 +150,12 @@ const StoreData = ({
                   dataUserLab={dataUserLab}
                   warehouseId={selectedWarehouse}
                 />
-
               )}
-
             <UseFullScreen
               setRefreshButton={setRefreshButton}
               refreshing={refreshButton}
             />
-
           </Box>
-
           {/* Search Input */}
           <Box sx={{ width: { xs: "100%", sm: "100%", md: "250px" } }}>
             <TextField
@@ -177,7 +173,6 @@ const StoreData = ({
               }}
             />
           </Box>
-
           {/* Clear Filters */}
           <Box sx={{ width: { xs: "100%", sm: "150px" } }}>
             <Button

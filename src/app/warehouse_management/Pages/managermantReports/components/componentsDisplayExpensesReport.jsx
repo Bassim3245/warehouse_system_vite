@@ -17,6 +17,7 @@ import {
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ExcelJS from 'exceljs';
 import { formatCurrency, FormatDataNumber, formatDateAr, formatTimeAr } from '../../../../../utils/formatData';
+import { Person } from '@mui/icons-material';
 
 const DisplayExpensesReport = ({ dataItem }) => {
   if (!dataItem?.beneficiaries) {
@@ -337,7 +338,7 @@ const DisplayExpensesReport = ({ dataItem }) => {
   return (
     <Box
       sx={{
-        p: 4,
+        p: { xs: 1, sm: 2, md: 4 },
         maxWidth: 1600,
         mx: 'auto',
         backgroundColor: '#f8f9fa',
@@ -349,8 +350,8 @@ const DisplayExpensesReport = ({ dataItem }) => {
       <Paper
         elevation={0}
         sx={{
-          p: 4,
-          mb: 4,
+          p: { xs: 2, sm: 3, md: 4 },
+          mb: { xs: 2, md: 4 },
           backgroundColor: '#ffffff',
           borderRadius: 2,
           border: '1px solid #e0e0e0'
@@ -363,6 +364,7 @@ const DisplayExpensesReport = ({ dataItem }) => {
             mb: 3,
             color: '#2c3e50',
             textAlign: 'center',
+            fontSize: { xs: '1.5rem', md: '2.125rem' },
             letterSpacing: '0.5px'
           }}
         >
@@ -393,15 +395,16 @@ const DisplayExpensesReport = ({ dataItem }) => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={12} md={6}>
-            <Box sx={{ textAlign: 'center', p: 2 }}>
+            <Box sx={{ textAlign: 'center', p: { xs: 1, md: 2 } }}>
               <Button
                 variant="contained"
                 color="success"
                 size="large"
+                fullWidth
                 startIcon={<FileDownloadIcon />}
                 onClick={handleExportToExcel}
                 sx={{
-                  px: 4,
+                  maxWidth: { xs: '100%', md: 300 },
                   py: 1.5,
                   fontWeight: 600,
                   boxShadow: 2,
@@ -424,27 +427,26 @@ const DisplayExpensesReport = ({ dataItem }) => {
         elevation={0}
         sx={{
           mb: 4,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           borderRadius: 2,
           overflow: 'hidden'
         }}
       >
-        <CardContent sx={{ textAlign: 'center', p: 4 }}>
+        <CardContent sx={{ textAlign: 'center', p: { xs: 2, md: 4 } }}>
           <Typography
             variant="h6"
             sx={{
-              mb: 2,
-              color: 'rgba(255,255,255,0.9)',
-              fontWeight: 500
+              mb: { xs: 1, md: 2 },
+              fontWeight: 500,
+              fontSize: { xs: '1.1rem', md: '1.25rem' }
             }}
           >
-            💰 إجمالي المصروفات الكلي
+             إجمالي المصروفات الكلي
           </Typography>
           <Typography
             variant="h3"
             sx={{
               fontWeight: 700,
-              color: '#ffffff',
+              fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
               textShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}
           >
@@ -470,30 +472,35 @@ const DisplayExpensesReport = ({ dataItem }) => {
             sx={{
               background: 'linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%)',
               color: 'white',
-              p: 3
+              p: { xs: 2, md: 3 }
             }}
           >
             <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-                  👤 {beneficiary.beneficiary}
+                <Typography variant="h5" sx={{ fontWeight: 600, mb: 1, fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
+                  <Person sx={{ verticalAlign: 'middle', mr: 1 }}/> {beneficiary.beneficiary}
                 </Typography>
                 <Typography variant="body2" sx={{ opacity: 0.95 }}>
                   المستفيد رقم {index + 1}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'right', md: 'left' } }}>
+              <Grid item xs={12} md={6}>
                 <Box sx={{
-                  display: 'inline-block',
+                  display: { xs: 'flex', md: 'inline-block' },
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  justifyContent: 'space-between',
+                  alignItems: { xs: 'flex-start', sm: 'center' },
                   backgroundColor: 'rgba(255,255,255,0.2)',
                   borderRadius: 2,
                   p: 2,
-                  backdropFilter: 'blur(10px)'
+                  backdropFilter: 'blur(10px)',
+                  width: { xs: '100%', md: 'auto' },
+                  float: { md: 'left' } // equivalent to right in LTR, aligns to left in RTL
                 }}>
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
+                  <Typography variant="body2" sx={{ mb: { xs: 1, sm: 0 }, mr: { sm: 2 } }}>
                     عدد المعاملات: {FormatDataNumber(beneficiary.total_transactions)}
                   </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
                     المجموع: {formatCurrency(beneficiary.total_spent)} دينار
                   </Typography>
                 </Box>
@@ -502,59 +509,23 @@ const DisplayExpensesReport = ({ dataItem }) => {
           </Box>
 
           {/* Transactions Table */}
-          <TableContainer sx={{ maxHeight: 600 }}>
-            <Table stickyHeader size="small">
+          <TableContainer sx={{ maxHeight: 600, overflowX: 'auto' }}>
+            <Table stickyHeader size="small" sx={{ minWidth: 900 }}>
               <TableHead>
-                <TableRow>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: 700,
-                      backgroundColor: '#f8f9fa',
-                      color: '#2c3e50',
-                      borderBottom: '2px solid #dee2e6',
-                      fontSize: '0.875rem',
-                      py: 2
-                    }}
-                  >
-                    #
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    رقم الوثيقة
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    رمز المادة
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    اسم المادة
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    المواصفات
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    الكمية
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    وحدة القياس
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    السعر
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    المبلغ الكلي
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    المنشأ
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    المخزن
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    تاريخ الوثيقة
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 2 }}>
-                    تاريخ الصرف
-                  </TableCell>
+                <TableRow sx={{ '& th': { fontWeight: 700, backgroundColor: '#f8f9fa', color: '#2c3e50', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', py: 1.5, whiteSpace: 'nowrap', px: 2 } }}>
+                  <TableCell align="center">#</TableCell>
+                  <TableCell align="center">رقم الوثيقة</TableCell>
+                  <TableCell align="center">رمز المادة</TableCell>
+                  <TableCell align="center">اسم المادة</TableCell>
+                  <TableCell align="center">المواصفات</TableCell>
+                  <TableCell align="center">الكمية</TableCell>
+                  <TableCell align="center">وحدة القياس</TableCell>
+                  <TableCell align="center">السعر</TableCell>
+                  <TableCell align="center">المبلغ الكلي</TableCell>
+                  <TableCell align="center">المنشأ</TableCell>
+                  <TableCell align="center">المخزن</TableCell>
+                  <TableCell align="center">تاريخ الوثيقة</TableCell>
+                  <TableCell align="center">تاريخ الصرف</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -562,70 +533,24 @@ const DisplayExpensesReport = ({ dataItem }) => {
                   <TableRow
                     key={transaction.transaction_id}
                     sx={{
-                      '&:nth-of-type(even)': {
-                        backgroundColor: '#f8f9fa'
-                      },
-                      '&:hover': {
-                        backgroundColor: '#e9ecef',
-                        transition: 'background-color 0.2s ease'
-                      }
+                      '&:nth-of-type(even)': { backgroundColor: '#f8f9fa' },
+                      '&:hover': { backgroundColor: '#e9ecef', transition: 'background-color 0.2s ease' },
+                      '& td': { fontSize: '0.875rem', py: 1.5, whiteSpace: 'nowrap', px: 2 }
                     }}
                   >
-                    <TableCell
-                      align="center"
-                      sx={{
-                        fontWeight: 600,
-                        color: '#6c757d',
-                        fontSize: '0.875rem',
-                        py: 1.5
-                      }}
-                    >
-                      {idx + 1}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5 }}>
-                      {transaction.document_number}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5 }}>
-                      {transaction.material_code}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5, fontWeight: 500 }}>
-                      {transaction.material_name}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5 }}>
-                      {transaction.specification}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5, fontWeight: 600 }}>
-                      {FormatDataNumber(transaction.total_quantity)}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5 }}>
-                      {transaction.measuring_unit}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5, color: '#495057' }}>
-                      {formatCurrency(transaction.price)}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: '0.875rem',
-                        py: 1.5,
-                        color: '#3a7bd5'
-                      }}
-                    >
-                      {formatCurrency(transaction.total_amount)}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5 }}>
-                      {transaction.origin}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5 }}>
-                      {transaction.warehouse_name}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5, color: '#6c757d' }}>
-                      {formatDateAr(transaction.document_date)}
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontSize: '0.875rem', py: 1.5, color: '#6c757d' }}>
-                      {formatDateAr(transaction.export_date)}
-                    </TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 600, color: '#6c757d' }}>{idx + 1}</TableCell>
+                    <TableCell align="center">{transaction.document_number}</TableCell>
+                    <TableCell align="center">{transaction.material_code}</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 500 }}>{transaction.material_name}</TableCell>
+                    <TableCell align="center">{transaction.specification}</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 600 }}>{FormatDataNumber(transaction.total_quantity)}</TableCell>
+                    <TableCell align="center">{transaction.measuring_unit}</TableCell>
+                    <TableCell align="center" sx={{ color: '#495057' }}>{formatCurrency(transaction.price)}</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 700, color: '#3a7bd5' }}>{formatCurrency(transaction.total_amount)}</TableCell>
+                    <TableCell align="center">{transaction.origin}</TableCell>
+                    <TableCell align="center">{transaction.warehouse_name}</TableCell>
+                    <TableCell align="center" sx={{ color: '#6c757d' }}>{formatDateAr(transaction.document_date)}</TableCell>
+                    <TableCell align="center" sx={{ color: '#6c757d' }}>{formatDateAr(transaction.export_date)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -645,10 +570,11 @@ const DisplayExpensesReport = ({ dataItem }) => {
               sx={{
                 fontWeight: 700,
                 textAlign: 'center',
-                color: '#00695c'
+                color: '#00695c',
+                fontSize: { xs: '1.1rem', md: '1.25rem' }
               }}
             >
-              💵 مجموع المستفيد: {formatCurrency(beneficiary.total_spent.toLocaleString('en-US'))} دينار
+              💵 مجموع المستفيد: {formatCurrency(beneficiary.total_spent)} دينار
             </Typography>
           </Box>
         </Paper>

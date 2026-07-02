@@ -13,6 +13,8 @@ import GlobalSettingsSection from "./component/globalSettingsSection";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import InvoiceTemplateDesigner from "../../customerManagePlatform/InvoiceTemplateDesigner/InvoiceTemplateDesigner";
+import DocumentFieldSettings from "../../customerManagePlatform/documentFiledSetting/DocumentFieldSettings";
 
 const EntityDetails = () => {
   const dispatch = useDispatch();
@@ -135,6 +137,9 @@ const EntityDetails = () => {
         onSettingChange={handleGlobalSettingChange}
         onSubmit={handleSubmit}
       />
+
+      <InvoiceTemplateDesigner entity_id={id} />
+      <DocumentFieldSettings entity_id={id} />
     </Box>
   );
 };

@@ -13,9 +13,9 @@ export const FormatDataNumber = (number) => {
   }).format(number);
 };
 
-export const formatCurrency = (value, lang = "ar") => {
+export const formatCurrency = (value, lang = "en") => {
   const number = Number(value);
-  const locale = lang === "ar" ? "ar-IQ" : "en-US";
+  const locale = lang === "en" ? "en-US" : "ar-IQ";
 
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: Number.isInteger(number) ? 0 : 3,

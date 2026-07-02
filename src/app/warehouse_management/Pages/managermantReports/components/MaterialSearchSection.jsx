@@ -124,8 +124,8 @@ const MaterialSearchSection = memo(({
                                     {t("تقرير مصروفات الجهات")}
                                 </Typography>
 
-                                <Grid container spacing={3}>
-                                    <Grid size={{ xs: 12, md: 6 }}>
+                                <Grid container>
+                                    <Grid size={{ xs: 12, md: 12 }}>
                                         <TextField
                                             fullWidth
                                             label={t("اسم الجهة (اختياري)")}

@@ -8,6 +8,7 @@ import NotificationAdd from "@mui/icons-material/NotificationAdd";
 import { useTranslation } from "react-i18next";
 import logo from "../../../assets/image/computer-design-colorful-vector.png";
 import { Draw } from "@mui/icons-material";
+import { Settings } from "lucide-react";
 export default function Root4() {
   const { roles } = useSelector((state) => state?.RolesData);
   const { t } = useTranslation();
@@ -45,10 +46,16 @@ export default function Root4() {
       checkPermission: roles?.show_profile?._id,
     },
     {
-      text: t("layout.Invoice Template Designer"),
+      text: t("تصميم قالب الفاتورة"),
       icon: < Draw />,
       path: "invoice-template-designer", // Fixed path to include a leading slash
-      checkPermission: roles?.show_profile?._id,
+      checkPermission: roles?.show_page_design_invoice_document?._id,
+    },
+    {
+      text: t("إعدادات الحقول"),
+      icon: <Settings />,
+      path: "document-field-settings",
+      checkPermission: roles?.show_page_manage_document_field_dynamically?._id,
     },
   ];
 

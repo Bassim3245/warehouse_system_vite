@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { formatDateAr } from "../../../../../../utils/formatData";
 
 const MaterialsListTable = ({ materialsList, handleRemoveMaterial }) => {
   return (
@@ -25,88 +26,94 @@ const MaterialsListTable = ({ materialsList, handleRemoveMaterial }) => {
     >
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
-          <TableRow sx={{
-            bgcolor: "#f5f5f5",
-            borderBottom: "2px solid #1976d2"
-          }}>
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px",
-              borderRight: "1px solid #e0e0e0"
-            }}>
+          <TableRow
+            sx={{
+              bgcolor: "#f5f5f5",
+              borderBottom: "2px solid #1976d2",
+            }}
+          >
+            <TableCell
+              sx={{
+                color: "#1976d2",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                textAlign: "center",
+                padding: "16px 8px",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
               رمز المادة
             </TableCell>
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px",
-              borderRight: "1px solid #e0e0e0"
-            }}>
+            <TableCell
+              sx={{
+                color: "#1976d2",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                textAlign: "center",
+                padding: "16px 8px",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
               اسم المادة
             </TableCell>
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px",
-              borderRight: "1px solid #e0e0e0"
-            }}>
+            <TableCell
+              sx={{
+                color: "#1976d2",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                textAlign: "center",
+                padding: "16px 8px",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
               الكمية
             </TableCell>
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px",
-              borderRight: "1px solid #e0e0e0"
-            }}>
+            <TableCell
+              sx={{
+                color: "#1976d2",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                textAlign: "center",
+                padding: "16px 8px",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
               السعر
             </TableCell>
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px",
-              borderRight: "1px solid #e0e0e0"
-            }}>
+            <TableCell
+              sx={{
+                color: "#1976d2",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                textAlign: "center",
+                padding: "16px 8px",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
               الإجمالي
             </TableCell>
 
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px",
-              borderRight: "1px solid #e0e0e0"
-            }}>
-              تاريخ الإنتاج
+            <TableCell
+              sx={{
+                color: "#1976d2",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                textAlign: "center",
+                padding: "16px 8px",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
+              تاريخ
             </TableCell>
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px",
-              borderRight: "1px solid #e0e0e0"
-            }}>
-              تاريخ الانتهاء
-            </TableCell>
-            <TableCell sx={{
-              color: "#1976d2",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              textAlign: "center",
-              padding: "16px 8px"
-            }}>
+            <TableCell
+              sx={{
+                color: "#1976d2",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                textAlign: "center",
+                padding: "16px 8px",
+              }}
+            >
               الإجراءات
             </TableCell>
           </TableRow>
@@ -120,132 +127,149 @@ const MaterialsListTable = ({ materialsList, handleRemoveMaterial }) => {
                 borderBottom: "1px solid #e0e0e0",
                 "&:hover": {
                   bgcolor: "#f0f7ff",
-                  transition: "background-color 0.2s ease"
+                  transition: "background-color 0.2s ease",
                 },
               }}
             >
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0"
-              }}>
-                <Box sx={{
-                  display: "inline-block",
-                  padding: "4px 8px",
-                  bgcolor: "#e3f2fd",
-                  color: "#1976d2",
-                  fontWeight: "600",
-                  fontSize: "0.75rem",
-                  borderRadius: "4px",
-                  border: "1px solid #1976d2"
-                }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  padding: "12px 8px",
+                  borderRight: "1px solid #e0e0e0",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "inline-block",
+                    padding: "4px 8px",
+                    bgcolor: "#e3f2fd",
+                    color: "#1976d2",
+                    fontWeight: "600",
+                    fontSize: "0.75rem",
+                    borderRadius: "4px",
+                    border: "1px solid #1976d2",
+                  }}
+                >
                   {item.material.cod_material}
                 </Box>
               </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0",
-                maxWidth: 200
-              }}>
-                <Typography variant="body2" sx={{
-                  wordBreak: "break-word",
-                  color: "#333333",
-                  fontWeight: "500"
-                }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  padding: "12px 8px",
+                  borderRight: "1px solid #e0e0e0",
+                  maxWidth: 200,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    wordBreak: "break-word",
+                    color: "#333333",
+                    fontWeight: "500",
+                  }}
+                >
                   {item.material.name_of_material}
                 </Typography>
               </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0"
-              }}>
-                <Typography variant="body2" sx={{
-                  fontWeight: "600",
-                  color: "#2e7d32",
-                  fontSize: "0.875rem"
-                }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  padding: "12px 8px",
+                  borderRight: "1px solid #e0e0e0",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: "600",
+                    color: "#2e7d32",
+                    fontSize: "0.875rem",
+                  }}
+                >
                   {parseFloat(item.quantity).toLocaleString()}
                 </Typography>
               </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0"
-              }}>
-
-              </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0"
-              }}>
-                <Typography variant="body2" sx={{
-                  color: "#1976d2",
-                  fontWeight: "600",
-                  fontSize: "0.875rem"
-                }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  padding: "12px 8px",
+                  borderRight: "1px solid #e0e0e0",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#1976d2",
+                    fontWeight: "600",
+                    fontSize: "0.875rem",
+                  }}
+                >
                   {parseFloat(item.price).toLocaleString()}
                 </Typography>
-                <Typography variant="caption" sx={{
-                  color: "#666666",
-                  fontSize: "0.75rem"
-                }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "#666666",
+                    fontSize: "0.75rem",
+                  }}
+                >
                   دينار
                 </Typography>
               </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0"
-              }}>
-                <Typography variant="body2" sx={{
-                  color: "#d32f2f",
-                  fontWeight: "700",
-                  fontSize: "0.875rem"
-                }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  padding: "12px 8px",
+                  borderRight: "1px solid #e0e0e0",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#d32f2f",
+                    fontWeight: "700",
+                    fontSize: "0.875rem",
+                  }}
+                >
                   {item.total.toLocaleString()}
                 </Typography>
-                <Typography variant="caption" sx={{
-                  color: "#666666",
-                  fontSize: "0.75rem"
-                }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "#666666",
+                    fontSize: "0.75rem",
+                  }}
+                >
                   دينار
                 </Typography>
               </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0"
-              }}>
-                <Typography variant="body2" sx={{
-                  color: "#333333",
-                  fontWeight: "500"
-                }}>
-                  {item.production_date
-                    ? new Date(item.production_date).toLocaleDateString("ar-IQ")
-                    : "-"}
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  padding: "12px 8px",
+                  borderRight: "1px solid #e0e0e0",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#333333",
+                    fontWeight: "500",
+                  }}
+                >
+                  {item.document_type === "in"
+                    ? formatDateAr(item.purchase_date)
+                    : formatDateAr(item.return_date)}
                 </Typography>
               </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px",
-                borderRight: "1px solid #e0e0e0"
-              }}>
-                <Typography variant="body2" sx={{
-                  color: "#333333",
-                  fontWeight: "500"
-                }}>
-                  {item.expiry_date
-                    ? new Date(item.expiry_date).toLocaleDateString("ar-IQ")
-                    : "-"}
-                </Typography>
-              </TableCell>
-              <TableCell sx={{
-                textAlign: "center",
-                padding: "12px 8px"
-              }}>
+
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  padding: "12px 8px",
+                }}
+              >
                 <IconButton
                   onClick={() => handleRemoveMaterial(item.id)}
                   size="small"

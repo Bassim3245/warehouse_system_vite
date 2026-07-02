@@ -55,6 +55,18 @@ const LabsEntity = () => {
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const entityId = useMemo(
     () => dataUserById?.entity_id,
@@ -183,6 +195,10 @@ const LabsEntity = () => {
         t={t}
         theme={theme}
         hasAddPermission={hasPermission(roles?.add_lab?._id, permissionData)}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
       />
     </Box>
   );

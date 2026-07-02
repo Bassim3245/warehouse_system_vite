@@ -242,7 +242,7 @@ export default function ReportModel({ reportEntity, entity_id, user_id }) {
   const renderFormContent = () => (
     <Box component="form" sx={{ p: 3 }}>
       <Grid container spacing={3} dir="rtl">
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper
             elevation={2}
             sx={{
@@ -286,7 +286,7 @@ export default function ReportModel({ reportEntity, entity_id, user_id }) {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper
             elevation={2}
             sx={{
@@ -326,7 +326,7 @@ export default function ReportModel({ reportEntity, entity_id, user_id }) {
         </Grid>
 
         {(active?.includes("1") || active?.includes("3") || active.includes("5")) && (
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Paper
               elevation={2}
               sx={{
@@ -344,7 +344,7 @@ export default function ReportModel({ reportEntity, entity_id, user_id }) {
 
               <Grid container spacing={3}>
                 {active?.includes("1") && (
-                  <Grid item xs={12} md={4}>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <Paper
                       elevation={1}
                       sx={{
@@ -370,7 +370,7 @@ export default function ReportModel({ reportEntity, entity_id, user_id }) {
                 )}
 
                 {(active?.includes("3") || active.includes("5")) && (
-                  <Grid item xs={12} md={4}>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <Paper
                       elevation={1}
                       sx={{
@@ -396,7 +396,7 @@ export default function ReportModel({ reportEntity, entity_id, user_id }) {
                 )}
 
                 {active?.includes("5") && (
-                  <Grid item xs={12} md={4}>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <Paper
                       elevation={1}
                       sx={{

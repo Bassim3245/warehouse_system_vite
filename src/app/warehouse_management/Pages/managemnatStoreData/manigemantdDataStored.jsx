@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import StoreData from "./storeData";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -52,6 +52,21 @@ const ManagementDataStore = () => {
 
     return filtered;
   }, [wareHouseData, selectedSection, selectedWarehouseType]);
+
+  // تعيين أول نوع مخزن افتراضيًا عند الدخول للصفحة أو عند عدم اختياره
+  useEffect(() => {
+    if (!selectedWarehouseType && warehouseTypeOptions.length > 0) {
+      setSelectedWarehouseType(warehouseTypeOptions[0]);
+    }
+  }, [selectedWarehouseType]);
+
+  // تعيين أول مخزن من المخازن المفلترة افتراضيًا
+  useEffect(() => {
+    if (!selectedWarehouse && filteredWarehouses && filteredWarehouses.length > 0) {
+      setSelectedWarehouse(filteredWarehouses[0].id);
+    }
+  }, [filteredWarehouses, selectedWarehouse]);
+
   const {
     dataUserById,
     rtl,
