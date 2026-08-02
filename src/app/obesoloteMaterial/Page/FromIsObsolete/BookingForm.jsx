@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import BookOnline from "@mui/icons-material/BookOnline";
 import PopupForm from "../../../../components/PopupForm";
 import { getDataMinistries } from "../../../../redux/MinistriesState/MinistresAction";
-import { getDataEntities } from "../../../../redux/EntitiesState/EntitiesAction";
+import { useGetEntitiesQuery } from "../../../../redux/EntitiesState/EntitiesApi";
 import { setLanguage } from "../../../../redux/LanguageState";
 import { getToken } from "../../../../utils/handelCookie";
 import { BottomRoot } from "../../../../style/ButtomStyle";
@@ -30,11 +30,10 @@ export default function BookingForm({
   const [filterData, setFilterData] = useState([]);
   const [loading, setLoading] = useState(false);
   const { Ministries } = useSelector((state) => state?.Ministries);
-  const { Entities } = useSelector((state) => state?.Entities);
+  const { data: Entities = [] } = useGetEntitiesQuery();
   // Fetch Ministries and Entities on component mount
   useEffect(() => {
     dispatch(getDataMinistries());
-    dispatch(getDataEntities());
     dispatch(setLanguage());
   }, [dispatch]);
   // Filter entities based on selected ministry

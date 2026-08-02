@@ -16,7 +16,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/ar";
-import { getToken } from "../../../../../utils/handelCookie";
+import { getToken, getUserInformation } from "../../../../../utils/handelCookie";
 import { typeDocument } from "../../../../../constants/arrayFuction";
 import Loader from "../../../../../components/reusableComponent/Loader";
 import AnnualInventoryModel from "../annual/ComplmentAnnualInventory";
@@ -25,20 +25,18 @@ import { documentArchiveMonthlyGrid } from "../../../../../utils/ColumnsGridData
 import GridTemplate from "../../../../../components/reusableComponent/GridTemplet";
 import { BackendUrl } from "../../../../../redux/api/axios";
 import { axiosInstance } from "../../../../../redux/api/axiosConfig";
-import usePermissionUser from "../../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../../hooks/genaral/useUserPermissions";
 import RefreshButtonData from "../../../../../components/reusableComponent/RefreshButton";
 import { useTranslation } from "react-i18next";
 import { useInventoryArchiveMonthly } from "../hook/useInventory";
 import Header from "../../../../../components/reusableComponent/HeaderComponent";
 import layoutStyle from "../../../../../style/layoutStyle";
 import { useNavigate } from "react-router-dom";
-import {
-  Autocomplete,
-  Chip,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { Warehouse } from "@mui/icons-material";
 import { Search } from "lucide-react";
 import useGetAllWarehouse from "../../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
@@ -58,7 +56,9 @@ DocumentTypeButton.displayName = "DocumentTypeButton";
 const MonthlyInventory = () => {
   const token = getToken();
   const { t } = useTranslation();
-  const { roles, applicationPermission, dataUserById } = usePermissionUser();
+  const { roles, applicationPermission } = useUserPermissions();
+  const dataUserById = getUserInformation();
+  
   const { wareHouseData } = useGetAllWarehouse();
   const {
     setSelectedDate,
@@ -285,7 +285,7 @@ const MonthlyInventory = () => {
     <Box sx={{ ...layoutStyle }} dir="rtl">
       {dataLoaded && <Loader />}
       <Box sx={{ mb: 2 }}>
-        <Header title="المستندات المؤرشفة الشهرية" dir={rtl.dir} />
+        <Header title="المستندات المؤرشفة الشهرية" dir="rtl"/>
       </Box>
       <Grid container spacing={1} sx={{ mb: 1 }}>
         <Grid size={{ xs: 12, md: 2.3 }}>

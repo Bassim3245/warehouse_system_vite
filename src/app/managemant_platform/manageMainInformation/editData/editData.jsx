@@ -9,21 +9,22 @@ import { useTheme } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { ButtonTheme, VisuallyHiddenInput } from "../../../../style/ButtomStyle";
 import { BackendUrl } from "../../../../redux/api/axios";
 import { setLanguage } from "../../../../redux/LanguageState";
-import { getDataMinistries } from "../../../../redux/MinistriesState/MinistresAction";
 import { getToken } from "../../../../utils/handelCookie";
-import { TextField, MenuItem } from "@mui/material";
+import  TextField  from "@mui/material/TextField";
+import MenuItem  from "@mui/material/MenuItem";
+import useMinistries from "../../../../hooks/genaral/useMinistries";
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 export default function ModelEdit(props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { Ministries } = useSelector((state) => state?.Ministries);
+  const { Ministries } = useMinistries();
   const [open, setOpen] = useState(false);
   const [dataEdit, setDataEdit] = useState(props?.edit_data || "");
   const [dataEdit2, setDataEdit2] = useState(props?.edit_data2 || "");
@@ -43,9 +44,7 @@ export default function ModelEdit(props) {
     }
   }, [Ministries, ministries_id]);
 
-  useEffect(() => {
-    dispatch(getDataMinistries());
-  }, [dispatch]);
+ 
 
   useEffect(() => {
     const selectMinistry = select?.id;

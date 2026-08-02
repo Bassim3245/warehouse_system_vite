@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -31,7 +31,7 @@ export default function MonthlyInventory({
   // Main states
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [archiveStatus, setArchiveStatus] = useState(null);
+  const [_, setArchiveStatus] = useState(null);
   const [startDate, setStartDate] = useState(dayjs().startOf("month"));
   const [endDate, setEndDate] = useState(dayjs().endOf("month"));
   const [enableArchiving, setEnableArchiving] = useState(true);
@@ -109,8 +109,7 @@ export default function MonthlyInventory({
     setArchiveStatus(null);
   };
 
-
-  const DateRangeSelector = () => (
+  const renderDateRangeSelector = () => (
     <Grid container spacing={2} sx={{ mt: 1 }} dir="ltr">
       <Grid size={{ xs: 12, md: 6 }}>
         <CustomDatePicker
@@ -143,14 +142,14 @@ export default function MonthlyInventory({
     </Grid>
   );
 
-  const ArchiveOptions = () => (
+  const renderArchiveOptions = () => (
     <Box sx={{ mt: 2 }}>
       {enableArchiving && documentsToArchive.length > 0 && (
         <Box sx={{ mt: 2, mb: 1 }}>
           <Box sx={{ mb: 1, p: 1, bgcolor: "background.paper", borderRadius: 1, border: "1px dashed", borderColor: "primary.300" }}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <DateRange fontSize="small" color="primary" />
-              <Typography variant="caption" color="text.secondary"> {/* حجم أصغر */}
+              <Typography variant="caption" color="text.secondary">
                 الفترة المحددة: <strong>{getPeriodText()}</strong>
               </Typography>
             </Stack>
@@ -167,7 +166,7 @@ export default function MonthlyInventory({
               </Grid>
             ))}
             {documentsToArchive.length > 5 && (
-              <Grid >
+              <Grid item>
                 <Chip
                   label={`+${documentsToArchive.length - 5} أخرى`}
                   size="small"
@@ -181,14 +180,15 @@ export default function MonthlyInventory({
     </Box>
   );
 
-  const FormContent = () => (
+  const renderFormContent = () => (
     <Box dir={"rtl"}>
-      <DateRangeSelector />
-      <ArchiveOptions />
+      {renderDateRangeSelector()}
+      {renderArchiveOptions()}
     </Box>
   );
-  const FormActions = () => (
-    <Stack direction="row" spacing={1} justifyContent="flex-end"> {/* تقليل spacing */}
+
+  const renderFormActions = () => (
+    <Stack direction="row" spacing={1} justifyContent="flex-end">
       <Button onClick={handleClose} variant="outlined" disabled={loading} size="small">
         {t("close")}
       </Button>
@@ -206,6 +206,7 @@ export default function MonthlyInventory({
       </ButtonTheme>
     </Stack>
   );
+
   return (
     <div>
       <Tooltip title="إكمال الجرد الشهري وأرشفة المستندات المكتملة">
@@ -225,8 +226,8 @@ export default function MonthlyInventory({
         setOpen={setOpen}
         icon={<ArchiveIcon color="success" />}
         width="50%"
-        content={<FormContent />}
-        footer={<FormActions />}
+        content={renderFormContent()}
+        footer={renderFormActions()}
       />
     </div>
   );

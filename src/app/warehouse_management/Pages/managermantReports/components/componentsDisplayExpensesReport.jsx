@@ -1,23 +1,22 @@
-import {
-  Box,
-  Paper,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Card,
-  CardContent,
-  Grid,
-  Divider,
-  Button,
-} from '@mui/material';
+
+import Box from "@mui/material/Box";
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ExcelJS from 'exceljs';
 import { formatCurrency, FormatDataNumber, formatDateAr, formatTimeAr } from '../../../../../utils/formatData';
-import { Person } from '@mui/icons-material';
+import Person from '@mui/icons-material/Person';
 
 const DisplayExpensesReport = ({ dataItem }) => {
   if (!dataItem?.beneficiaries) {

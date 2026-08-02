@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useState, Fragment } from "react";
-
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import Fade from "@mui/material/Fade";
@@ -12,7 +11,11 @@ import Tooltip from "@mui/material/Tooltip";
 import Paper from "@mui/material/Paper";
 import DialogContent from "@mui/material/DialogContent";
 import TableContainer from "@mui/material/TableContainer";
-import Table from "react-bootstrap/Table";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import ModelEdit from "./editDataSubandMeasuring.jsx";
 import { BackendUrl } from "../../../../redux/api/axios.jsx";
 import axios from "axios";
@@ -79,24 +82,19 @@ export default function ShowDataSubAndUnit({ setOpen1 }) {
                 theme?.palette?.mode === "dark" ? "#1e1e1e" : "#fff",
             }}
           >
-            <Table
-              striped
-              bordered
-              hover
-              dir="rtl"
-              variant={theme?.palette?.mode === "dark" ? "dark" : ""}
-            >
-              <thead>
-                <tr
-                  style={{
+            <Table dir="rtl" aria-label="sub class data table">
+              <TableHead>
+                <TableRow
+                  sx={{
                     backgroundColor:
                       theme.palette.mode === "dark"
                         ? "rgba(255, 255, 255, 0.05)"
                         : "rgba(25, 118, 210, 0.05)",
                   }}
                 >
-                  <th
-                    style={{
+                  <TableCell
+                    align="right"
+                    sx={{
                       fontWeight: "bold",
                       color:
                         theme.palette.mode === "dark"
@@ -106,9 +104,10 @@ export default function ShowDataSubAndUnit({ setOpen1 }) {
                     }}
                   >
                     #
-                  </th>
-                  <th
-                    style={{
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
                       fontWeight: "bold",
                       color:
                         theme.palette.mode === "dark"
@@ -118,9 +117,10 @@ export default function ShowDataSubAndUnit({ setOpen1 }) {
                     }}
                   >
                     أسم الصنف الخاص
-                  </th>
-                  <th
-                    style={{
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
                       fontWeight: "bold",
                       color:
                         theme.palette.mode === "dark"
@@ -130,14 +130,15 @@ export default function ShowDataSubAndUnit({ setOpen1 }) {
                     }}
                   >
                     الإجراءات
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {dataSubClass?.map((item, index) => (
-                  <tr
+                  <TableRow
                     key={item?.subClass_id}
-                    style={{
+                    hover
+                    sx={{
                       transition: "background-color 0.3s",
                       backgroundColor:
                         index % 2 === 0
@@ -146,13 +147,14 @@ export default function ShowDataSubAndUnit({ setOpen1 }) {
                             : "rgba(0, 0, 0, 0.02)"
                           : "transparent",
                     }}
-                    className="hover-row"
                   >
-                    <td style={{ padding: "12px 16px" }}>{index + 1}</td>
-                    <td style={{ padding: "12px 16px" }}>
+                    <TableCell align="right" sx={{ padding: "12px 16px" }}>
+                      {index + 1}
+                    </TableCell>
+                    <TableCell align="right" sx={{ padding: "12px 16px" }}>
                       {item?.sub_class_name}
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
+                    </TableCell>
+                    <TableCell align="center" sx={{ padding: "12px 16px" }}>
                       <Box
                         sx={{
                           display: "flex",
@@ -185,10 +187,10 @@ export default function ShowDataSubAndUnit({ setOpen1 }) {
                           </span>
                         </Tooltip>
                       </Box>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
+              </TableBody>
             </Table>
           </TableContainer>
         </DialogContent>

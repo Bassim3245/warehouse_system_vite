@@ -25,9 +25,8 @@ import { toast } from "react-toastify";
 import Header from "../../../components/reusableComponent/HeaderComponent";
 import EntityModel from "./Model/entityModel";
 
-// Redux actions  
 import { getDataMinistries } from "../../../redux/MinistriesState/MinistresAction";
-import { getDataEntities } from "../../../redux/EntitiesState/EntitiesAction";
+import { useGetEntitiesQuery } from "../../../redux/EntitiesState/EntitiesApi";
 
 // Utils
 import { getToken } from "../../../utils/handelCookie";
@@ -41,7 +40,7 @@ const EntityManagement = () => {
 
   // Redux Selectors
   const { Ministries } = useSelector((state) => state.Ministries);
-  const { Entities } = useSelector((state) => state.Entities);
+  const { data: Entities = [], isLoading } = useGetEntitiesQuery();
   const { rtl } = useSelector((state) => state?.language);
 
   const [refresh, setRefresh] = useState(true);
@@ -52,8 +51,7 @@ const EntityManagement = () => {
    ------------------------ */
   useEffect(() => {
     dispatch(getDataMinistries());
-    dispatch(getDataEntities(token));
-  }, [dispatch, token]);
+  }, [dispatch]);
 
   /** -----------------------
    * Memoized helper

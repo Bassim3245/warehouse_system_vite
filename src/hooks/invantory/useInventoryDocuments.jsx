@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 import { axiosInstance } from "../../redux/api/axiosConfig";
 import { BackendUrl } from "../../redux/api/axios";
 import { DeleteItem } from "../../utils/Function";
-import usePermissionUser from "../usePermissionUser";
 import useGetfactoryInformationByUserId from "../ManageWarehouseSetting/useGetfactoryInformationByUserId";
+import useUserData from "../genaral/useUserData";
 
 const documentTypeConfig = {
   internal_transfer: "مستند نقل داخلي",
@@ -30,7 +30,7 @@ export default function useInventoryDocuments({
   setRefreshButton,
 }) {
   const navigate = useNavigate();
-  const { dataUserLab } = usePermissionUser();
+  const { dataUserLab } = useUserData();
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState(null);
@@ -190,7 +190,7 @@ export default function useInventoryDocuments({
 
   useEffect(() => {
     fetchDocuments();
-  }, [fetchDocuments, refreshButton,documentType]);
+  }, [fetchDocuments, refreshButton, documentType]);
 
   /** --------------------------------
    *  WAREHOUSE CHANGE HANDLER
@@ -226,7 +226,7 @@ export default function useInventoryDocuments({
   ----------------------------------*/
   const deleteDocument = useCallback(
     (id) => {
-      DeleteItem(id, setRefreshButton, () => {}, token, "warehouse/deleteDocumentById");
+      DeleteItem(id, setRefreshButton, () => { }, token, "warehouse/deleteDocumentById");
     },
     [token]
   );

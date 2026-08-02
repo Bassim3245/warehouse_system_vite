@@ -1,17 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { apiSlice } from "./api/apiSlice";
 import userSlice from "./userSlice/userSlice";
 import languageSlice from "./LanguageState";
 import RolesReducer from "./RoleSlice/RoleSlice";
 import themesSlice from "./theme/themeReducer";
 import MinistriesState from "./MinistriesState/MinistriesSlice";
-import EntitiesState from "./EntitiesState/EntitiesSlice";
 import StateMaterialState from "./StateMartrialState/StateMatrialSlices";
 import settingDataSlice from "./windoScreen/settingDataSlice";
 import inventorySlice from "./Inventiry/InventorySlice";
-import warehouseSlice from "./wharHosueState/WareHouseSlice";
-import factorySlice from "./FactoriesState/FactoriesSlice";
-import LabSlice from "./LaboriesState/LabSlice";
-import dataHandelUserActionSlice from "./getDataProjectById/getSlice";
 import applicationPermissionsSlice from "./auth/authSlice";
 import CompanyStructureState from "./CompanyStructure/CompanyStructureSlice";
 import documentState from "./documentState/documentsSlice";
@@ -24,19 +21,15 @@ const enhance = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 const store = configureStore(
   {
     reducer: {
+      [apiSlice.reducerPath]: apiSlice.reducer,
       user: userSlice,
       language: languageSlice,
       RolesData: RolesReducer,
       ThemeData: themesSlice,
       Ministries: MinistriesState,
-      Entities: EntitiesState,
       StateMaterial: StateMaterialState,
       settingData: settingDataSlice,
       Inventory: inventorySlice,
-      wareHouse: warehouseSlice,
-      factory: factorySlice,
-      lab: LabSlice,
-      dataHandelUserAction: dataHandelUserActionSlice,
       applicationPermissions: applicationPermissionsSlice,
       CompanyStructure: CompanyStructureState,
       document: documentState,
@@ -45,8 +38,13 @@ const store = configureStore(
       signauter: SignauterSlice,
       monthLock: monthLockState,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(apiSlice.middleware),
   },
   // @ts-ignore
   enhance
 );
+
+setupListeners(store.dispatch);
+
 export default store;

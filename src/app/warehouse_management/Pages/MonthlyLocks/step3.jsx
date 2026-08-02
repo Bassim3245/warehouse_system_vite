@@ -1,4 +1,6 @@
-import { Box, Stack, Paper, Typography, Grid } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { Archive } from "lucide-react";
 import { Warehouse } from "lucide-react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";

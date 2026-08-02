@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
 import LogList from "./LogLis.jsx";
 import { useApi } from "../../hooks/useApi.jsx";
+import useUserPermissions from "../../hooks/genaral/useUserPermissions.jsx";
 const AllLog = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -9,9 +9,7 @@ const AllLog = () => {
   const [dataLog, setDataLog] = useState([]);
   const [totalPages, setTotalPages] = useState("");
   const [totalItems, setTotalItems] = useState("");
-  const { roles, applicationPermission } = useSelector(
-    (state) => state?.RolesData
-  );
+  const { roles, applicationPermission } = useUserPermissions()
   const { loading: apiLoading, fetchData } = useApi(); // Using the new API hook
 
   const fetchDataByProjectId = useCallback(async () => {

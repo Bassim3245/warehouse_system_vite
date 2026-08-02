@@ -1,15 +1,14 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { getRoleAndUserId } from "../redux/RoleSlice/rolAction.jsx";
 import { getToken } from "../utils/handelCookie.jsx";
 import { renderMenuItem } from "../utils/Function.jsx";
 import { BackendUrl } from "../redux/api/axios.jsx";
 import { entityUserColumnGrid, userColumnGrid } from "../utils/ColumnsGridData";
 import { axiosInstance } from "../redux/api/axiosConfig";
+import useUserPermissions from "./genaral/useUserPermissions.jsx";
 
 const useManagementUsersList = (props) => {
   const {
@@ -20,18 +19,15 @@ const useManagementUsersList = (props) => {
     Ministries,
     Entities,
     roles,
-    applicationPermission,
     rtl,
-    permissionData,
     dataUserById = {},
   } = props;
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const token = getToken();
-
+const {permissionData ,applicationPermission}=useUserPermissions()
   /** ---------------- STATES ---------------- */
   const [activeStatuses, setActiveStatuses] = useState({});
   const [DataGovernorate, setGovernorate] = useState([]);
@@ -43,14 +39,6 @@ const useManagementUsersList = (props) => {
   const [UsersDataRow, setUserDataRow] = useState([]);
 
   /** ---------------- INITIAL FETCH ---------------- */
-
-  const dispatchRoleUserId = useCallback(() => {
-    dispatch(getRoleAndUserId(token));
-  }, [token, dispatch]);
-
-  useEffect(() => {
-    dispatchRoleUserId();
-  }, [dispatchRoleUserId]);
 
   /** GET ROLES */
   const fetchRoles = useCallback(async () => {

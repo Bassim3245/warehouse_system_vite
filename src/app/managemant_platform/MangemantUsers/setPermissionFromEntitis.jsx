@@ -11,22 +11,23 @@ import RefreshButtonData from "../../../components/reusableComponent/RefreshButt
 import Loader from "../../../components/reusableComponent/Loader";
 import HeaderCenter from "../../../components/reusableComponent/HeaderCenterComponent";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getToken } from "../../../utils/handelCookie";
 import { getDataUserById } from "../../../redux/userSlice/authActions";
 import { axiosInstance } from "../../../redux/api/axiosConfig";
-import UsePermissionUser from "../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../hooks/genaral/useUserPermissions";
+import useLanguageRtl from "../../../hooks/genaral/useLanguageRtl";
+import useUserData from "../../../hooks/genaral/useUserData";
+
 const SetPermissionFromEntities = (props) => {
-  const { dataUserById } = useSelector((state) => {
-    return state.user;
-  });
-  const { rtl } = useSelector((state) => state?.language);
+  const { dataUserById } = useUserData();
+  const { rtl } = useLanguageRtl();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { id } = useParams();
   const GroupId = props?.GroupId || "";
   const token = getToken();
-  const {  roles, applicationPermission } = UsePermissionUser();
+  const { roles, applicationPermission  } = useUserPermissions();
   const [permissionData, setPermissionData] = useState([]);
   const [permissionDataAll, setPermissionDataAll] = useState([]);
   const [selectionModel, setSelectionModel] = useState([]);

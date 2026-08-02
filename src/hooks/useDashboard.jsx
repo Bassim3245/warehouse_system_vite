@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import usePermissionUser from "./usePermissionUser";
 import { getDataStatistic } from "../redux/dashboard/dashboardAction";
+import { getUserInformation } from "../utils/handelCookie";
 export default function useDashboard() {
   const dispatch = useDispatch();
   const {
@@ -12,13 +12,13 @@ export default function useDashboard() {
     chartDataMaterialExport,
   } = useSelector((state) => state.dashboard);
 
-  const { dataUserById } = usePermissionUser();
+  const dataUserById = getUserInformation();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectMonth] = useState(new Date().getMonth()+1);
+  const [selectedMonth, setSelectMonth] = useState(new Date().getMonth() + 1);
   const dispatchDataStatistic = useCallback(() => {
     const { entity_id } = dataUserById;
-    dispatch(getDataStatistic({ entity_id, selectedYear,selectedMonth }));
-  }, [selectedYear,selectedMonth])
+    dispatch(getDataStatistic({ entity_id, selectedYear, selectedMonth }));
+  }, [selectedYear, selectedMonth])
   useEffect(() => {
     dispatchDataStatistic()
   }, [dispatchDataStatistic]);

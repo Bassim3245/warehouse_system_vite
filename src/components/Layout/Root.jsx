@@ -47,10 +47,13 @@ export default function Root({
 
   const handleDrawerOpen = () => {
     setOpen(true);
+    console.log("Drawer opened");
+    
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    console.log("Drawer closed");
   };
 
   return (
@@ -69,6 +72,7 @@ export default function Root({
           <SideBar
             open={open}
             handleDrawerClose={handleDrawerClose}
+            handleDrawerOpen={handleDrawerOpen}
             Route1={Route1}
             Route2={Route2}
             logo={logo}

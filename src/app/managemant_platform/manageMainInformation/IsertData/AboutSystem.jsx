@@ -9,12 +9,12 @@ import { BackendUrl } from "../../../../redux/api/axios";
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import { getToken } from "../../../../utils/handelCookie";
 import Loader from "../../../../components/reusableComponent/Loader";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 function AboutSystem() {
   const { rtl } = useSelector((state) => state.language);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
   const [aboutSystem, setAboutSystem] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,9 +39,9 @@ function AboutSystem() {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "An unexpected error occurred. Please try again later."
+        "An unexpected error occurred. Please try again later."
       );
-    }finally{
+    } finally {
       setLoading(false)
     }
   };
@@ -62,7 +62,7 @@ function AboutSystem() {
   }, []);
   return (
     <div>
-      {loading&&<Loader/>}
+      {loading && <Loader />}
       <Header title="عن النظام" dir={rtl?.dir} />
       <form onSubmit={handleSubmit}>
         <Box sx={{ mb: 2, mt: 2 }} dir="rtl">
@@ -73,7 +73,7 @@ function AboutSystem() {
             required
             onChange={(e) => setTitle(e.target.value)}
           />
-          <Box sx ={{mb:"10px"}}/>
+          <Box sx={{ mb: "10px" }} />
           <TextField
             label="النص "
             fullWidth

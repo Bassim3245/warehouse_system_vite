@@ -31,8 +31,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useApi } from "../../../hooks/useApi";
 import { toast } from "react-toastify";
 import layoutStyle from "../../../style/layoutStyle";
-import usePermissionUser from "../../../hooks/usePermissionUser";
 import { typeDocument } from "../../../constants/arrayFuction";
+import useEntities from "../../../hooks/genaral/useEntities";
 
 const DOC_TYPE_LABELS = {
   in: { label: "وارد", color: "success" },
@@ -42,7 +42,7 @@ const DOC_TYPE_LABELS = {
 
 const DocumentEdit = () => {
   const { get, post, loading } = useApi();
-  const { Entities } = usePermissionUser();
+  const { Entities } = useEntities();
 
   const [filters, setFilters] = useState({
     entity_id: "",

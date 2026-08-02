@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ButtonTheme } from "../../../../style/ButtomStyle";
 import Box from "@mui/material/Box";
@@ -9,9 +8,10 @@ import { BackendUrl } from "../../../../redux/api/axios";
 import ShowDataBanner from "../ShowData/ShowBanner";
 import { getToken } from "../../../../utils/handelCookie";
 import Loader from "../../../../components/reusableComponent/Loader";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import useLanguageRtl from "../../../../hooks/genaral/useLanguageRtl";
 function Banner() {
-  const { rtl } = useSelector((state) => state?.language);
+  const { rtl } =useLanguageRtl();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [bannerData, setBannerData] = useState([])

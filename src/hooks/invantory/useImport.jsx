@@ -5,9 +5,11 @@ import { BackendUrl } from "../../redux/api/axios";
 import { getToken } from "../../utils/handelCookie";
 import { axiosInstance } from "../../redux/api/axiosConfig";
 import { getDataDocumentById } from "../../redux/documentState/documentsAction";
-import usePermissionUser from "../usePermissionUser";
+import useUserPermissions from "../genaral/useUserPermissions";
 import useGetfactoryInformationByUserId from "../ManageWarehouseSetting/useGetfactoryInformationByUserId";
-import { getWarehouseDataById } from "../../redux/wharHosueState/WareHouseAction";
+import { useGetWarehouseDataByIdQuery } from "../../redux/wharHosueState/WarehouseApi";
+import useUserData from "../genaral/useUserData";
+import useStateMaterial from "../genaral/useStatMaterila";
 
 export const useImportData = ({ searchParams }) => {
   const documentId = searchParams.get("id");
@@ -16,10 +18,15 @@ export const useImportData = ({ searchParams }) => {
   /** ============ REDUX ============ */
   const dispatch = useDispatch();
   const { document } = useSelector((state) => state.document);
-  const { warehouseDataBYId } = useSelector((state) => state.wareHouse);
 
-  const { dataUserById, dataUserLab, stateMaterial, applicationPermission } =
-    usePermissionUser();
+  const { data: warehouseDataBYId } = useGetWarehouseDataByIdQuery(
+    warehouseId,
+    { skip: !warehouseId }
+  );
+
+  const { applicationPermission } = useUserPermissions();
+  const { stateMaterial } = useStateMaterial()
+  const { dataUserById, dataUserLab } = useUserData()
 
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const token = getToken();
@@ -134,13 +141,6 @@ export const useImportData = ({ searchParams }) => {
       dispatch(getDataDocumentById(documentId));
     }
   }, [dispatch, documentId, refreshButton]);
-
-  /** ============ FETCH WAREHOUSE INFO ============ */
-  useEffect(() => {
-    if (warehouseId) {
-      dispatch(getWarehouseDataById(warehouseId));
-    }
-  }, [dispatch, warehouseId]);
 
   /** ============ FETCH IMPORT MOVEMENTS ============ */
   useEffect(() => {

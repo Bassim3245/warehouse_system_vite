@@ -14,6 +14,7 @@ import HeaderCenter from "../../../../components/reusableComponent/HeaderCenterC
 import { getToken } from "../../../../utils/handelCookie";
 import "./Category.css";
 import { BackendUrFile } from "../../../../redux/api/axios";
+
 function Category({ BackendUrl }) {
   const [dataMainClass, setDataMainClass] = useState([]);
   const [allDataMainClass, setAllDataMainClass] = useState([]);

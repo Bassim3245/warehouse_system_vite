@@ -18,7 +18,7 @@ Core utility functions for warehouse permission validation:
 - `getWarehouseDispatchConfig()` - Determine dispatch configuration
 - `shouldRefreshWarehouseData()` - Check if data refresh is needed
 
-### 2. Enhanced usePermissionUser Hook (`src/hooks/usePermissionUser.js`)
+### 2. Enhanced useUserPermissions Hook (`src/hooks/useUserPermissions.js`)
 
 The main permission hook now includes:
 
@@ -37,7 +37,7 @@ const {
   warehousePermissions,         // Permission status object
   canDisplayWarehouse,          // Boolean: can display warehouse data
   shouldDispatchWarehouse       // Boolean: should dispatch warehouse data
-} = usePermissionUser();
+} = useUserPermissions();
 ```
 
 ### 3. Warehouse Permissions Hook (`src/hooks/useWarehousePermissions.js`)
@@ -182,7 +182,7 @@ import WarehousePermissionTest from '../components/WarehousePermissionTest';
    const { wareHouseData } = useSelector(state => state.wareHouse);
    
    // New
-   const { filteredWarehouseData } = usePermissionUser();
+   const { filteredWarehouseData } = useUserPermissions();
    ```
 
 2. Add permission checks before displaying warehouse UI:

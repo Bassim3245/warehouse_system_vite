@@ -15,27 +15,32 @@ import { useApi } from "../../../../hooks/useApi";
 import UseFullScreen from "../../../../hooks/useFullScreen";
 import { obsoleteMaterialGrideColumn } from "../../../../utils/ColumnsGridData";
 import { handelDeleteAll } from "../../../../utils/opsoloteUtils";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
 import layoutStyle from "../../../../style/layoutStyle";
 import useGetInformationClass from "../../../../hooks/useGetInformationClass.jsx";
-import useUnitMeasuring from "../../../../hooks/useUnitMeasuring";
+import useUnitMeasuring from "../../../../hooks/genaral/useUnitMeasuring";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
 import Search from "@mui/icons-material/Search";
+import useUserData from "../../../../hooks/genaral/useUserData.jsx";
+import useMinistries from "../../../../hooks/genaral/useMinistries.jsx";
+import useEntities from "../../../../hooks/genaral/useEntities.jsx";
+import useStateMaterial from "../../../../hooks/genaral/useStatMaterila.jsx";
 
 const FormDeletedList = () => {
   const {
     roles,
     applicationPermission,
-    dataUserById,
     permissionData,
-    Ministries,
-    Entities,
-    stateMaterial,
-    rtl,
-  } = usePermissionUser();
+
+  } = useUserPermissions();
+
+  const { dataUserById, rtl } = useUserData()
+  const { Ministries } = useMinistries()
+  const { Entities } = useEntities()
+  const { stateMaterial } = useStateMaterial()
   const { dataMainClass, dataSubClass } = useGetInformationClass();
   const { dataUnitMeasuring } = useUnitMeasuring();
   let token = getToken();

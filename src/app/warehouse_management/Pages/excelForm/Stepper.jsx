@@ -8,9 +8,9 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {useTheme} from "@mui/material/styles";import { alpha } from "@mui/material/styles";
+import {useTheme} from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 import Fade from "@mui/material/Fade";
-
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";

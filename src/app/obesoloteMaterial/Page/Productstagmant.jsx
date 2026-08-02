@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import { CustomNoRowsOverlay, isImageFile } from "../../../utils/Function";
 import HeaderCenter from "../../../components/reusableComponent/HeaderCenterComponent";
 import { Autocomplete, Box, TextField, useTheme } from "@mui/material";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Loader from "../../../components/reusableComponent/Loader";
-import usePermissionUser from "../../../hooks/usePermissionUser";
+import { getUserInformation } from "../../../utils/handelCookie";
+import useStateMaterial from "../../../hooks/genaral/useStatMaterila";
 function ProductStagnant() {
-  const { dataUserById, stateMaterial } = usePermissionUser();
+  const dataUserById = getUserInformation();
+
   const Params = useParams();
   const mainClassId = Params?.id;
   const [dataProduct, setDataProduct] = useState([]);
@@ -21,7 +23,7 @@ function ProductStagnant() {
   const [loading, setLoading] = useState(false);
   const maintheme = useSelector((state) => state?.ThemeData?.maintheme);
   const theme = useTheme();
-
+  const { stateMaterial } = useStateMaterial()
   const typeMaterial = [
     { typeMaterial: "مادة راكدة" },
     { typeMaterial: "مادة بطيئة الحركة" },

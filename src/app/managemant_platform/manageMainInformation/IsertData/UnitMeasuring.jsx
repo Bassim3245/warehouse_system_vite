@@ -71,9 +71,7 @@ function UnitMeasuring(props) {
             onChange={(e) => {
               setUnitMeasuring(e.target.value);
             }}
-            onClearClick={() => {
-              setUnitMeasuring("");
-            }}
+          
           />
         </Box>
       </form>

@@ -20,12 +20,15 @@ import InformationMaterialBooked from "./InformationMaterialBooked.jsx";
 import { useApi } from "../../../../hooks/useApi";
 import UseFullScreen from "../../../../hooks/useFullScreen";
 import { formatDate } from "../../../../utils/formatData";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
 import layoutStyle from "../../../../style/layoutStyle";
 import { axiosInstance } from "../../../../redux/api/axiosConfig";
+import useUserData from "../../../../hooks/genaral/useUserData.jsx";
 const BookObsoleteMaterial = () => {
-  const { roles, applicationPermission, dataUserById, rtl } =
-    usePermissionUser();
+  const { roles, applicationPermission } =
+    useUserPermissions();
+
+  const { dataUserById, rtl } = useUserData()
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
@@ -36,7 +39,7 @@ const BookObsoleteMaterial = () => {
   const [refreshButton, setRefreshButton] = useState(false);
   const token = getToken();
   const [daysLeftMap, setDaysLeftMap] = useState({});
-  const { loading: apiLoading, error, fetchData } = useApi();
+  const { loading: apiLoading, fetchData } = useApi();
 
   const fetchDataByProjectId = useCallback(async () => {
     if (!dataUserById?.entity_id) return;

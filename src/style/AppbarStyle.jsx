@@ -1,61 +1,44 @@
-import { styled } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
+import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
-import MuiAppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 
-export const drawerWidth = 260;
-
-
-export const StyledAppBar = styled(MuiAppBar, {
+/* Floating, frosted-glass app bar — light and airy instead of a flat block */
+export const StyledAppBar = styled(AppBar, {
   shouldForwardProp: (prop) => prop !== "open" && prop !== "rtl",
-})(({ theme, open, rtl }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  boxShadow:
-    theme.palette.mode === "light"
-      ? "0 2px 10px rgba(90, 8, 8, 0.05)"
-      : "0 2px 10px rgba(0,0,0,0.5)",
-  ...(open && {
-    marginLeft: rtl?.flexDirection === "row" ? drawerWidth : undefined,
-    marginRight: rtl?.flexDirection === "row-reverse" ? drawerWidth : undefined,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
+})(({ theme }) => ({
+  backgroundColor: alpha(theme.palette.background.paper, 0.8),
+  backdropFilter: "blur(10px)",
+  WebkitBackdropFilter: "blur(10px)",
+  color: theme.palette.text.primary,
+  boxShadow: "none",
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  transition: theme.transitions.create(["background-color", "border-color"], {
+    duration: theme.transitions.duration.drawer,
+    easing: theme.transitions.easing.smooth,
   }),
 }));
 
-// Styled components for AppBar elements
 export const StyledIconBtn = styled(IconButton)(({ theme }) => ({
-  color: theme.palette.primary.main,
-  backgroundColor:
-    theme.palette.mode === "dark"
-      ? "rgba(255, 255, 255, 0.05)"
-      : "rgba(0, 0, 0, 0.04)",
-  borderRadius: "10px",
-  transition: "all 0.2s ease",
+  borderRadius: 10,
+  padding: 8,
+  color: theme.palette.text.secondary,
+  transition: theme.transitions.create(["background-color", "color", "transform"], {
+    duration: 200,
+    easing: theme.transitions.easing.smooth,
+  }),
   "&:hover": {
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(0, 0, 0, 0.08)",
-    transform: "scale(1.05)",
+    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+    color: theme.palette.primary.main,
+  },
+  "&:active": {
+    transform: "scale(0.94)",
   },
 }));
 
 export const StyledUserName = styled(Typography)(({ theme }) => ({
-  fontSize: "0.9rem",
-  fontWeight: 500,
-  overflow: "hidden",
-  whiteSpace: "nowrap",
-  textOverflow: "ellipsis",
   color: theme.palette.text.primary,
-  transition: "all 0.3s ease",
-  "@media (max-width: 600px)": {
-    fontSize: "0.8rem",
-  },
+  fontSize: "0.95rem",
+  letterSpacing: 0,
+  transition: theme.transitions.create("color", { duration: 200 }),
 }));

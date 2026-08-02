@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getDataStateName } from "../redux/StateMartrialState/stateMatrialAction";
+import { getDataStateName } from "../../redux/StateMartrialState/stateMatrialAction";
 function useStateMaterial() {
   const dispatch = useDispatch();
   // Memoize selectors to prevent unnecessary re-renders

@@ -7,7 +7,6 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getRoleAndUserId } from "../../redux/RoleSlice/rolAction";
 import { GridMenuIcon } from "@mui/x-data-grid";
 import Logo from "./logo";
 import LisItem from "./LisItem";
@@ -29,11 +28,8 @@ const Appbar = ({
   category_id,
 }) => {
   const { rtl } = useSelector((state) => state.language);
-  const { Permission } = useSelector((state) => state?.RolesData);
   const dataUserById = getUserInformation();
   const token = getToken();
-
-  const [permissionData, setPermissionData] = useState([]);
   const [votes, setVotes] = useState(0);
 
   const navigate = useNavigate();
@@ -77,21 +73,8 @@ const Appbar = ({
     fontWeight: "bold",
   }), [rtl?.flexDirection]);
 
-  // Parse permission data
-  useEffect(() => {
-    if (Permission?.permission_id) {
-      try {
-        const parsedData = JSON.parse(Permission.permission_id);
-        setPermissionData(parsedData);
-      } catch (error) {
-        console.error("Error parsing permission_id:", error);
-      }
-    }
-  }, [Permission?.permission_id]);
-
   // Dispatch actions on component mount
   useEffect(() => {
-    dispatch(getRoleAndUserId(token));
     dispatch(setLanguage());
   }, [dispatch, token, location]);
 

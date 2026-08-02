@@ -31,11 +31,12 @@ import {
   logoutButtonSx,
   toggleButtonSx,
 } from "../../style/DrawerStyle";
-import usePermissionUser from "../../hooks/usePermissionUser";
+import useUserPermissions from "../../hooks/genaral/useUserPermissions";
 
 const SideBar = ({
   open,
   handleDrawerClose,
+  handleDrawerOpen,
   Route1 = [],
   Route2 = [],
   logo,
@@ -45,7 +46,7 @@ const SideBar = ({
 }) => {
   const { rtl } = useSelector((state) => state?.language);
   const dataUserById = getUserInformation();
-  const { permissionData } = usePermissionUser();
+  const { permissionData } = useUserPermissions();
   const navigate = useNavigate();
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -95,13 +96,13 @@ const SideBar = ({
             {renderLogo(open, logo, theme, rtl, title)}
           </Box>
           <IconButton
-            onClick={handleDrawerClose}
+            onClick={open ? handleDrawerClose : handleDrawerOpen}
             sx={toggleButtonSx(isDark, theme)}
           >
             {rtl?.dir === "rtl" ? (
-              <ChevronLeftIcon fontSize="small" />
+              open ? <ChevronRightIcon fontSize="small" /> : <ChevronLeftIcon fontSize="small" />
             ) : (
-              <ChevronRightIcon fontSize="small" />
+              open ? <ChevronLeftIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />
             )}
           </IconButton>
         </DrawerHeader>
@@ -195,9 +196,11 @@ const SideBar = ({
       rtl,
       title,
       handleDrawerClose,
+      handleDrawerOpen,
       Route1,
       Route2,
       Route3,
+      Route4,
       permissionData,
       location,
       navigate,

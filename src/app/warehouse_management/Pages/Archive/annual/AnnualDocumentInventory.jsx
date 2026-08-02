@@ -17,18 +17,20 @@ import { documentArchiveMonthlyGrid } from "../../../../../utils/ColumnsGridData
 import GridTemplate from "../../../../../components/reusableComponent/GridTemplet";
 import { BackendUrl } from "../../../../../redux/api/axios";
 import { axiosInstance } from "../../../../../redux/api/axiosConfig";
-import usePermissionUser from "../../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../../hooks/genaral/useUserPermissions";
 import RefreshButtonData from "../../../../../components/reusableComponent/RefreshButton";
 import { useTranslation } from "react-i18next";
 import { useInventoryArchiveMonthly } from "../hook/useInventory";
 import Header from "../../../../../components/reusableComponent/HeaderComponent";
 import layoutStyle from "../../../../../style/layoutStyle";
+import useUserData from "../../../../../hooks/genaral/useUserData";
 
 const AnnualInventory = () => {
   const token = getToken();
   const { t } = useTranslation();
-  const { roles, applicationPermission, dataUserById } = usePermissionUser();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const { roles, applicationPermission } = useUserPermissions();
+  const { dataUserById } = useUserData();
+  const [_, setAnchorEl] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [documentArchiveMonthly, setDocumentArchiveMonthly] = useState([]);
   const [pagination, setPagination] = useState({
@@ -187,7 +189,7 @@ const AnnualInventory = () => {
       {dataLoaded && <Loader />}
 
       <Box sx={headerBoxSx}>
-        <Header title=" المستندات المؤرشفة السنوية " dir={rtl.dir} />
+        <Header title=" المستندات المؤرشفة السنوية " dir={"rtl"} />
       </Box>
 
       {/* Controls */}

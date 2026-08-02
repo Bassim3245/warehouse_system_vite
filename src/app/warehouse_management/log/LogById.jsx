@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import LogList from "../../../main_page/log/LogLis.jsx";
 import { useApi } from "../../../hooks/useApi";
-import usePermissionUser from "../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../hooks/genaral/useUserPermissions";
+import { getUserInformation } from "../../../utils/handelCookie.jsx";
 const LogWarehouseById = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -9,7 +10,8 @@ const LogWarehouseById = () => {
   const [dataLog, setDataLog] = useState([]);
   const [totalPages, setTotalPages] = useState("");
   const [totalItems, setTotalItems] = useState("");
-  const { dataUserById, roles, applicationPermission } = usePermissionUser();
+  const {  roles, applicationPermission } = useUserPermissions();
+  const dataUserById =getUserInformation()
   const { loading: apiLoading, fetchData } = useApi(); // Using the new API hook
   const fetchDataByProjectId = useCallback(async () => {
     try {

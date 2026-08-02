@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import Root from "../../../components/Layout/Root";
 import AccountBox from "@mui/icons-material/AccountBox";
-import EventAvailable from "@mui/icons-material/EventAvailable";
 import Info from "@mui/icons-material/Info";
 import ManageAccounts from "@mui/icons-material/ManageAccounts";
 import NotificationAdd from "@mui/icons-material/NotificationAdd";

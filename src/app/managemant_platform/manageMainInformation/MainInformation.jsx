@@ -5,7 +5,7 @@ import { BackendUrl } from "../../../redux/api/axios";
 import { useState, useMemo, useCallback, memo } from "react";
 import { hasPermission } from "../../../utils/Function";
 import layoutStyle from "../../../style/layoutStyle";
-import usePermissionUser from "../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../hooks/genaral/useUserPermissions";
 import {
   a11yProps,
   CustomTabPanel,
@@ -35,7 +35,7 @@ import Fade from "@mui/material/Fade";
 
 function MainInformation() {
   const { rtl } = useSelector((state) => state?.language);
-  const { permissionData, roles, applicationPermission } = usePermissionUser();
+  const { permissionData, roles, applicationPermission } = useUserPermissions();
   const theme = useTheme();
   const [tabValue, setTabValue] = useState(0);
   const { t } = useTranslation();

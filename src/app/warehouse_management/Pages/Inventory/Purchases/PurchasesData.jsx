@@ -12,12 +12,13 @@ import { toast } from "react-toastify";
 import { usePermissionsStructure } from "../../../../../hooks/useStructureCompany";
 import UseFullScreen from "../../../../../hooks/useFullScreen";
 import { PrintPurchases } from "../../invoice/PrintInfoPurchInvoice";
-import usePermissionUser from "../../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../../hooks/genaral/useUserPermissions";
 import { BackendUrl } from "../../../../../redux/api/axios";
 import { axiosInstance } from "../../../../../redux/api/axiosConfig";
 import { getToken } from "../../../../../utils/handelCookie";
 import layoutStyle from "../../../../../style/layoutStyle";
 import { useSearchParams } from "react-router-dom";
+import useUserData from "../../../../../hooks/genaral/useUserData";
 
 const PurchasesData = () => {
   const { rtl } = useSelector((state) => state?.language);
@@ -48,7 +49,7 @@ const PurchasesData = () => {
   const [materialsList, setMaterialsList] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
 
-  const { dataUserById, dataUserLab } = usePermissionUser();
+  const { dataUserById, dataUserLab } = useUserData();
   const { has_lab, has_factory, has_warehouse } = usePermissionsStructure();
 
   // -----------------------------

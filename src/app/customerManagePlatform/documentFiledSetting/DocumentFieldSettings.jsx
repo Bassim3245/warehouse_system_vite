@@ -32,7 +32,7 @@ import { BackendUrl } from "../../../redux/api/axios";
 import { getUserInformation } from "../../../utils/handelCookie";
 import DeleteConfirmDialog from "./deleteConfirmModel";
 import FieldFormDialog from "./documetFildeModel";
-import { DOCUMENT_TYPES, FIELD_TYPES } from "./utils";
+import {  FIELD_TYPES } from "./utils";
 import { ButtonTheme } from "../../../style/ButtomStyle";
 import { typeDocument } from "../../../constants/arrayFuction";
 

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
 import Header from "../../../../components/reusableComponent/HeaderComponent";
@@ -9,9 +8,10 @@ import { useTranslation } from "react-i18next";
 import ShowGovernorate from "../ShowData/showGovernorate";
 import { getToken } from "../../../../utils/handelCookie";
 import Loader from "../../../../components/reusableComponent/Loader";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import useLanguageRtl from "../../../../hooks/genaral/useLanguageRtl";
 function Governorate({ BackendUrl }) {
-  const { rtl } = useSelector((state) => state?.language);
+  const { rtl } = useLanguageRtl();
   const [governorateData, setGovernorateData] = useState({
     governorate_name: "",
   });

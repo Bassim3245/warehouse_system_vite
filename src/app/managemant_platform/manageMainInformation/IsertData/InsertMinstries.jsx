@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import Header from "../../../../components/reusableComponent/HeaderComponent";
 import { useTranslation } from "react-i18next";
 import Loader from "../../../../components/reusableComponent/Loader";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 function Minstries(props) {
   const { Ministries, message, isSuccess, isError } = useSelector((state) => {
     // @ts-ignore 
@@ -29,7 +29,7 @@ function Minstries(props) {
       const formData = new FormData();
       formData.append("ministries", ministries);
       dispatch(AddMinstries(formData));
-      setRefresh(prv=>!prv)
+      setRefresh(prv => !prv)
 
     } catch (error) {
       console.log(error);

@@ -3,7 +3,7 @@ import Monitor from "@mui/icons-material/Monitor";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import {
   DeleteItem,
   renderMenuItem,
@@ -18,13 +18,11 @@ import { useLabManagement } from "../../../../hooks/ManageWarehouseSetting/useLa
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getToken } from "../../../../utils/handelCookie";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
-import {
-  getAllLab,
-  getAllLabByFactoryId,
-} from "../../../../redux/LaboriesState/LabAction";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
 import { fetchDataUserEntityId } from "../../../../redux/userSlice/authActions";
 import useGetfactoryInformationByUserId from "../../../../hooks/ManageWarehouseSetting/useGetfactoryInformationByUserId";
+import { useFactoryManagement } from "../../../../hooks/ManageWarehouseSetting/useFactory";
+
 const LabsEntity = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -39,19 +37,19 @@ const LabsEntity = () => {
     labData,
   } = useLabManagement();
 
+  const { factoryData } = useFactoryManagement();
+
   const dispatch = useDispatch();
   const theme = useTheme();
   const token = useMemo(() => getToken(), []);
-  // Memoize selectors to prevent unnecessary re-renders
-  const { factoryData } = useSelector((state) => state.factory);
-  const { dataUsers } = useSelector((state) => state.user);
+
+  const { dataUsers } = useSelector((state) => state.user || {});
   const {
     roles,
     applicationPermission,
     permissionData,
     dataUserById,
-    dataUserLab,
-  } = usePermissionUser();
+  } = useUserPermissions();
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -77,30 +75,14 @@ const LabsEntity = () => {
     [dataUserFactory?.factory_id]
   );
 
-  // Optimize factory, lab, and warehouse data fetching
   const dispatchFactoryLabWarehouseData = useCallback(() => {
     if (!entityId) return;
     dispatch(fetchDataUserEntityId(entityId));
-  }, [entityId, refreshKey]);
+  }, [entityId, dispatch]);
 
   useEffect(() => {
     dispatchFactoryLabWarehouseData();
-    if (factoryId) {
-      dispatch(
-        getAllLabByFactoryId({ entity_id: entityId, factory_id: factoryId })
-      );
-    } else {
-      dispatch(
-        getAllLab({ entity_id: entityId, roles, applicationPermission })
-      );
-    }
-  }, [
-    dispatchFactoryLabWarehouseData,
-    factoryId,
-    entityId,
-    dispatch,
-    refreshKey,
-  ]);
+  }, [dispatchFactoryLabWarehouseData]);
 
   const renderActionButtons = (item) => {
     return (
@@ -157,6 +139,7 @@ const LabsEntity = () => {
     { key: "specialization", label: "التخصص" },
     { key: "warehouse_count", label: "عدد المخازن المتوفرة" },
   ];
+
   const addButton = hasPermission(roles?.add_lab?._id, permissionData) && (
     <AddLabForm
       editMode={false}
@@ -176,6 +159,7 @@ const LabsEntity = () => {
       allow_show_data_l={allow_show_data_l}
     />
   );
+
   return (
     <Box sx={{ ...layoutStyle, mt: 2 }}>
       <DataCard

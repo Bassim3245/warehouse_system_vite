@@ -12,7 +12,10 @@ import EntityCreateUser from "./entityCreateUser";
 import UseFullScreen from "../../../hooks/useFullScreen";
 import RefreshButtonData from "../../../components/reusableComponent/RefreshButton";
 import GridTemplate from "../../../components/reusableComponent/GridTemplet.jsx";
-import usePermissionUser from "../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../hooks/genaral/useUserPermissions";
+import useLanguageRtl from "../../../hooks/genaral/useLanguageRtl.jsx";
+import useMinistries from "../../../hooks/genaral/useMinistries.jsx";
+import useEntities from "../../../hooks/genaral/useEntities.jsx";
 
 function UserManagementFromEntities() {
   const [page, setPage] = useState(1);
@@ -25,11 +28,12 @@ function UserManagementFromEntities() {
   const {
     roles,
     applicationPermission,
-    rtl, // Get permission data
-    Ministries,
-    Entities,
+
     permissionData,
-  } = usePermissionUser();
+  } = useUserPermissions();
+  const { rtl } = useLanguageRtl();
+  const { Ministries } = useMinistries();
+  const { Entities } = useEntities();
   const dataUserById = getUserInformation();
   const { t } = useTranslation();
   const { loading: apiLoading, fetchData } = useApi(); // Using the new API hook

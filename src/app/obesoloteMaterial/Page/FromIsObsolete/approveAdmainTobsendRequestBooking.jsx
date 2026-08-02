@@ -3,8 +3,8 @@ import Box from "@mui/material/Box";
 import Header from "../../../../components/reusableComponent/HeaderComponent.jsx";
 import GridTemplate from "../../../../components/reusableComponent/GridTemplet.jsx";
 import Loader from "../../../../components/reusableComponent/Loader.jsx";
-import { BackendUrl } from "../../../../redux/api/axios"; 
-import { getToken } from "../../../../utils/handelCookie.jsx";
+import { BackendUrl } from "../../../../redux/api/axios";
+import { getToken, getUserInformation } from "../../../../utils/handelCookie.jsx";
 import { useTranslation } from "react-i18next";
 import {
   renderMenuItem,
@@ -12,15 +12,16 @@ import {
 import { useApi } from "../../../../hooks/useApi";
 import UseFullScreen from "../../../../hooks/useFullScreen";
 import { ApproveAdmainTobsendRequestBookingColumn } from "../../../../utils/ColumnsGridData";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
 import layoutStyle from "../../../../style/layoutStyle";
+import useLanguageRtl from "../../../../hooks/genaral/useLanguageRtl.jsx";
 const ApproveAdmainTobsendRequestBooking = () => {
   const {
     roles,
     applicationPermission,
-    dataUserById,
-    rtl,
-  } = usePermissionUser();
+  } = useUserPermissions();
+  const dataUserById = getUserInformation()
+  const {rtl}=useLanguageRtl()
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);

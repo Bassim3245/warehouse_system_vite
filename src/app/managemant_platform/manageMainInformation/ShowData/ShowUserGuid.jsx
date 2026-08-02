@@ -2,23 +2,23 @@ import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
-
 import useMediaQuery from "@mui/material/useMediaQuery";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
-
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Fade from "@mui/material/Fade";
 import Tooltip from "@mui/material/Tooltip";
 import Zoom from "@mui/material/Zoom";
-
 import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { BackendUrl } from "../../../../redux/api/axios";
 import { ButtonClose, ButtonSave, ButtonTheme } from "../../../../style/ButtomStyle";
@@ -35,7 +35,7 @@ const UserGuidList = () => {
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [refresh2, setRefresh] = useState(false);
   const [refresh3, setRefresh3] = useState(false);
-  const [active, setIsActive] = useState({}); // Store active status as an object
+  const [active, setIsActive] = useState({});
 
   const { t } = useTranslation();
   const handleClickOpen = () => {
@@ -62,7 +62,6 @@ const UserGuidList = () => {
     setOpen(false);
   };
   useEffect(() => {
-    // Initialize active checkboxes based on show_guide status
     const initialActiveState = userGuid?.reduce((acc, item) => {
       if (item?.is_show) {
         acc[item?.id] = true;
@@ -85,12 +84,12 @@ const UserGuidList = () => {
     try {
       const accessData = Object?.entries(active)?.map(([id, status]) => ({
         id,
-        show_guide: status ? 1 : 0, // Convert boolean to 1 (true) or 0 (false)
+        show_guide: status ? 1 : 0,
       }));
 
       const response = await axios.post(
         `${BackendUrl}/api/EditAccessTOfile`,
-        { data: accessData }, // Send the updated data
+        { data: accessData },
         {
           headers: {
             authorization: token,
@@ -99,7 +98,7 @@ const UserGuidList = () => {
       );
       if (response.status === 200) {
         toast(response?.data?.message);
-        setRefresh((prev) => !prev); // Trigger re-fetch if needed
+        setRefresh((prev) => !prev);
         handleClose();
       }
     } catch (error) {
@@ -137,48 +136,43 @@ const UserGuidList = () => {
               backgroundColor: theme?.palette?.mode === "dark" ? "#1e1e1e" : "#fff",
             }}
           >
-            <Table
-              striped
-              bordered
-              hover
-              dir="rtl"
-              variant={`${theme?.palette?.mode === "dark" ? "dark" : ""}`}
-            >
-              <thead>
-                <tr style={{
+            <Table dir="rtl" aria-label="user guide table">
+              <TableHead>
+                <TableRow style={{
                   backgroundColor: theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(25, 118, 210, 0.05)",
                 }}>
-                  <th style={{
+                  <TableCell align="right" style={{
                     fontWeight: 'bold',
                     color: theme.palette.mode === "dark" ? theme.palette.primary.light : theme.palette.primary.main,
                     padding: '12px 16px',
-                  }}>#</th>
-                  <th style={{
+                  }}>#</TableCell>
+                  <TableCell align="right" style={{
                     fontWeight: 'bold',
                     color: theme.palette.mode === "dark" ? theme.palette.primary.light : theme.palette.primary.main,
                     padding: '12px 16px',
-                  }}>الوصف</th>
-                  <th style={{
+                  }}>الوصف</TableCell>
+                  <TableCell align="right" style={{
                     fontWeight: 'bold',
                     color: theme.palette.mode === "dark" ? theme.palette.primary.light : theme.palette.primary.main,
                     padding: '12px 16px',
-                  }}>الملفات</th>
-                  <th style={{
+                  }}>الملفات</TableCell>
+                  <TableCell align="center" style={{
                     fontWeight: 'bold',
                     color: theme.palette.mode === "dark" ? theme.palette.primary.light : theme.palette.primary.main,
                     padding: '12px 16px',
-                  }}>{t("Action")}</th>
-                  <th style={{
+                  }}>{t("Action")}</TableCell>
+                  <TableCell align="right" style={{
                     fontWeight: 'bold',
                     color: theme.palette.mode === "dark" ? theme.palette.primary.light : theme.palette.primary.main,
                     padding: '12px 16px',
-                  }}>حق الوصول</th>
-                </tr>
-              </thead>
-              <tbody>
+                  }}>حق الوصول</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {userGuid?.map((item, index) => (
-                  <tr
+                  <TableRow
                     key={item?.id}
+                    hover
                     style={{
                       transition: "background-color 0.3s",
                       backgroundColor: index % 2 === 0
@@ -186,10 +180,10 @@ const UserGuidList = () => {
                         : "transparent"
                     }}
                   >
-                    <td style={{ padding: '12px 16px' }}>{index + 1}</td>
-                    <td style={{ padding: '12px 16px' }}>{item?.description}</td>
-                    <td style={{ padding: '12px 16px' }}>{getFileIcon(item?.file_name, "", "edit")}</td>
-                    <td style={{ padding: '12px 16px' }}>
+                    <TableCell align="right" style={{ padding: '12px 16px' }}>{index + 1}</TableCell>
+                    <TableCell align="right" style={{ padding: '12px 16px' }}>{item?.description}</TableCell>
+                    <TableCell align="right" style={{ padding: '12px 16px' }}>{getFileIcon(item?.file_name, "", "edit")}</TableCell>
+                    <TableCell align="center" style={{ padding: '12px 16px' }}>
                       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
                         <Tooltip title="تعديل" TransitionComponent={Zoom} arrow>
                           <span>
@@ -219,14 +213,14 @@ const UserGuidList = () => {
                           </span>
                         </Tooltip>
                       </Box>
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
+                    </TableCell>
+                    <TableCell align="right" style={{ padding: '12px 16px' }}>
                       <FormGroup>
                         <FormControlLabel
                           key={item?.id}
                           control={
                             <Checkbox
-                              checked={active[item?.id] || false} // If the item ID exists in active, checkbox will be checked
+                              checked={active[item?.id] || false}
                               onChange={handleCheckboxChange(item?.id)}
                               sx={{
                                 color: theme.palette.mode === "dark" ? theme.palette.primary.light : theme.palette.primary.main,
@@ -239,10 +233,10 @@ const UserGuidList = () => {
                           label={item?.label}
                         />
                       </FormGroup>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
+              </TableBody>
             </Table>
           </TableContainer>
         </DialogContent>

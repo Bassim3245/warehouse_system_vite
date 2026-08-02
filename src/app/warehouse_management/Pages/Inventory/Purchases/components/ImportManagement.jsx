@@ -3,12 +3,12 @@ import GridTemplate from "../../../../../../components/reusableComponent/GridTem
 import { inventoryImportManagement } from "../../../../../../utils/ColumnsGridData";
 import { useTranslation } from "react-i18next";
 import RefreshButtonData from "../../../../../../components/reusableComponent/RefreshButton";
-import usePermissionUser from "../../../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../../../hooks/genaral/useUserPermissions";
 import Loader from "../../../../../../components/reusableComponent/Loader";
 
-const ImportManagement = ({ rtl, invoiceData, setRefreshButton, loading, document, pagination, setPagination ,searchParams }) => {
+const ImportManagement = ({ rtl, invoiceData, setRefreshButton, loading, document, pagination, setPagination, searchParams }) => {
   const { t } = useTranslation();
-  const { roles, applicationPermission } = usePermissionUser();
+  const { roles, applicationPermission } = useUserPermissions();
   const [anchorEl, setAnchorEl] = useState(null);
 
   // 🔒 Stable callback for menu anchor

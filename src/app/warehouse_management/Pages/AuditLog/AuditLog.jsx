@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -11,7 +11,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '@mui/material/Pagination';
-import { useTheme } from '@mui/material/styles';
 import HistoryIcon from '@mui/icons-material/History';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -23,7 +22,6 @@ import { getUserInformation } from '../../../../utils/handelCookie';
 import { BackendUrl } from '../../../../redux/api/axios';
 
 const AuditLog = () => {
-    const theme = useTheme();
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedLog, setSelectedLog] = useState(null);

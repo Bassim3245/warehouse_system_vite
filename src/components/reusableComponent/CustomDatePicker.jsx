@@ -1,3 +1,4 @@
+import * as React from "react";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -24,21 +25,33 @@ export default function CustomDatePicker({
 }) {
   const theme = useTheme();
 
-  // Common TextField props — outlined to match MUI TextField default
-  const textFieldProps = {
-    variant: "outlined",
-    error: error,
-    helperText: textError,
-    required: props?.required || false,
-    placeholder: placeholder,
-    fullWidth: true,
-    sx: {
-      width: "100%",
-      "& .MuiOutlinedInput-root": {
-        borderRadius: 1,
+  // Memoize common TextField props to prevent recreate on every render
+  const textFieldProps = React.useMemo(
+    () => ({
+      variant: "outlined",
+      error: error,
+      helperText: textError,
+      required: props?.required || false,
+      placeholder: placeholder,
+      fullWidth: true,
+      sx: {
+        width: "100%",
+        "& .MuiOutlinedInput-root": {
+          borderRadius: 1,
+        },
       },
+    }),
+    [error, textError, props?.required, placeholder]
+  );
+
+  const handleChange = React.useCallback(
+    (date) => {
+      if (setValue) {
+        setValue(date);
+      }
     },
-  };
+    [setValue]
+  );
 
   return (
     <Box sx={{ position: "relative", width: customWidth || "100%" }}>
@@ -50,7 +63,7 @@ export default function CustomDatePicker({
             value={value}
             minDate={minDate}
             maxDate={maxDate}
-            onChange={(date) => setValue(date)}
+            onChange={handleChange}
             slotProps={{ textField: textFieldProps }}
           />
         ) : !is_Time ? (
@@ -63,7 +76,7 @@ export default function CustomDatePicker({
               value={value}
               minDate={minDate}
               maxDate={maxDate}
-              onChange={(date) => setValue(date)}
+              onChange={handleChange}
               readOnly={props?.readOnly}
               slotProps={{ textField: textFieldProps }}
             />
@@ -74,7 +87,7 @@ export default function CustomDatePicker({
               value={value}
               minDate={minDate}
               maxDate={maxDate}
-              onChange={(date) => setValue(date)}
+              onChange={handleChange}
               readOnly={props?.readOnly}
               slotProps={{ textField: textFieldProps }}
             />
@@ -86,7 +99,7 @@ export default function CustomDatePicker({
             value={value}
             minTime={minDate}
             maxTime={maxDate}
-            onChange={(date) => setValue(date)}
+            onChange={handleChange}
             slotProps={{ textField: textFieldProps }}
           />
         )}
@@ -94,7 +107,7 @@ export default function CustomDatePicker({
         {/* زر مسح التاريخ */}
         {value && !props?.readOnly && (
           <CloseIcon
-            onClick={() => setValue(null)}
+            onClick={() => setValue && setValue(null)}
             sx={{
               position: "absolute",
               right: "42px",

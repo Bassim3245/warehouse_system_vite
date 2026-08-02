@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useApi } from "../../../hooks/useApi.jsx";
-import usePermissionUser from "../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../hooks/genaral/useUserPermissions";
 import useManagementUsersList from "../../../hooks/useManagementUsersList.jsx";
-import { Box } from "@mui/material";
+import Box  from "@mui/material/Box";
 import Header from "../../../components/reusableComponent/HeaderComponent.jsx";
 import UserMangeForm from "./UserManageForm.jsx";
 import FilterDataUser from "../../../components/filter/filterUser";
@@ -12,6 +12,9 @@ import { Loader } from "lucide-react";
 import RefreshButtonData from "../../../components/reusableComponent/RefreshButton.jsx";
 import layoutStyle from "../../../style/layoutStyle";
 import GridTemplate from "../../../components/reusableComponent/GridTemplet.jsx";
+import useMinistries from "../../../hooks/genaral/useMinistries.jsx";
+import useEntities from "../../../hooks/genaral/useEntities.jsx";
+import useLanguageRtl from "../../../hooks/genaral/useLanguageRtl.jsx";
 
 function UserManagementAllUsers() {
   const { t } = useTranslation();
@@ -29,11 +32,11 @@ function UserManagementAllUsers() {
   const {
     roles,
     applicationPermission,
-    rtl,
-    Ministries,
-    Entities,
     permissionData,
-  } = usePermissionUser();
+  } = useUserPermissions();
+  const { Ministries } = useMinistries();
+  const { Entities } = useEntities();
+  const { rtl } = useLanguageRtl();
 
   /** ------------------- API ------------------- */
   const { loading: apiLoading, fetchData } = useApi();

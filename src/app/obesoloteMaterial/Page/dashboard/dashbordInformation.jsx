@@ -1,5 +1,6 @@
 import Row1 from "./Row1";
-import {useTheme} from "@mui/material/styles";import { alpha } from "@mui/material/styles";
+import {useTheme} from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";

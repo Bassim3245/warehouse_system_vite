@@ -4,10 +4,15 @@ import './index.css'
 import App from './App.jsx'
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import { injectStore } from "./redux/api/axiosConfig";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n.jsx";
 import { ToastContainer } from "react-toastify";
 import { Slide } from "react-toastify";
+
+// Inject store into axiosConfig to break circular dependency
+injectStore(store);
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

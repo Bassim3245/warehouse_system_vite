@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -6,10 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Replay from "@mui/icons-material/Replay";
@@ -20,9 +17,8 @@ import { axiosInstance } from "../../../../../redux/api/axiosConfig";
 import CustomDatePicker from "../../../../../components/reusableComponent/CustomDatePicker";
 import { ButtonTheme } from "../../../../../style/ButtomStyle";
 import MaterialSearchInput from "../../../../../components/InventoryComponents/MaterialSearchInput";
-import useStateMaterial from "../../../../../hooks/useStatMaterila";
+import useStateMaterial from "../../../../../hooks/genaral/useStatMaterila";
 import Box from "@mui/material/Box";
-import useMovmantExport from "../../../../../hooks/invantory/export/useMovmantExport";
 import { typeDocument } from "../../../../../constants/arrayFuction";
 /* ---------------------------------------------------------------
    Material state options (حالة المادة)
@@ -30,7 +26,7 @@ import { typeDocument } from "../../../../../constants/arrayFuction";
    If your IDs differ, update accordingly.
 --------------------------------------------------------------- */
 
-const InventoryReturnDialog = ({ warehouseId, documentId, documentType, onSuccess }) => {
+const InventoryReturnDialog = ({ warehouseId, documentId, documentType }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { stateMaterial } = useStateMaterial();

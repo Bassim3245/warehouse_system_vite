@@ -15,10 +15,8 @@ import {
 } from "../../../../../style/generalStyle";
 import "dayjs/locale/ar";
 import Loader from "../../../../../components/reusableComponent/Loader";
-import {
-  TableCell,
-  Divider
-} from "@mui/material";
+import TableCell from "@mui/material/TableCell";
+import Divider from "@mui/material/Divider";
 import layoutStyle from "../../../../../style/layoutStyle";
 import DisplayInformationArchiveMaterial from "../showDailogInfMaterialArchive";
 import InventoryExportModel from "../../Inventory/selas/components/ExportInventoryModel";

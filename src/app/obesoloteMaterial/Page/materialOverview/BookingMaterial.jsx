@@ -7,7 +7,7 @@ import { BackendUrl } from "../../../../redux/api/axios";
 import { getToken } from "../../../../utils/handelCookie";
 import { BottomRoot, ButtonTheme } from "../../../../style/ButtomStyle";
 import { hasPermission } from "../../../../utils/Function";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -20,14 +20,14 @@ export default function BookingFormUser({
   user_id,
   dataUserById,
 }) {
-  const { roles, rtl, permissionData } =
-    usePermissionUser();
+  const { roles, permissionData } =
+    useUserPermissions();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [loading, setLoading] = useState(false);
   const token = getToken();
- 
+
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();

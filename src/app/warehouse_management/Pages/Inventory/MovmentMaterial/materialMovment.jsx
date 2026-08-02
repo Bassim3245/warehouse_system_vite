@@ -6,11 +6,11 @@ import React, {
   useMemo,
   Suspense,
 } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ButtonTheme } from "../../../../../style/ButtomStyle";
 import { BackendUrl } from "../../../../../redux/api/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { Box } from "@mui/material";
+import { Box, Stack, Divider } from "@mui/material";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import LocalPrintshopOutlined from "@mui/icons-material/LocalPrintshopOutlined";
 import { useTranslation } from "react-i18next";
@@ -26,10 +26,11 @@ import { axiosInstance } from "../../../../../redux/api/axiosConfig";
 import { toast, ToastContainer } from "react-toastify";
 import Loader from "../../../../../components/reusableComponent/Loader";
 import { getDataStateName } from "../../../../../redux/StateMartrialState/stateMatrialAction";
-import { getDataUserWithWareHouseDataById } from "../../../../../redux/getDataProjectById/getActions";
 import { usePermissionsStructure } from "../../../../../hooks/useStructureCompany";
+import useUserData from "../../../../../hooks/genaral/useUserData";
 import MaterialDetailsCard from "../../../../../components/InventoryComponents/MaterialDetailsCard";
 import MaterialMovementsTable from "../../../../../components/InventoryComponents/MaterialMovementsTable";
+
 function MaterialMovement() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ function MaterialMovement() {
   const dataUserById = getUserInformation();
 
   const { hierarchyConfig } = usePermissionsStructure();
-  const { dataUserLab } = useSelector((state) => state?.dataHandelUserAction);
+  const { dataUserLab } = useUserData();
   const { stateMaterial } = useSelector((state) => state?.StateMaterial);
 
   const [refreshButton, setRefreshButton] = useState(false);
@@ -62,19 +63,7 @@ function MaterialMovement() {
     dispatch(setLanguage());
   }, [dispatch]);
 
-  /* ----------------------------------------------
-     Load User / Warehouse Data Once
-  ---------------------------------------------- */
-  useEffect(() => {
-    if (dataUserById?.user_id && dataUserById?.entity_id) {
-      dispatch(
-        getDataUserWithWareHouseDataById({
-          user_id: dataUserById.user_id,
-          entity_id: dataUserById.entity_id,
-        })
-      );
-    }
-  }, [dataUserById, dispatch]);
+
 
   /* ----------------------------------------------
      Fetch Material Details + Movements
@@ -152,21 +141,17 @@ function MaterialMovement() {
     [navigate, materialId]
   );
 
-  /* ----------------------------------------------
-     Clear Movement Data
-  ---------------------------------------------- */
-  const handleClearData = useCallback(() => {
-    setInventory({});
-    setMaterialMovements([]);
-  }, []);
-
   return (
-    <div className="w-100">
+    <Box sx={{ m: { xs: 1.5, sm: 2 } }}>
       <ToastContainer />
       {loading && <Loader />}
 
-      {/* HEADER BUTTONS */}
-      <div className="pb-3 d-flex justify-content-between m-2">
+      {/* HEADER ACTIONS */}
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={1.5}
+        sx={{ mb: 3 }}
+      >
         <ButtonTheme onClick={handleBack} startIcon={<ArrowBack />}>
           {t("رجوع")}
         </ButtonTheme>
@@ -177,35 +162,37 @@ function MaterialMovement() {
         >
           {t("طباعة التفاصيل")}
         </ButtonTheme>
-      </div>
+      </Stack>
 
       {/* PAGE CONTENT */}
-      <div className="p-3 rad-10">
-        <Box className="d-flex justify-content-end">
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ mb: 2 }}>
           <Header title={t("معلومات المادة")} />
         </Box>
-        <Box ref={detailsCardRef} dir="rtl">
+
+        <Box ref={detailsCardRef} dir="rtl" sx={{ mb: 3 }}>
           <Suspense fallback={<Loader />}>
             <MaterialDetailsCard inventory={inventory} />
           </Suspense>
         </Box>
-        <div dir="rtl">
-          <Suspense fallback={<Loader />}>
-            <MaterialMovementsTable
-              materialMovements={materialMovements}
-              paramsQuery={paramsQuery}
-              openMovement={openMovement}
-              stateMaterial={stateMaterial}
-              dataUserLab={dataUserLab}
-              dataUserById={dataUserById}
-              hierarchyConfig={hierarchyConfig}
-              refreshButton={refreshButton}
-              setRefreshButton={setRefreshButton}
-            />
-          </Suspense>
-        </div>
-      </div>
-    </div>
+
+        <Divider sx={{ mb: 3 }} />
+
+        <Suspense fallback={<Loader />}>
+          <MaterialMovementsTable
+            materialMovements={materialMovements}
+            paramsQuery={paramsQuery}
+            openMovement={openMovement}
+            stateMaterial={stateMaterial}
+            dataUserLab={dataUserLab}
+            dataUserById={dataUserById}
+            hierarchyConfig={hierarchyConfig}
+            refreshButton={refreshButton}
+            setRefreshButton={setRefreshButton}
+          />
+        </Suspense>
+      </Box>
+    </Box>
   );
 }
 

@@ -3,7 +3,6 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Document from "./Doucument";
-import usePermissionUser from "../../../../../hooks/usePermissionUser";
 import { getToken } from "../../../../../utils/handelCookie";
 import { useTranslation } from "react-i18next";
 import layoutStyle from "../../../../../style/layoutStyle";
@@ -16,6 +15,7 @@ import {
   Undo2,
   FileText,
 } from "lucide-react";
+import useUserData from "../../../../../hooks/genaral/useUserData";
 
 // ─── Type-specific configuration ─────────────────────────────────────────────
 const docTypeConfig = {
@@ -53,7 +53,7 @@ export default function ManageDocuments() {
   // Build the tab list from the shared typeDocument constant
 
   const theme = useTheme();
-  
+
   const tabs = useMemo(
     () =>
       typeDocument.map((dt) => ({
@@ -83,7 +83,7 @@ export default function ManageDocuments() {
     return 0;
   });
 
-  const { dataUserById, dataUserLab } = usePermissionUser();
+  const { dataUserById, dataUserLab } = useUserData();
   const { t } = useTranslation();
   const token = getToken();
   const [refreshButton, setRefreshButton] = useState(false);

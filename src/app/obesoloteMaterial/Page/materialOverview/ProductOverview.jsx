@@ -12,21 +12,19 @@ import {
 import { BottomRoot } from "../../../../style/ButtomStyle";
 import { toast } from "react-toastify";
 import BookingFormUser from "./BookingMaterial";
-import { getToken } from "../../../../utils/handelCookie";
+import { getToken, getUserInformation } from "../../../../utils/handelCookie";
 import { useTranslation } from "react-i18next";
 import UploadBook from "./UploadBookeMaterial";
 import moment from "moment";
 import { formatDateYearsMonth } from "../../../../utils/formatData";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import debounce from "lodash/debounce";
 import Typography from "@mui/material/Typography";
-import {useTheme} from "@mui/material/styles";import ArrowCircleLeftOutlined from "@mui/icons-material/ArrowCircleLeftOutlined";
+import { useTheme } from "@mui/material/styles"; import ArrowCircleLeftOutlined from "@mui/icons-material/ArrowCircleLeftOutlined";
 const ProductOverview = () => {
   const maintheme = useSelector((state) => state?.ThemeData?.maintheme);
-  const { dataUserById } =
-    usePermissionUser();
+  const dataUserById = getUserInformation();
   const { id: stagnant_id } = useParams();
   const token = getToken();
   const [dataProduct, setDataProduct] = useState({});

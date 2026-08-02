@@ -1,36 +1,34 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { BackendUrl } from "../redux/api/axios";
 import { axiosInstance } from "../redux/api/axiosConfig";
-import { getToken } from "../utils/handelCookie";
-import {
-  getAllWarehouse,
-  getWarehouseDataByUserId,
-} from "../redux/wharHosueState/WareHouseAction";
-import { getAllFactory } from "../redux/FactoriesState/FactoriesAction";
-import { getAllLab } from "../redux/LaboriesState/LabAction";
-import { getDataUserWithFactoryById } from "../redux/getDataProjectById/getActions";
+import { getToken, getUserInformation } from "../utils/handelCookie";
+
+import useGetfactoryInformationByUserId from "./ManageWarehouseSetting/useGetfactoryInformationByUserId";
 import { usePermissionsStructure } from "./useStructureCompany";
-import usePermissionUser from "./usePermissionUser";
+import useUserPermissions from "./genaral/useUserPermissions";
+
+// Import RTK Query Hooks
+import {
+  useGetAllWarehouseQuery,
+  useGetWarehouseDataByUserIdQuery,
+} from "../redux/wharHosueState/WarehouseApi";
+import { useGetAllFactoryQuery } from "../redux/FactoriesState/FactoryApi";
+import { useGetAllLabQuery } from "../redux/LaboriesState/LabApi";
 
 export const useWarehouseBaseTheRoleAndPermission = () => {
   const dispatch = useDispatch();
   const token = useMemo(() => getToken(), []);
+
   // Memoize permissions structure hook
   const {
     roles,
-    dataUserById,
     applicationPermission,
-  } = usePermissionUser();
+  } = useUserPermissions();
+  const dataUserById = getUserInformation()
   const { hierarchyConfig } = usePermissionsStructure();
 
-  // Memoize selectors to prevent unnecessary re-renders
-  const { factoryData } = useSelector((state) => state.factory);
-  const { wareHouseData } = useSelector((state) => state?.wareHouse);
-  const { labData } = useSelector((state) => state?.lab);
-  const [dataUserFactory, setDataUserFactory] = useState([]);
-  // States
-
+  const { dataUserFactory } = useGetfactoryInformationByUserId();
   const userId = useMemo(() => dataUserById?.user_id, [dataUserById?.user_id]);
   const entityId = useMemo(
     () => dataUserById?.entity_id,
@@ -41,6 +39,7 @@ export const useWarehouseBaseTheRoleAndPermission = () => {
     has_factory = false,
     has_warehouse = false,
   } = hierarchyConfig || {};
+
   // Helper function to determine permission type
   const getPermissionType = (has_lab, has_warehouse, has_factory) => {
     if (has_lab && has_warehouse && has_factory) return "ALL_PERMISSIONS";
@@ -53,115 +52,82 @@ export const useWarehouseBaseTheRoleAndPermission = () => {
     return "NO_PERMISSIONS";
   };
 
-  // Use switch statement to handle different permission combinations
   const permissionType = getPermissionType(has_lab, has_warehouse, has_factory);
 
+  const shouldFetchAllWarehouse = [
+    "ALL_PERMISSIONS",
+    "LAB_WAREHOUSE",
+    "WAREHOUSE_FACTORY",
+    "WAREHOUSE_ONLY"
+  ].includes(permissionType) && !!entityId && !!roles && !!applicationPermission;
+
+  const shouldFetchUserWarehouse = [
+    "ALL_PERMISSIONS",
+    "LAB_WAREHOUSE",
+    "WAREHOUSE_FACTORY"
+  ].includes(permissionType) && !!entityId && !!roles && !!applicationPermission && !!userId;
+
+  const shouldFetchFactory = [
+    "ALL_PERMISSIONS",
+    "LAB_FACTORY",
+    "WAREHOUSE_FACTORY",
+    "FACTORY_ONLY"
+  ].includes(permissionType) && !!entityId && !!roles && !!applicationPermission;
+
+  const shouldFetchLab = [
+    "ALL_PERMISSIONS",
+    "LAB_WAREHOUSE",
+    "LAB_FACTORY",
+    "LAB_ONLY"
+  ].includes(permissionType) && !!entityId && !!roles && !!applicationPermission;
+
+  // RTK Query: fetch all warehouse data
+  const { data: allWarehouseData } = useGetAllWarehouseQuery(
+    {
+      entity_id: entityId,
+      warehouse_type: "",
+      checkPermissionUser: roles?.get_all_report_for_factory_lab_warehouse?._id,
+      applicationPermission: applicationPermission?.warehouseSystem?._id,
+    },
+    { skip: !shouldFetchAllWarehouse }
+  );
+
+  // RTK Query: fetch warehouse data by user ID
+  const { data: userWarehouseData } = useGetWarehouseDataByUserIdQuery(
+    userId,
+    { skip: !shouldFetchUserWarehouse }
+  );
+
+  // RTK Query: fetch factory data
+  const { data: factoryData = [] } = useGetAllFactoryQuery(
+    { entity_id: entityId, roles, applicationPermission },
+    { skip: !shouldFetchFactory }
+  );
+
+  // RTK Query: fetch lab data
+  const { data: labData = [] } = useGetAllLabQuery(
+    { entity_id: entityId, roles, applicationPermission },
+    { skip: !shouldFetchLab }
+  );
+
+  const wareHouseData = allWarehouseData || userWarehouseData || [];
+
   useEffect(() => {
-    // Only execute if we have the required data
     if (!entityId || !roles || !applicationPermission) {
       return;
     }
 
-    switch (permissionType) {
-      case "ALL_PERMISSIONS":
-        // Handle lab, warehouse, and factory logic
-        dispatch(
-          getAllFactory({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(
-          getAllLab({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(
-          getAllWarehouse({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(
-          getDataUserWithFactoryById({ user_id: userId, entity_id: entityId })
-        );
-        getFactoryRelatedUserData();
-        dispatch(getWarehouseDataByUserId(userId));
-
-        break;
-
-      case "LAB_WAREHOUSE":
-        dispatch(
-          getAllLab({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(
-          getAllWarehouse({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(getWarehouseDataByUserId(userId));
-
-        break;
-
-      case "LAB_FACTORY":
-        dispatch(
-          getAllLab({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(
-          getAllFactory({ entity_id: entityId, roles, applicationPermission })
-        );
-        break;
-
-      case "WAREHOUSE_FACTORY":
-        dispatch(
-          getAllWarehouse({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(
-          getAllFactory({ entity_id: entityId, roles, applicationPermission })
-        );
-        dispatch(getWarehouseDataByUserId(userId));
-        break;
-
-      case "LAB_ONLY":
-        dispatch(
-          getAllLab({ entity_id: entityId, roles, applicationPermission })
-        );
-        break;
-
-      case "WAREHOUSE_ONLY":
-        dispatch(
-          getAllWarehouse({ entity_id: entityId, roles, applicationPermission })
-        );
-        break;
-
-      case "FACTORY_ONLY":
-        dispatch(
-          getAllFactory({ entity_id: entityId, roles, applicationPermission })
-        );
-        break;
-
-      case "NO_PERMISSIONS":
-      default:
-        // No permissions or unhandled case
-        console.warn(
-          "No valid permissions found or unhandled permission combination"
-        );
-        break;
+    if (permissionType === "ALL_PERMISSIONS") {
+      // Factory user data is now fetched automatically by useGetfactoryInformationByUserId
     }
-  }, [dispatch, entityId, roles, applicationPermission, permissionType]);
-
-  const getFactoryRelatedUserData = useCallback(async () => {
-    if (!entityId || !userId) return;
-    try {
-      const response = await axiosInstance.get(
-        `${BackendUrl}/api/warehouse/getFactoryAndUserData?user_id=${userId}&entity_id=${entityId}`,
-        {
-          headers: { authorization: token },
-        }
-      );
-      setDataUserFactory(response?.data?.data[0] || {});
-    } catch (error) {
-      console.error("Error fetching warehouse and user data:", error);
-    }
-  }, [entityId, userId, token]);
-
+  }, [dispatch, entityId, roles, applicationPermission, permissionType, userId]);
 
   const getWarehouseDataIfUserId = useCallback(() => {
     if (userId) {
     }
-  }, [dispatch, userId, entityId]);
+  }, [userId]);
+
   useEffect(() => {
-    // dispatchFactoryLabWarehouseData();
     getWarehouseDataIfUserId();
   }, [getWarehouseDataIfUserId]);
 

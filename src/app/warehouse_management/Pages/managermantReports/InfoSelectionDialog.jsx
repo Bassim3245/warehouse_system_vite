@@ -1,33 +1,21 @@
-import { useEffect, useState, useCallback, memo } from "react";
+import {  useState, useCallback, memo } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-
-
 import Paper from "@mui/material/Paper";
-
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-
 import TextField from "@mui/material/TextField";
-
-
 import FormControl from "@mui/material/FormControl";
-
 import RadioGroup from "@mui/material/RadioGroup";
 import FormLabel from "@mui/material/FormLabel";
-
 import Box from "@mui/material/Box";
-
 import { useTheme } from "@mui/material/styles";
-
 import CheckBox from "@mui/icons-material/CheckBox";
-
 import Warehouse from "@mui/icons-material/Warehouse";
 import Science from "@mui/icons-material/Science";
 import Factory from "@mui/icons-material/Factory";
@@ -42,7 +30,6 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   InformationMaterialImport,
-  InformationMaterialExport,
   reportTypeOptions,
 } from "../../../../constants/reportConstants";
 import DisplayInformationComponent from "./displayData";

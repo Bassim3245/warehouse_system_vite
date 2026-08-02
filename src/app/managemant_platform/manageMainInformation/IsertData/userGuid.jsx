@@ -10,7 +10,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { getToken } from "../../../../utils/handelCookie";
 import UserGuidList from "../ShowData/ShowUserGuid";
 import Loader from "../../../../components/reusableComponent/Loader";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 function UserGuid({ BackendUrl }) {
   const [description, setDescription] = useState("");
   const [fileName, setFileName] = useState("");
@@ -73,9 +73,7 @@ function UserGuid({ BackendUrl }) {
             onChange={(e) => {
               setDescription(e.target.value);
             }}
-            onClearClick={() => {
-              setDescription("");
-            }}
+          
           />
         </Box>
         <ButtonTheme

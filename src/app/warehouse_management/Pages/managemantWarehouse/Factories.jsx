@@ -1,8 +1,8 @@
-import  { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import {
   DeleteItem,
   hasPermission,
@@ -12,22 +12,21 @@ import AddFactoriesForm from "./addFactoiesForm";
 import DataCard from "../../../../components/reusableComponent/DataCard";
 import { useTranslation } from "react-i18next";
 import layoutStyle from "../../../../style/layoutStyle";
-import { useDispatch, useSelector } from "react-redux";
-import { getToken } from "../../../../utils/handelCookie";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
-import { getAllFactory } from "../../../../redux/FactoriesState/FactoriesAction";
+import { getToken, getUserInformation } from "../../../../utils/handelCookie";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
 import useGenInformationUserByEntityId from "../../../../hooks/useGenInformationUserByEntityId";
+import { useFactoryManagement } from "../../../../hooks/ManageWarehouseSetting/useFactory";
+
 const Factories = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
-  // Memoize token to prevent unnecessary re-computations
   const token = useMemo(() => getToken(), []);
-  const { factoryData } = useSelector((state) => state?.factory);
-  const { wareHouseData } = useSelector((state) => state?.wareHouse);
-  const { roles, applicationPermission, permissionData, dataUserById } =
-    usePermissionUser();
-  // States
+
+  const { factoryData } = useFactoryManagement();
+  const { roles, applicationPermission, permissionData } =
+    useUserPermissions();
+  const dataUserById = getUserInformation()
   const { dataUsers } = useGenInformationUserByEntityId();
+
   const theme = useTheme();
   const [refreshKey, setRefreshKey] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -43,15 +42,6 @@ const Factories = () => {
     setPage(0);
   };
 
-  useEffect(() => {
-    dispatch(
-      getAllFactory({
-        entity_id: dataUserById?.entity_id,
-        roles,
-        applicationPermission,
-      })
-    );
-  }, [dataUserById?.entity_id, dispatch, refreshKey]);
   const renderActionButtons = (item) => {
     if (!hasPermission(roles?.add_factory?._id, permissionData)) return null;
     return (
@@ -78,13 +68,13 @@ const Factories = () => {
           token={token}
           setRefreshButton={setRefreshKey}
           refreshButton={refreshKey}
-          wareHouseData={wareHouseData}
           factoryData={item}
           dataUsers={dataUsers}
         />
       </>
     );
   };
+
   const addButton = hasPermission(roles?.add_factory?._id, permissionData) ? (
     <AddFactoriesForm
       editMode={false}
@@ -92,7 +82,6 @@ const Factories = () => {
       token={token}
       setRefreshButton={setRefreshKey}
       refreshButton={refreshKey}
-      wareHouseData={wareHouseData}
       dataUsers={dataUsers}
     />
   ) : null;

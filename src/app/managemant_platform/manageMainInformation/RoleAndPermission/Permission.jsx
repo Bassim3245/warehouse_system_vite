@@ -11,8 +11,6 @@ import {
   InputAdornment,
   Paper,
   Chip,
-  IconButton,
-  Collapse,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router";
@@ -25,8 +23,6 @@ import {
   Search,
   CheckCircle,
   RadioButtonUnchecked,
-  ExpandMore,
-  ExpandLess,
 } from "@mui/icons-material";
 
 import { BackendUrl } from "../../../../redux/api/axios";

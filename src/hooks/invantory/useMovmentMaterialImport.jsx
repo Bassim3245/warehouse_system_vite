@@ -2,7 +2,7 @@
 // import { useDispatch, useSelector } from "react-redux";
 
 // import { getAllLab } from "../../redux/LaboriesState/LabAction";
-// import usePermissionUser from "../usePermissionUser";
+// import useUserPermissions from "../genaral/useUserPermissions";
 // import { usePermissionsStructure } from "../useStructureCompany";
 // import { getDataImportInventory } from "../../redux/Inventiry/InventoryAction";
 
@@ -15,7 +15,7 @@
 //     permissionData,
 //     dataUserById,
 //     dataUserLab,
-//   } = usePermissionUser();
+//   } = useUserPermissions();
 //   const {
 //     has_lab,
 //     has_factory,

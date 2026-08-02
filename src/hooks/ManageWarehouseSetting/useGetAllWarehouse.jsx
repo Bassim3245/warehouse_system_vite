@@ -1,23 +1,21 @@
 // ===== REACT HOOKS =====
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-// ===== REDUX HOOKS =====
-import { useDispatch, useSelector } from "react-redux";
-
 // ===== CUSTOM HOOKS =====
-import usePermissionUser from "../usePermissionUser";
+import useUserPermissions from "../genaral/useUserPermissions";
+import useGetfactoryInformationByUserId from "./useGetfactoryInformationByUserId";
 
-// ===== REDUX ACTIONS =====
+// ===== REDUX RTK QUERY HOOKS =====
 import {
-  getAllWarehouse,
-  getWarehouseByLabId,
-  getAllWarehouseByFactoryAndLab,
-  getWarehouseDataByUserId,
-} from "../../redux/wharHosueState/WareHouseAction";
+  useGetAllWarehouseQuery,
+  useGetWarehouseByLabIdQuery,
+  useGetAllWarehouseByFactoryAndLabQuery,
+  useGetWarehouseDataByUserIdQuery,
+} from "../../redux/wharHosueState/WarehouseApi";
 
 // ===== UTILS =====
 import { getCompanyStructure } from "../../utils/handelCookie";
-import useGetfactoryInformationByUserId from "./useGetfactoryInformationByUserId";
+import useUserData from "../genaral/useUserData";
 
 /**
  * هوك مخصص لجلب جميع بيانات المخازن
@@ -25,47 +23,22 @@ import useGetfactoryInformationByUserId from "./useGetfactoryInformationByUserId
  * @returns {Object} بيانات المخازن وحالة التحميل ووظائف التحديث
  */
 const useGetAllWarehouse = () => {
-  // ===== REDUX SETUP =====
-  const dispatch = useDispatch();
-  const { wareHouseData, loading } = useSelector((state) => state?.wareHouse);
-
   // ===== PERMISSION HOOKS =====
-  const { roles, applicationPermission, dataUserById, dataUserLab } =
-    usePermissionUser();
+  const { roles, applicationPermission } = useUserPermissions();
+  const { dataUserLab, dataUserById } = useUserData()
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   // ===== STATE MANAGEMENT =====
   const [refreshKey, setRefreshKey] = useState(false);
   const hasFetched = useRef(false);
+
+  // RTK Query Config State
+  const [queryConfig, setQueryConfig] = useState({ type: null, params: null });
+
   // ===== MEMOIZED VALUES =====
-  /**
-   * معرف الكيان المستخرج من بيانات المستخدم
-   */
-  const entityId = useMemo(
-    () => dataUserById?.entity_id,
-    [dataUserById?.entity_id]
-  );
-
-  /**
-   * معرف المستخدم
-   */
+  const entityId = useMemo(() => dataUserById?.entity_id, [dataUserById?.entity_id]);
   const userId = useMemo(() => dataUserById?.user_id, [dataUserById?.user_id]);
-
-  /**
-   * معرف المعمل
-   */
   const labId = useMemo(() => dataUserLab?.lab_id, [dataUserLab?.lab_id]);
-
-  /**
-   * معرف المصنع
-   */
-  const factoryId = useMemo(
-    () => dataUserFactory?.factory_id,
-    [dataUserFactory?.factory_id]
-  );
-
-  /**
-   * إعدادات التسلسل الهرمي للشركة
-   */
+  const factoryId = useMemo(() => dataUserFactory?.factory_id, [dataUserFactory?.factory_id]);
   const hierarchyConfig = useMemo(() => getCompanyStructure(), []);
 
   // ===== PERMISSION CONFIGURATION =====
@@ -78,190 +51,138 @@ const useGetAllWarehouse = () => {
     has_branch_warehouse = false,
   } = hierarchyConfig || {};
 
+  // ===== RTK QUERY HOOKS =====
+  // These hooks will only execute when their respective type is set in queryConfig
+  const { data: allData, isFetching: allLoading } = useGetAllWarehouseQuery(
+    queryConfig.params,
+    { skip: queryConfig.type !== "getAllWarehouse" || !queryConfig.params }
+  );
+
+  const { data: labData, isFetching: labLoading } = useGetWarehouseByLabIdQuery(
+    queryConfig.params,
+    { skip: queryConfig.type !== "getWarehouseByLabId" || !queryConfig.params }
+  );
+
+  const { data: factoryData, isFetching: factoryLoading } = useGetAllWarehouseByFactoryAndLabQuery(
+    queryConfig.params,
+    { skip: queryConfig.type !== "getAllWarehouseByFactoryAndLab" || !queryConfig.params }
+  );
+
+  const { data: userData, isFetching: userLoading } = useGetWarehouseDataByUserIdQuery(
+    userId,
+    { skip: queryConfig.type !== "getWarehouseDataByUserId" || !userId }
+  );
+
+  const wareHouseData = allData || labData || factoryData || userData || [];
+  const loading = allLoading || labLoading || factoryLoading || userLoading;
+
   // ===== WAREHOUSE DATA FETCHING LOGIC =====
-  /**
-   * دالة جلب بيانات المخازن بناءً على صلاحيات المستخدم
-   * تحدد نوع المخزن المطلوب جلبه حسب مجموعة المستخدم
-   */
-  const dispatchWarehouseData = useCallback(() => {
-    // التحقق من وجود البيانات المطلوبة
+  const determineQueryConfig = useCallback(() => {
     if (!entityId || !roles || !applicationPermission) {
       return;
     }
 
     try {
-      // ===== SWITCH STATEMENT BASED ON USER ROLE =====
       const userRole = dataUserById?.group_name;
-      console.log("userRole", userRole);
+      let newConfig = { type: null, params: null };
+
+      // Helper to set params for getAllWarehouse
+      const setAllWarehouse = (warehouse_type = "") => {
+        newConfig = {
+          type: "getAllWarehouse",
+          params: {
+            entity_id: entityId,
+            warehouse_type,
+            checkPermissionUser: roles?.get_all_report_for_factory_lab_warehouse?._id,
+            applicationPermission: applicationPermission.warehouseSystem._id,
+          },
+        };
+      };
+
       switch (userRole) {
         case "Admin":
-          // المدير العام - يمكنه الوصول لجميع المخازن
-          if (has_warehouse && has_factory && has_lab) {
-            dispatch(
-              getAllWarehouse({
-                entity_id: entityId,
-                warehouse_type: "",
-                roles,
-                applicationPermission,
-              })
-            );
-          }
-          if (has_warehouse && !has_factory && has_lab) {
-            dispatch(
-              getAllWarehouse({
-                entity_id: entityId,
-                warehouse_type: "",
-                roles,
-                applicationPermission,
-              })
-            );
-          }
-          if (has_warehouse && has_factory && !has_lab) {
-            dispatch(
-              getAllWarehouse({
-                entity_id: entityId,
-                warehouse_type: "",
-                roles,
-                applicationPermission,
-              })
-            );
-          }
-          if (has_warehouse && !has_factory && !has_lab) {
-            dispatch(
-              getAllWarehouse({
-                entity_id: entityId,
-                warehouse_type: "",
-                roles,
-                applicationPermission,
-              })
-            );
+          if (has_warehouse) {
+            setAllWarehouse("");
           }
           break;
 
         case "lab user":
-          if (has_lab && labId) {
-            if (has_branch_warehouse) {
-              dispatch(
-                getWarehouseByLabId({
-                  entity_id: entityId,
-                  lab_id: labId,
-                  warehouseType: "branch",
-                })
-              );
-            }
+          if (has_lab && labId && has_branch_warehouse) {
+            newConfig = {
+              type: "getWarehouseByLabId",
+              params: { entity_id: entityId, lab_id: labId, warehouseType: "branch" },
+            };
           }
           break;
 
         case "Factory user":
           if (has_factory && factoryId) {
-            dispatch(
-              getAllWarehouseByFactoryAndLab({
-                entity_id: entityId,
-                factory_id: factoryId,
-                lab_id: null,
-                warehouseType: "main",
-              })
-            );
+            newConfig = {
+              type: "getAllWarehouseByFactoryAndLab",
+              params: { entity_id: entityId, factory_id: factoryId, lab_id: null, warehouseType: "main" },
+            };
           }
           break;
+
         case "warehouse_Manager":
-          if (has_warehouse) {
-            if (userId) {
-              dispatch(getWarehouseDataByUserId(userId));
-            }
+          if (has_warehouse && userId) {
+            newConfig = { type: "getWarehouseDataByUserId", params: {} };
           }
           break;
+
         case "production_manager":
           if (has_production_warehouse) {
             if (has_factory && factoryId) {
-              dispatch(
-                getAllWarehouseByFactoryAndLab({
-                  entity_id: entityId,
-                  factory_id: factoryId,
-                  lab_id: null,
-                })
-              );
+              newConfig = {
+                type: "getAllWarehouseByFactoryAndLab",
+                params: { entity_id: entityId, factory_id: factoryId, lab_id: null },
+              };
             } else {
-              dispatch(
-                getAllWarehouse({
-                  entity_id: entityId,
-                  warehouse_type: "production",
-                  roles,
-                  applicationPermission,
-                })
-              );
+              setAllWarehouse("production");
             }
           }
           break;
 
         case "warehouse_main_manger":
-          // مدير المخزن الرئيسي - يحتاج للمخازن الرئيسية
           if (has_main_warehouse) {
-            dispatch(
-              getAllWarehouse({
-                entity_id: entityId,
-                warehouse_type: "main",
-                roles,
-                applicationPermission,
-              })
-            );
+            setAllWarehouse("main");
           }
           break;
 
         default:
           if (has_factory && has_lab && has_warehouse) {
-            // إذا كان لديه جميع الصلاحيات، يفضل المعمل أولاً
             if (labId) {
-              dispatch(
-                getWarehouseByLabId({
-                  entity_id: entityId,
-                  lab_id: labId,
-                  warehouseType: "intermediate",
-                })
-              );
+              newConfig = {
+                type: "getWarehouseByLabId",
+                params: { entity_id: entityId, lab_id: labId, warehouseType: "intermediate" },
+              };
             } else if (factoryId) {
-              dispatch(
-                getAllWarehouseByFactoryAndLab({
-                  entity_id: entityId,
-                  factory_id: factoryId,
-                  lab_id: null,
-                })
-              );
+              newConfig = {
+                type: "getAllWarehouseByFactoryAndLab",
+                params: { entity_id: entityId, factory_id: factoryId, lab_id: null },
+              };
             }
           } else if (has_factory && factoryId) {
-            dispatch(
-              getAllWarehouseByFactoryAndLab({
-                entity_id: entityId,
-                factory_id: factoryId,
-                lab_id: null,
-              })
-            );
+            newConfig = {
+              type: "getAllWarehouseByFactoryAndLab",
+              params: { entity_id: entityId, factory_id: factoryId, lab_id: null },
+            };
           } else if (has_lab && labId) {
-            dispatch(
-              getWarehouseByLabId({
-                entity_id: entityId,
-                lab_id: labId,
-                warehouseType: "intermediate",
-              })
-            );
+            newConfig = {
+              type: "getWarehouseByLabId",
+              params: { entity_id: entityId, lab_id: labId, warehouseType: "intermediate" },
+            };
           } else {
-            // الحالة الافتراضية العامة
-            dispatch(
-              getAllWarehouse({
-                entity_id: entityId,
-                warehouse_type: "",
-                roles,
-                applicationPermission,
-              })
-            );
+            setAllWarehouse("");
           }
           break;
       }
+
+      setQueryConfig(newConfig);
     } catch (error) {
-      console.error("خطأ في جلب بيانات المخازن:", error);
+      console.error("خطأ في تحديد إعدادات المخازن:", error);
     }
   }, [
-    dispatch,
     entityId,
     labId,
     factoryId,
@@ -271,7 +192,6 @@ const useGetAllWarehouse = () => {
     has_factory,
     has_lab,
     has_warehouse,
-    refreshKey,
     has_branch_warehouse,
     has_main_warehouse,
     has_production_warehouse,
@@ -279,16 +199,11 @@ const useGetAllWarehouse = () => {
   ]);
 
   // ===== EFFECTS =====
-  /**
-   * تأثير لجلب بيانات المخازن عند تغيير المعاملات
-   * يعيد المحاولة عندما تصل البيانات المطلوبة
-   */
   useEffect(() => {
     hasFetched.current = false;
-    dispatchWarehouseData();
-  }, [dispatchWarehouseData]);
+    determineQueryConfig();
+  }, [determineQueryConfig, refreshKey]);
 
-  // إعادة المحاولة عندما تكون البيانات غير متوفرة بعد
   useEffect(() => {
     if (hasFetched.current) return;
     if (!entityId || !roles || !applicationPermission) return;
@@ -300,13 +215,13 @@ const useGetAllWarehouse = () => {
     if (needsLab && !labId && has_lab) return;
     if (needsFactory && !factoryId && has_factory) return;
 
-    dispatchWarehouseData();
+    determineQueryConfig();
     hasFetched.current = true;
-  }, [entityId, roles, applicationPermission, labId, factoryId, dataUserById?.group_name, has_lab, has_factory, dispatchWarehouseData]);
+  }, [entityId, roles, applicationPermission, labId, factoryId, dataUserById?.group_name, has_lab, has_factory, determineQueryConfig]);
 
   // ===== RETURN VALUES =====
   return {
-    wareHouseData: wareHouseData || [],
+    wareHouseData,
     loading,
     setRefreshKey,
     refreshKey,

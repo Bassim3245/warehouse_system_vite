@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../../redux/api/axiosConfig";
-import usePermissionUser from "../usePermissionUser";
 import useGetfactoryInformationByUserId from "./useGetfactoryInformationByUserId";
 import { getToken } from "../../utils/handelCookie";
+import useUserData from "../genaral/useUserData";
 
 const useGetInformationUserWarhosue = () => {
   const [userWarehouse, setUserWarehouse] = useState([]);
   const { dataUserFactory } = useGetfactoryInformationByUserId();
-  const { dataUserLab } = usePermissionUser();
+  const { dataUserLab } = useUserData();
   const getInformationUserWarehouse = useCallback(async () => {
     const params = new URLSearchParams();
 

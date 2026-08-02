@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import ShowJobTitle from "../ShowData/showJobTitle";
 import { getToken } from "../../../../utils/handelCookie";
 import Loader from "../../../../components/reusableComponent/Loader";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 function JobTitle({ BackendUrl }) {
   const { rtl } = useSelector((state) => state?.language);
   const [jobTitle, setJobTitle] = useState({
@@ -58,7 +58,6 @@ function JobTitle({ BackendUrl }) {
             value={jobTitle.job}
             required
             onChange={handleChange}
-            onClearClick={() => setJobTitle({ job: "" })}
           />
         </Box>
         <div

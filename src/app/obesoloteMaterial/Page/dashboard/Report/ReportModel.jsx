@@ -1,5 +1,6 @@
 import { useState } from "react";
-import {useTheme} from "@mui/material/styles";import { alpha } from "@mui/material/styles";
+import {useTheme} from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 

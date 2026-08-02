@@ -85,22 +85,20 @@ function PermissionData({ BackendUrl, roles, applicationPermission }) {
     <div className="">
       <Header title="أدخال الصلاحيات" />
       <form onSubmit={handleSubmit}>
-        <input
-          data-bs-theme={theme.palette.mode === "dark" ? "dark" : ""}
+        <TextField
           type="text"
+          fullWidth
+          margin="normal"
           style={{ direction: "rtl" }}
-          className="form-control p-10 rad-6 mb-3"
-          placeholder=" كتابة الصلاحية"
+          label=" كتابة الصلاحية"
           value={permissionName}
           onChange={(e) => setpermissionName(e?.target?.value)}
           required
         />
         <TextField
-          id="outlined-select-currency"
           select
           fullWidth
           label="اختر المجموعة"
-          helperText="اختر المجموعة"
           value={groupSelect}
           onChange={(e) => {
             setGroupSelect(e?.target?.value);

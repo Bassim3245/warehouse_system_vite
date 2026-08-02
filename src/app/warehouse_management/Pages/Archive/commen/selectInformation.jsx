@@ -19,10 +19,10 @@ import UseFullScreen from "../../../../../hooks/useFullScreen";
 import Loader from "../../../../../components/reusableComponent/Loader";
 import Header from "../../../../../components/reusableComponent/HeaderComponent";
 import PrintDialogInventory from "../../printInventory/printDialogInventory";
-import usePermissionUser from "../../../../../hooks/usePermissionUser";
 import { useLabManagement } from "../../../../../hooks/ManageWarehouseSetting/useLab";
 import { useFactoryManagement } from "../../../../../hooks/ManageWarehouseSetting/useFactory";
 import useGetAllWarehouse from "../../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
+import useUserData from "../../../../../hooks/genaral/useUserData";
 
 const SelectInformation = ({
   title,
@@ -48,8 +48,8 @@ const SelectInformation = ({
   loading,
   selectedYear,
 }) => {
-  
-  const { dataUserById, dataUserLab } = usePermissionUser();
+
+  const { dataUserById, dataUserLab } = useUserData();
   const { labData } = useLabManagement();
   const { factoryData } = useFactoryManagement();
   const { wareHouseData } = useGetAllWarehouse();

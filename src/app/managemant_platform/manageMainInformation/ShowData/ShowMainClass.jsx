@@ -3,18 +3,19 @@ import { useState, Fragment } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-
 import useMediaQuery from "@mui/material/useMediaQuery";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
-
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Fade from "@mui/material/Fade";
 import Tooltip from "@mui/material/Tooltip";
 import Zoom from "@mui/material/Zoom";
-
-import Table from "react-bootstrap/Table";
 import axios from "axios";
 import { BackendUrl } from "../../../../redux/api/axios";
 import ModelEdit from "../editData/editData";
@@ -63,10 +64,7 @@ export default function MainClassList() {
     <>
       {isLoading && <Loader />}
       <Fragment>
-        <ButtonSave onClick={handleClickOpen}>
-          &#1575;&#1604;&#1576;&#1610;&#1575;&#1606;&#1575;&#1578;
-          &#1575;&#1604;&#1605;&#1583;&#1585;&#1581;&#1577;
-        </ButtonSave>
+        <ButtonSave onClick={handleClickOpen}>البيانات المدرجة</ButtonSave>
         <Dialog
           fullScreen={fullScreen}
           open={open}
@@ -94,24 +92,19 @@ export default function MainClassList() {
                   theme.palette.mode === "dark" ? "#1e1e1e" : "#fff",
               }}
             >
-              <Table
-                striped
-                bordered
-                hover
-                dir="rtl"
-                variant={`${theme?.palette?.mode === "dark" ? "dark" : ""}`}
-              >
-                <thead>
-                  <tr
-                    style={{
+              <Table dir="rtl" aria-label="main class table">
+                <TableHead>
+                  <TableRow
+                    sx={{
                       backgroundColor:
                         theme.palette.mode === "dark"
                           ? "rgba(255, 255, 255, 0.05)"
                           : "rgba(25, 118, 210, 0.05)",
                     }}
                   >
-                    <th
-                      style={{
+                    <TableCell
+                      align="right"
+                      sx={{
                         fontWeight: "bold",
                         color:
                           theme.palette.mode === "dark"
@@ -121,9 +114,10 @@ export default function MainClassList() {
                       }}
                     >
                       #
-                    </th>
-                    <th
-                      style={{
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
                         fontWeight: "bold",
                         color:
                           theme.palette.mode === "dark"
@@ -132,11 +126,11 @@ export default function MainClassList() {
                         padding: "12px 16px",
                       }}
                     >
-                      &#1575;&#1587;&#1605; &#1575;&#1604;&#1589;&#1606;&#1601;
-                      &#1575;&#1604;&#1585;&#1575;&#1574;&#1587;&#1610;
-                    </th>
-                    <th
-                      style={{
+                      اسم الصنف الرئيسي
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
                         fontWeight: "bold",
                         color:
                           theme.palette.mode === "dark"
@@ -145,10 +139,11 @@ export default function MainClassList() {
                         padding: "12px 16px",
                       }}
                     >
-                      &#1575;&#1604;&#1589;&#1608;&#1585;&#1577;
-                    </th>
-                    <th
-                      style={{
+                      الصورة
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
                         fontWeight: "bold",
                         color:
                           theme.palette.mode === "dark"
@@ -157,15 +152,16 @@ export default function MainClassList() {
                         padding: "12px 16px",
                       }}
                     >
-                      &#1575;&#1604;&#1575;&#1580;&#1585;&#1575;&#1571;&#1575;&#1578;
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+                      الاجراءات
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
                   {dataMainClass?.map((item, index) => (
-                    <tr
+                    <TableRow
                       key={item?.mainClass_id}
-                      style={{
+                      hover
+                      sx={{
                         transition: "background-color 0.3s",
                         backgroundColor:
                           index % 2 === 0
@@ -174,19 +170,20 @@ export default function MainClassList() {
                               : "rgba(0, 0, 0, 0.02)"
                             : "transparent",
                       }}
-                      className="hover-row"
                     >
-                      <td style={{ padding: "12px 16px" }}>{index + 1}</td>
-                      <td style={{ padding: "12px 16px" }}>
+                      <TableCell align="right" sx={{ padding: "12px 16px" }}>
+                        {index + 1}
+                      </TableCell>
+                      <TableCell align="right" sx={{ padding: "12px 16px" }}>
                         {item?.main_Class_name}
-                      </td>
-                      <td style={{ padding: "12px 16px" }}>
+                      </TableCell>
+                      <TableCell align="right" sx={{ padding: "12px 16px" }}>
                         <StyledImage
                           src={`${BackendUrl}/uploads/${item?.file_name}`}
                           alt=""
                         />
-                      </td>
-                      <td>
+                      </TableCell>
+                      <TableCell align="center" sx={{ padding: "12px 16px" }}>
                         <Box
                           sx={{
                             display: "flex",
@@ -196,7 +193,7 @@ export default function MainClassList() {
                           }}
                         >
                           <Tooltip
-                            title="&#1578;&#1593;&#1583;&#1610;&#1604;"
+                            title="تعديل"
                             TransitionComponent={Zoom}
                             arrow
                           >
@@ -217,7 +214,7 @@ export default function MainClassList() {
                             </span>
                           </Tooltip>
                           <Tooltip
-                            title="&#1581;&#1584;&#1601;"
+                            title="حذف"
                             TransitionComponent={Zoom}
                             arrow
                           >
@@ -231,10 +228,10 @@ export default function MainClassList() {
                             </span>
                           </Tooltip>
                         </Box>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </Table>
             </TableContainer>
           </DialogContent>
@@ -245,7 +242,7 @@ export default function MainClassList() {
               variant="contained"
               color="error"
             >
-              &#1594;&#1604;&#1602;
+              غلق
             </ButtonClose>
           </DialogActions>
         </Dialog>

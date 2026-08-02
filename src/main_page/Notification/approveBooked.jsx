@@ -12,9 +12,9 @@ import Grow from "@mui/material/Grow";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 
-import {useTheme} from "@mui/material/styles";import { alpha } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles"; import { alpha } from "@mui/material/styles";
 
-import { getToken } from "../../utils/handelCookie";
+import { getToken, getUserInformation } from "../../utils/handelCookie";
 import { BackendUrl } from "../../redux/api/axios";
 import axios from "axios";
 import {
@@ -23,16 +23,14 @@ import {
   getTimeAgo,
 } from "../../utils/Function";
 import ApproveComponent from "./ApproveComponent";
-import MoreOption from "./MoreObtion";
-import { useSelector } from "react-redux";
 import Loader from "../../components/reusableComponent/Loader";
 import { useApi } from "../../hooks/useApi";
+import useUserPermissions from "../../hooks/genaral/useUserPermissions";
 
 export default function ApproveBooked() {
-  const { roles, applicationPermission } = useSelector(
-    (state) => state.RolesData
-  );
 
+  const { roles, applicationPermission } = useUserPermissions()
+  const dataUserById = getUserInformation()
   const token = getToken();
   const theme = useTheme();
   const [refresh, setRefresh] = useState(false);
@@ -40,9 +38,7 @@ export default function ApproveBooked() {
   const [message, setMessage] = useState([]);
   const [dataBooked, setBooked] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { dataUserById } = useSelector((state) => {
-    return state?.user;
-  });
+
   const { loading: apiLoading, fetchData } = useApi();
   const fetchDataByProjectId = useCallback(async () => {
     if (!dataUserById?.entity_id) return;

@@ -7,7 +7,8 @@ import { useTheme } from "@mui/material/styles";
 
 import { ContainerOfSelectField } from "./ThemDesign";
 import CloseIcon from "@mui/icons-material/Close";
-import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
+import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 
 function CustomeSelectField({
   label,

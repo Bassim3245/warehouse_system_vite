@@ -14,6 +14,7 @@ import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { BackendUrFile } from "../../../../redux/api/axios";
 import Logo from "../../../../components/Layout/logo";
 import "./PrintPdfInformation.css";
+
 export default function PrintPdInformation({ dataMaterial }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);

@@ -15,18 +15,17 @@ import { useReactToPrint } from "react-to-print";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import CardInfoImportMaterialArchive from "./cardInfoImportMaterialArchive";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
 import CardInfoExportMaterialArchive from "./cardInfoExportMaterialArchive";
 import { MenuItem } from "@mui/material";
+import useLanguageRtl from "../../../../hooks/genaral/useLanguageRtl";
 
 const Transition = React.forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props} />
 ));
-const DisplayInformationArchiveMaterial = ({ dataItem, isExport ,isInternalTransfer}) => {
+const DisplayInformationArchiveMaterial = ({ dataItem, isExport, isInternalTransfer }) => {
   const [open, setOpen] = useState(false);
-  const { rtl } = usePermissionUser();
+  const {rtl} = useLanguageRtl();
   const componentRef = useRef();
-  console.log(isExport)
   const handleClickOpen = () => {
     setOpen(true);
   };

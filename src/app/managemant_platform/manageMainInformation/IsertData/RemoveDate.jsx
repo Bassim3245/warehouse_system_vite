@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import ShowRemoveDate from "../ShowData/showRemoveDate";
 import { getToken } from "../../../../utils/handelCookie";
 import Loader from "../../../../components/reusableComponent/Loader";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 function RemoveDate({ BackendUrl }) {
   const { rtl } = useSelector((state) => state?.language);
   const { t } = useTranslation();
@@ -65,9 +65,7 @@ function RemoveDate({ BackendUrl }) {
           onChange={(e) => {
             setRemoveDate(e.target.value);
           }}
-          onClearClick={() => {
-            setRemoveDate("");
-          }}
+      
         />
       </Box>
       <div

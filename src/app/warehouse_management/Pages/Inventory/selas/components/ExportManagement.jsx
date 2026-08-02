@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import GridTemplate from "../../../../../../components/reusableComponent/GridTemplet";
 import RefreshButtonData from "../../../../../../components/reusableComponent/RefreshButton";
 import { axiosInstance } from "../../../../../../redux/api/axiosConfig";
-import UsePermissionUser from "../../../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../../../hooks/genaral/useUserPermissions";
 import Loader from "../../../../../../components/reusableComponent/Loader";
 import { BackendUrl } from "../../../../../../redux/api/axios";
 import { getToken } from "../../../../../../utils/handelCookie";
@@ -20,7 +20,7 @@ const ExportManagement = ({
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const { t } = useTranslation();
-  const { roles, applicationPermission } = UsePermissionUser();
+  const { roles, applicationPermission } = useUserPermissions();
   // --------------------------------------------------
   // 🔒 Stable fetch function (avoids re-creation)
   // --------------------------------------------------

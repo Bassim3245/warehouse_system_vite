@@ -31,7 +31,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ModelEdit from "../editData/editData";
 import { CheckCircleIcon } from "lucide-react";
-import { Cancel } from "@mui/icons-material";
+import Cancel from "@mui/icons-material/Cancel";
 
 export default function ShowDataUnitAndRole({
   label,

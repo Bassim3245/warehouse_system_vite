@@ -1,11 +1,15 @@
 import "../style.css";
 import FormApproveToRequest from "./ApproveListData.jsx";
 import { useTranslation } from "react-i18next";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
+import useUserData from "../../../../hooks/genaral/useUserData.jsx";
 const FormObsoleteMaterialApproveAdmin = () => {
-  const { roles, applicationPermission, dataUserById, rtl } =
-    usePermissionUser();
+  const { roles, applicationPermission } =
+    useUserPermissions();
+
   const { t } = useTranslation();
+  const { dataUserById, rtl } = useUserData()
+
   return (
     <>
       <FormApproveToRequest

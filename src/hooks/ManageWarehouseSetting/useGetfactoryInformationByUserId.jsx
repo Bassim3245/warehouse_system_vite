@@ -1,28 +1,18 @@
-import React, { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getDataUserWithFactoryById } from "../../redux/getDataProjectById/getActions";
+import { useMemo } from "react";
 import { getUserInformation } from "../../utils/handelCookie";
+import { useGetDataUserWithFactoryByIdQuery } from "../../redux/getDataProjectById/getDataUserApi";
 
 const useGetfactoryInformationByUserId = () => {
-  const { dataUserFactory } = useSelector(
-    (state) => state?.dataHandelUserAction
-  );
-  const dispatch = useDispatch();
-  const dataUserById = getUserInformation();
-  const dispatchUserWithFactoryById = useCallback(() => {
-    if (dataUserById.user_id && dataUserById.entity_id) {
-      dispatch(
-        getDataUserWithFactoryById({
-          user_id: dataUserById.user_id,
-          entity_id: dataUserById.entity_id,
-        })
-      );
-    }
-  }, [dispatch]);
+  const dataUserById = useMemo(() => getUserInformation(), []);
+  const user_id = dataUserById?.user_id;
+  const entity_id = dataUserById?.entity_id;
 
-  useEffect(() => {
-    dispatchUserWithFactoryById();
-  }, [dispatchUserWithFactoryById]);
+  const shouldFetch = user_id && entity_id;
+
+  const { data: dataUserFactory } = useGetDataUserWithFactoryByIdQuery(
+    { user_id, entity_id },
+    { skip: !shouldFetch }
+  );
 
   return {
     dataUserFactory,

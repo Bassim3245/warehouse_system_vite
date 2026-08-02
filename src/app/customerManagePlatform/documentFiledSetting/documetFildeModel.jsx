@@ -1,10 +1,20 @@
 import { memo, useEffect, useState } from "react";
-import { DOCUMENT_TYPES, EMPTY_FORM, FIELD_TYPES } from "./utils";
-import {
-  Box, Button, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogTitle, FormControl, FormControlLabel,
-  Grid, InputLabel, MenuItem, Select, Switch, TextField,
-} from "@mui/material";
+import { EMPTY_FORM, FIELD_TYPES } from "./utils";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Switch from "@mui/material/Switch";
+import TextField from "@mui/material/TextField";
 import { toast } from "react-toastify";
 import TuneIcon from "@mui/icons-material/Tune";
 import { typeDocument } from "../../../constants/arrayFuction";

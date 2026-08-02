@@ -8,21 +8,20 @@ import { renderMenuItem } from "../utils/Function";
 import { usePermissionsStructure } from "./useStructureCompany";
 import { useTranslation } from "react-i18next";
 import { axiosInstance } from "../redux/api/axiosConfig";
-import usePermissionUser from "./usePermissionUser";
-import useUnitMeasuring from "./useUnitMeasuring";
+import useUserPermissions from "./genaral/useUserPermissions";
+import useUnitMeasuring from "./genaral/useUnitMeasuring";
+import useUserData from "./genaral/useUserData";
 
 const useStoreData = ({ selectedWarehouse }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const token = useMemo(() => getToken(), []);
+  const { dataUserById, rtl, dataUserLab } = useUserData();
   const {
-    dataUserById,
-    rtl,
-    dataUserLab,
     roles,
     permissionData,
     applicationPermission,
-  } = usePermissionUser();
+  } = useUserPermissions();
   const { dataUnitMeasuring } = useUnitMeasuring();
   const { hierarchyConfig } = usePermissionsStructure();
   const [searchTerm, setSearchTerm] = useState("");

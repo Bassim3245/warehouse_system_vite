@@ -1,7 +1,11 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { memo } from "react";
-import { Alert } from "@mui/material";
-import { CircularProgress } from "@mui/material";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const DeleteConfirmDialog = memo(
   ({ open, onClose, onConfirm, fieldLabel, loading }) => (

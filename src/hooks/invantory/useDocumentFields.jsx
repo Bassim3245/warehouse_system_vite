@@ -14,7 +14,7 @@ const useDocumentFields = ({ documentType = null, documentId = null }) => {
     const [fieldValues, setFieldValues] = useState({}); // { field_id: value }
     const [loadingFields, setLoadingFields] = useState(false);
     const [loadingValues, setLoadingValues] = useState(false);
-const userInformation=getUserInformation()
+    const userInformation = getUserInformation()
     /* ── Fetch active field definitions ─────────────────── */
     const fetchFields = useCallback(async () => {
         if (!documentType) return;

@@ -39,14 +39,12 @@ function DocumentModel({
   documentData = {},
   wareHouseData = [],
   documentType,
-  isExport,
 }) {
   const { t } = useTranslation();
   const { labId, factoryId } = useGetDataId();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const storageDocKey = `selectedDocumentType_${documentType || "general"}`;
   const storageWarehouseKey = `selectedWarehouseId_${documentType || "general"}`;
 
   /* ------------------------------

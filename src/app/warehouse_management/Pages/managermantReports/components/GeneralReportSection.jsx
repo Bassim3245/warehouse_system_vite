@@ -13,7 +13,6 @@ import Title from "@mui/icons-material/Title";
 import FileDownload from "@mui/icons-material/FileDownload";
 import Description from "@mui/icons-material/Description";
 import { useTranslation } from "react-i18next";
-import { typeDocument } from "../../../../../constants/arrayFuction";
 
 const GeneralReportSection = memo(({
     selectedInfo,

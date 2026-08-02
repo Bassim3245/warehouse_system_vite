@@ -5,7 +5,6 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
-
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -66,7 +65,7 @@ const PrintDialogInventory = ({
   const handleClose = () => {
     setOpen(false);
   };
-  const FormContent = () => (
+  const renderFormContent = () => (
     <Box sx={{ direction: "rtl" }}>
       <Box
         ref={componentRef}
@@ -229,7 +228,7 @@ const PrintDialogInventory = ({
       </Box>
     </Box>
   );
-  const FormActions = () => (
+  const renderFormActions = () => (
     <Stack direction="row" spacing={1} justifyContent="flex-end">
       {" "}
       <Button
@@ -272,8 +271,8 @@ const PrintDialogInventory = ({
         width="100%"
         fullheight={true}
         is_margin={true}
-        content={<FormContent />}
-        footer={<FormActions />}
+        content={renderFormContent()}
+        footer={renderFormActions()}
       />
     </div>
   );

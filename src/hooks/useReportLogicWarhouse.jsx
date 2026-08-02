@@ -1,15 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { BackendUrl } from "../redux/api/axios";
 import { getToken } from "../utils/handelCookie";
 import { hasPermission } from "../utils/Function";
-import {
-  getAllWarehouse,
-  getWarehouseByLabId,
-} from "../redux/wharHosueState/WareHouseAction";
-import { getDataUserWithWareHouseDataById } from "../redux/getDataProjectById/getActions";
-import usePermissionUser from "./usePermissionUser";
+import useUserPermissions from "./genaral/useUserPermissions";
 import { useWarehouseBaseTheRoleAndPermission } from "./useWarehouseBaseTheRoleAndPermission";
+import useUserData from "./genaral/useUserData";
 
 export const useReportLogic = () => {
   const { wareHouseData, labData, factoryData } =
@@ -25,17 +19,15 @@ export const useReportLogic = () => {
   const [refresh, setRefresh] = useState(false);
   const [selectedReportType, setSelectedReportType] = useState("general");
 
-  const dispatch = useDispatch();
   const token = getToken();
 
   const {
     permissionData,
     roles,
     applicationPermission,
-    dataUserById,
-    dataUserLab,
-  } = usePermissionUser();
-
+  } = useUserPermissions();
+  const { dataUserById, dataUserLab } = useUserData();
+  
   // Memoize initial selectedInfo to prevent recreation on every render
   const initialSelectedInfo = useMemo(
     () => ({
@@ -88,40 +80,6 @@ export const useReportLogic = () => {
     [roles?.get_all_report_for_factory_lab_warehouse?._id, permissionData]
   );
 
-
-
-  useEffect(() => {
-    const entity_id = dataUserById?.entity_id;
-    const user_id = dataUserById?.user_id;
-    const lab_id = dataUserLab?.lab_id;
-
-    if (!user_id || !entity_id) return;
-
-    // Fetch user warehouse data
-    dispatch(
-      getDataUserWithWareHouseDataById({
-        user_id,
-        entity_id,
-      })
-    );
-
-    // Fetch warehouse data based on permissions
-    if (hasAllReportPermission) {
-      dispatch(getAllWarehouse({ entity_id, roles, applicationPermission }));
-    } else if (lab_id) {
-      dispatch(getWarehouseByLabId({ entity_id, lab_id }));
-    }
-  }, [
-    dispatch,
-    dataUserById?.entity_id,
-    dataUserById?.user_id,
-    dataUserLab?.lab_id,
-    refresh,
-    hasAllReportPermission,
-    roles,
-    applicationPermission,
-  ]);
-
   // Memoize return object to prevent recreation
   return useMemo(
     () => ({
@@ -140,22 +98,23 @@ export const useReportLogic = () => {
       setLoading,
       refresh,
       setRefresh,
-      labData,
-      factoryData,
-      permissionData,
-      wareHouseData,
+      selectedReportType,
+      setSelectedReportType,
       selectedInfo,
       setSelectedInfo,
       expandedSections,
       setExpandedSections,
-      dataUserById,
-      dataUserLab,
-      roles,
-      token,
-      applicationPermission,
-      selectedReportType,
-      setSelectedReportType,
       hasAllReportPermission,
+      // Data
+      wareHouseData,
+      labData,
+      factoryData,
+      dataUserLab,
+      dataUserById,
+      token,
+      roles,
+      applicationPermission,
+      permissionData,
     }),
     [
       selectedCategory,
@@ -165,19 +124,19 @@ export const useReportLogic = () => {
       timeRange,
       loading,
       refresh,
-      labData,
-      factoryData,
-      permissionData,
-      wareHouseData,
+      selectedReportType,
       selectedInfo,
       expandedSections,
-      dataUserById,
-      dataUserLab,
-      roles,
-      token,
-      applicationPermission,
-      selectedReportType,
       hasAllReportPermission,
+      wareHouseData,
+      labData,
+      factoryData,
+      dataUserLab,
+      dataUserById,
+      token,
+      roles,
+      applicationPermission,
+      permissionData,
     ]
   );
 };

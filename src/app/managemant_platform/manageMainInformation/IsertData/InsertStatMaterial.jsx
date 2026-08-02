@@ -7,7 +7,7 @@ import Header from "../../../../components/reusableComponent/HeaderComponent";
 import { useTranslation } from "react-i18next";
 import { AddStateMaterial } from "../../../../redux/StateMartrialState/stateMatrialAction";
 import ShowData from "../ShowData/ShowDataStateMaterial";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 function StatMaterial(props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();

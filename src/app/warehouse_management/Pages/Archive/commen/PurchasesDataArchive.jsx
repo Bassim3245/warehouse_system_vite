@@ -26,7 +26,7 @@ import CostumePagination from "../../../../../components/reusableComponent/Costu
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 
-const ImportArchiveMonthly = ({ InventoryArchiveData, loading, theme, setRefreshKey ,isInternalTransfer}) => {
+const ImportArchiveMonthly = ({ InventoryArchiveData, loading, theme, setRefreshKey }) => {
   const dispatch = useDispatch();
   const pagination = useSelector((state) => state.inventoryArchive.pagination);
   const handlePageChange = useCallback((page) => {

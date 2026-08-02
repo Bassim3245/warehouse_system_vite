@@ -1,11 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getRoleAndUserId } from "./rolAction";
 const initialState = {
-  Permission: [],
-
-  isError: false,
-  isSuccess: false,
-  loading: false,
   applicationPermission: {
     materialObsolete: {
       _id: 1,
@@ -254,23 +248,6 @@ export const RolesReducer = createSlice({
     getRoleRedux: (state) => {
       return state.roles;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(getRoleAndUserId.pending, (state) => {
-        state.loading = true;
-        state.isError = null;
-      })
-      .addCase(getRoleAndUserId.fulfilled, (state, action) => {
-        state.loading = false;
-        state.isSuccess = true; // registration isSuccessful
-        state.Permission = action.payload;
-      })
-      .addCase(getRoleAndUserId.rejected, (state, action) => {
-        state.loading = false;
-        state.isError = action.payload;
-        state.message = action.payload;
-      });
   },
 });
 export const { setRolesRedux, getRoleRedux } = RolesReducer.actions;

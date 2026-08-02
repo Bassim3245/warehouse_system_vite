@@ -1,6 +1,6 @@
 // Core imports
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -21,11 +21,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
 import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-
-
 // Icons
 import Add from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
@@ -33,7 +32,6 @@ import Email from "@mui/icons-material/Email";
 import Lock from "@mui/icons-material/Lock";
 import ModeEditOutlined from "@mui/icons-material/ModeEditOutlined";
 import Person from "@mui/icons-material/Person";
-import Phone from "@mui/icons-material/Phone";
 
 import { GridCloseIcon } from "@mui/x-data-grid";
 import SaveIcon from "@mui/icons-material/Save";
@@ -42,14 +40,11 @@ import SaveIcon from "@mui/icons-material/Save";
 import Header from "../../../components/reusableComponent/HeaderComponent";
 import Loader from "../../../components/reusableComponent/Loader";
 
-// Redux Actions
-import { getDataMinistries } from "../../../redux/MinistriesState/MinistresAction";
-import { getDataEntities } from "../../../redux/EntitiesState/EntitiesAction";
-
 // Utils and Config
 import { BackendUrl } from "../../../redux/api/axios";
 import { getToken } from "../../../utils/handelCookie";
 import { ButtonTheme } from "../../../style/ButtomStyle";
+import useLanguageRtl from "../../../hooks/genaral/useLanguageRtl";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -67,12 +62,11 @@ function UserMangeForm({
   DataApplicationPermission,
 }) {
   const { t } = useTranslation("");
-  const dispatch = useDispatch();
   const theme = useTheme();
   const token = getToken();
 
   // Redux Selectors
-  const { rtl } = useSelector((state) => state?.language);
+  const { rtl } = useLanguageRtl();
   const maintheme = useSelector((state) => state?.ThemeData?.maintheme);
   const { roles } = useSelector((state) => state.RolesData);
 
@@ -92,12 +86,6 @@ function UserMangeForm({
   const [roleId, setRoleId] = useState("");
   const [Address_id, setAddress_id] = useState("");
   const [jopTitle, setJopTitle] = useState("");
-
-  // Effects
-  useEffect(() => {
-    dispatch(getDataMinistries());
-    dispatch(getDataEntities());
-  }, [dispatch]);
 
   useEffect(() => {
     if (editInfo) {
@@ -309,9 +297,14 @@ function UserMangeForm({
                       fullWidth
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      onClearClick={() => setName("")}
                       required
-                      startIcon={<Person fontSize="small" />}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Person fontSize="small" />
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
 
@@ -321,9 +314,14 @@ function UserMangeForm({
                       label={t("userManager.Email")}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      onClearClick={() => setEmail("")}
                       required
-                      startIcon={<Email fontSize="small" />}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Email fontSize="small" />
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
 
@@ -333,12 +331,15 @@ function UserMangeForm({
                       label={t("userManager.Password")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      hasePassswordEye={true}
-                      onClearClick={() => setPassword("")}
-                      haswidth={true}
                       type="password"
                       required={!editInfo}
-                      startIcon={<Lock fontSize="small" />}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock fontSize="small" />
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
 

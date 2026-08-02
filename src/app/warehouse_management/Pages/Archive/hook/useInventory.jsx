@@ -4,16 +4,16 @@ import {
   getInventoryArchiveAnnual,
   getInventoryArchiveMonthly,
 } from "../../../../../redux/InventiryArchive/InventoryArchiveAction";
-import usePermissionUser from "../../../../../hooks/usePermissionUser";
 import { typeDocument } from "../../../../../constants/arrayFuction";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useGetAllWarehouse from "../../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
+import useUserData from "../../../../../hooks/genaral/useUserData";
 
 export const useInventoryArchiveMonthly = () => {
   const dispatch = useDispatch();
   const { InventoryArchiveDataMonthly, InventoryArchiveDataAnnual, loading, pagination } =
     useSelector((state) => state?.inventoryArchive);
-  const { dataUserById, rtl } = usePermissionUser();
+  const { dataUserById, rtl } = useUserData();
   const { wareHouseData } = useGetAllWarehouse();
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [filterDocumentType, setFilterDocumentType] = useState("in");

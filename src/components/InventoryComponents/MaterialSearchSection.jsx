@@ -17,7 +17,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import usePermissionUser from "../../hooks/usePermissionUser";
+import useUserPermissions from "../../hooks/genaral/useUserPermissions";
 const MaterialSearchSection = ({
   setSearchTerm,
   searchResults,
@@ -29,7 +29,7 @@ const MaterialSearchSection = ({
   handleMaterialSelect,
   wareHouseData,
 }) => {
-  const { rtl } = usePermissionUser();
+  const { rtl } = useUserPermissions();
   const [materialInputValue, setMaterialInputValue] = useState("");
   const [open, setOpen] = useState(false);
 

@@ -2,13 +2,13 @@ import { useMemo } from "react";
 import { usePermissionsStructure } from "./useStructureCompany";
 import useGetfactoryInformationByUserId from "./ManageWarehouseSetting/useGetfactoryInformationByUserId";
 import useGetAllWarehouse from "./ManageWarehouseSetting/useGetAllWarehouse";
-import usePermissionUser from "./usePermissionUser";
+import useUserData from "./genaral/useUserData";
 
 export default function useGetDataId() {
   const { wareHouseData } = useGetAllWarehouse();
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const { has_lab, has_factory, has_warehouse } = usePermissionsStructure();
-  const { dataUserById, dataUserLab } = usePermissionUser();
+  const { dataUserById, dataUserLab } = useUserData();
 
   return useMemo(() => {
     let nextFactory = null;

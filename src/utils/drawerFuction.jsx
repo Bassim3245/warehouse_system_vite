@@ -2,7 +2,7 @@
 import MuiDrawer from "@mui/material/Drawer";
 import { hasPermission } from "./Function";
 import { Dashboard } from "@mui/icons-material";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
@@ -131,16 +131,16 @@ export const renderMenuItem = (
 ) => {
   const hasAccess = hasPermission(item?.checkPermission, permissionData);
   if (!hasAccess) return null;
-  
+
   // Extract the last segment of the pathname for nested route matching
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const currentPage = pathSegments[pathSegments.length - 1];
-  
+
   // Check if current page matches the item path (for nested routes)
-  const isActive = location.pathname === `/${item.path}` || 
-                   location.pathname === item.path || 
-                   currentPage === item.path;
-  
+  const isActive = location.pathname === `/${item.path}` ||
+    location.pathname === item.path ||
+    currentPage === item.path;
+
 
   return (
     <ListItem key={item.path} disablePadding sx={{ display: "block", mb: 0.5 }}>
@@ -175,13 +175,13 @@ export const renderMenuItem = (
             },
             "&::before": isActive
               ? {
-                  content: '""',
-                  position: "absolute",
-                  left: rtl?.dir === "rtl" ? "auto" : 0,
-                  right: rtl?.dir === "rtl" ? 0 : "auto",
-                  top: 0,
-                  bottom: 0,
-                }
+                content: '""',
+                position: "absolute",
+                left: rtl?.dir === "rtl" ? "auto" : 0,
+                right: rtl?.dir === "rtl" ? 0 : "auto",
+                top: 0,
+                bottom: 0,
+              }
               : {},
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}

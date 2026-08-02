@@ -27,7 +27,7 @@ export default function ModelEdit(props) {
   const [dataEdit, setDataEdit] = useState(edit_value || "");
   const [select, setSelect] = useState("");
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [_, setLoading] = useState(false);
   const token = getToken();
   useEffect(() => {
     if (dataMainClass?.length && edit_select) {

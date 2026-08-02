@@ -1,4 +1,4 @@
-import  { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
@@ -29,8 +29,8 @@ import {
   formatDateAr,
 } from "../../../../utils/formatData";
 import { cellStyles, InfoRow, TableHeader } from "./utils";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
-import { getWarehouseDataById } from "../../../../redux/wharHosueState/WareHouseAction";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
+import { useGetWarehouseDataByIdQuery } from "../../../../redux/wharHosueState/WarehouseApi";
 
 const PrintInventory = () => {
   const [searchParams] = useSearchParams();
@@ -39,12 +39,14 @@ const PrintInventory = () => {
   const [filterDocument, setFilterDocument] = useState("in");
   const [loading, setLoading] = useState(false);
   const [refreshButton, setRefreshButton] = useState(false);
-  const dispatch = useDispatch();
 
   const store_id = searchParams.get("store_id");
-  const { warehouseDataBYId } = useSelector((state) => state?.wareHouse);
+  const { data: warehouseDataBYId } = useGetWarehouseDataByIdQuery(
+    store_id,
+    { skip: !store_id }
+  );
   const token = getToken();
-  const { dataUserById } = usePermissionUser();
+  const { dataUserById } = useUserPermissions();
 
   const fetchInventoryData = async () => {
     if (!dataUserById?.entity_id || !store_id) return;
@@ -71,14 +73,9 @@ const PrintInventory = () => {
 
   useEffect(() => {
     fetchInventoryData();
-  }, [refreshButton ,filterDocument]);
+  }, [refreshButton, filterDocument]);
 
-  useEffect(() => {
-    if (store_id) {
-      dispatch(getWarehouseDataById(store_id));
-    }
-
-  }, [store_id, dispatch, refreshButton]);
+  // Removed old useEffect for getWarehouseDataById since it's now handled by the query hook
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -230,7 +227,7 @@ const PrintInventory = () => {
                 {dataMaterials?.map((item, index) => (
                   <StyledTableRow
                     key={item?.id || index}
-                
+
                   >
                     <StyledTableCell sx={cellStyles} align="right">
                       {item?.cod_material}

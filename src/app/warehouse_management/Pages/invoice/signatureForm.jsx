@@ -18,7 +18,7 @@ import PopupForm from "../../../../components/reusableComponent/PopupForm";
 import { axiosInstance } from "../../../../redux/api/axiosConfig";
 import { toast } from "react-toastify";
 
-const SignatureForm = ({ documentId, refresh, setRefresh, signauterData = [] }) => {
+const SignatureForm = ({ documentId, setRefresh, signauterData = [] }) => {
   const [open, setOpen] = useState(false);
   const [signatureTitle, setSignatureTitle] = useState("");
   const [editSignature, setEditSignature] = useState(null);

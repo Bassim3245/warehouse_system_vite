@@ -1,20 +1,17 @@
-import { useEffect, useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
-import {
-  getAllLab,
-} from "../../redux/LaboriesState/LabAction";
-import usePermissionUser from "../usePermissionUser";
+import { useMemo } from "react";
+import useUserPermissions from "../genaral/useUserPermissions";
 import { usePermissionsStructure } from "../useStructureCompany";
 import useGetfactoryInformationByUserId from "./useGetfactoryInformationByUserId";
-import { getDataUserWithWareHouseDataById } from "../../redux/getDataProjectById/getActions";
+import {
+  useGetAllLabQuery,
+  useGetAllLabByFactoryIdQuery,
+} from "../../redux/LaboriesState/LabApi";
+import { getUserInformation } from "../../utils/handelCookie";
 
 export const useLabManagement = () => {
-  const dispatch = useDispatch();
-  const { labData } = useSelector((state) => state?.lab);
+  const dataUserById = getUserInformation();
   const { dataUserFactory } = useGetfactoryInformationByUserId();
-
-  const { roles, applicationPermission, dataUserById } = usePermissionUser();
+  const { roles, applicationPermission } = useUserPermissions();
   const {
     has_lab,
     has_factory,
@@ -25,7 +22,7 @@ export const useLabManagement = () => {
     allow_show_data_l,
     hierarchyConfig,
   } = usePermissionsStructure();
-  const userId = useMemo(() => dataUserById?.user_id, [dataUserById?.user_id]);
+
   const factoryId = useMemo(
     () => dataUserFactory?.factory_id,
     [dataUserFactory?.factory_id]
@@ -35,101 +32,20 @@ export const useLabManagement = () => {
     [dataUserById?.entity_id]
   );
 
-  const dispatchWarehouseData = useCallback(() => {
-    // التحقق من وجود البيانات المطلوبة
-    if (!entityId || !roles || !applicationPermission) {
-      return;
-    }
+  const shouldFetchByFactory = !!entityId && !!factoryId;
+  const shouldFetchByEntity = !!entityId && !!roles && !!applicationPermission && !factoryId;
 
-    try {
-      // ===== SWITCH STATEMENT BASED ON USER ROLE =====
-      const userRole = dataUserById?.group_name;
-      switch (userRole) {
-        case "Admin":
-          if (has_lab && has_factory && has_warehouse) {
-            dispatch(
-              getAllLab({ entity_id: entityId, roles, applicationPermission })
-            );
-          }
-          if (has_lab && has_factory && !has_warehouse) {
-            dispatch(
-              getAllLab({ entity_id: entityId, roles, applicationPermission })
-            );
-          }
-          if (has_lab && !has_factory && has_warehouse) {
-            dispatch(
-              getAllLab({ entity_id: entityId, roles, applicationPermission })
-            );
-          }
-          if (has_lab && !has_factory && !has_warehouse) {
-            dispatch(
-              getAllLab({ entity_id: entityId, roles, applicationPermission })
-            );
-          }
-          break;
-        case "lab user":
-          if (has_lab) {
-            if (allow_to_manage_all_lab) {
-              dispatch(
-                getAllLab({ entity_id: entityId, roles, applicationPermission })
-              );
-            } else {
-              dispatch(
-                getDataUserWithWareHouseDataById({
-                  entity_id: entityId,
-                  roles,
-                  applicationPermission,
-                })
-              );
-            }
-          }
-          break;
-        case "Factory user":
-          if (has_factory && factoryId) {
-            dispatch(
-              getAllLab({ entity_id: entityId, roles, applicationPermission })
-            );
-          }
-          break;
-        case "warehouse_Manager":
-          if (has_warehouse) {
-            if (userId) {
-              dispatch(
-                getAllLab({ entity_id: entityId, roles, applicationPermission })
-              );
-            }
-          }
-          break;
-        default:
-          break;
-      }
-    } catch (error) {
-      console.error("خطأ في جلب بيانات المخازن:", error);
-    }
-  }, [
-    dispatch,
-    entityId,
-    factoryId,
-    roles,
-    applicationPermission,
-    dataUserById?.group_name,
-    allow_to_manage_all_lab,
-    has_factory,
-    has_lab,
-    has_warehouse,
-  ]);
+  const { data: labDataByFactory } = useGetAllLabByFactoryIdQuery(
+    { entity_id: entityId, factory_id: factoryId },
+    { skip: !shouldFetchByFactory }
+  );
 
-  const dispatchFactoryLabWarehouseData = useCallback(() => {
-    if (!entityId) return;
-    if (allow_to_manage_all_lab && has_lab) {
-      dispatch(
-        getAllLab({ entity_id: entityId, roles, applicationPermission })
-      );
-    }
-  }, []);
-  useEffect(() => {
-    dispatchWarehouseData();
-  }, [dispatchFactoryLabWarehouseData]);
+  const { data: labDataByEntity } = useGetAllLabQuery(
+    { entity_id: entityId, roles, applicationPermission },
+    { skip: !shouldFetchByEntity }
+  );
+
+  const labData = labDataByFactory || labDataByEntity || [];
 
   return useMemo(
     () => ({

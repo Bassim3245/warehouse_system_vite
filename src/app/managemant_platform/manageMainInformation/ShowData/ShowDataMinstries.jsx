@@ -4,16 +4,20 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import Table from "react-bootstrap/Table";
-import { ButtonClearState, ButtonClose } from "../../../../style/ButtomStyle";
-import ModelEdit from "../editData/editData";
-import AllowDelate from "../../../../components/reusableComponent/AllowDelete";
-import Box from "@mui/material/Box";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
+import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import Tooltip from "@mui/material/Tooltip";
 import Zoom from "@mui/material/Zoom";
+import { ButtonClearState, ButtonClose } from "../../../../style/ButtomStyle";
+import ModelEdit from "../editData/editData";
+import AllowDelate from "../../../../components/reusableComponent/AllowDelete";
 
 export default function ShowData(props) {
   const [open, setOpen] = React.useState(false);
@@ -58,67 +62,63 @@ export default function ShowData(props) {
                 theme.palette.mode === "dark" ? "#1e1e1e" : "#fff",
             }}
           >
-            <Table
-              striped
-              bordered
-              hover
-              dir="rtl"
-              variant={theme.palette.mode === "dark" ? "dark" : ""}
-            >
-              <thead>
-                <tr
-                  style={{
+            <Table dir="rtl" aria-label="ministries data table">
+              <TableHead>
+                <TableRow
+                  sx={{
                     backgroundColor:
                       theme.palette.mode === "dark"
                         ? "rgba(255, 255, 255, 0.05)"
                         : "rgba(25, 118, 210, 0.05)",
                   }}
                 >
-                  <>
-                    <th
-                      style={{
-                        fontWeight: "bold",
-                        color:
-                          theme.palette.mode === "dark"
-                            ? theme.palette.primary.light
-                            : theme.palette.primary.main,
-                        padding: "12px 16px",
-                      }}
-                    >
-                      #
-                    </th>
-                    <th
-                      style={{
-                        fontWeight: "bold",
-                        color:
-                          theme.palette.mode === "dark"
-                            ? theme.palette.primary.light
-                            : theme.palette.primary.main,
-                        padding: "12px 16px",
-                      }}
-                    >
-                      اسم الوزارة{" "}
-                    </th>
-                    <th
-                      style={{
-                        fontWeight: "bold",
-                        color:
-                          theme.palette.mode === "dark"
-                            ? theme.palette.primary.light
-                            : theme.palette.primary.main,
-                        padding: "12px 16px",
-                      }}
-                    >
-                      اجراء
-                    </th>
-                  </>
-                </tr>
-              </thead>
-              <tbody>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      fontWeight: "bold",
+                      color:
+                        theme.palette.mode === "dark"
+                          ? theme.palette.primary.light
+                          : theme.palette.primary.main,
+                      padding: "12px 16px",
+                    }}
+                  >
+                    #
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      fontWeight: "bold",
+                      color:
+                        theme.palette.mode === "dark"
+                          ? theme.palette.primary.light
+                          : theme.palette.primary.main,
+                      padding: "12px 16px",
+                    }}
+                  >
+                    اسم الوزارة
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontWeight: "bold",
+                      color:
+                        theme.palette.mode === "dark"
+                          ? theme.palette.primary.light
+                          : theme.palette.primary.main,
+                      padding: "12px 16px",
+                    }}
+                  >
+                    اجراء
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {props?.DataShowInformationMinist?.map((data, index) => (
-                  <tr
+                  <TableRow
                     key={data?.id}
-                    style={{
+                    hover
+                    sx={{
                       transition: "background-color 0.3s",
                       backgroundColor:
                         index % 2 === 0
@@ -128,9 +128,13 @@ export default function ShowData(props) {
                           : "transparent",
                     }}
                   >
-                    <td style={{ padding: "12px 16px" }}>{index + 1}</td>
-                    <td style={{ padding: "12px 16px" }}>{data?.ministries}</td>
-                    <td style={{ padding: "12px 16px" }}>
+                    <TableCell align="right" sx={{ padding: "12px 16px" }}>
+                      {index + 1}
+                    </TableCell>
+                    <TableCell align="right" sx={{ padding: "12px 16px" }}>
+                      {data?.ministries}
+                    </TableCell>
+                    <TableCell align="center" sx={{ padding: "12px 16px" }}>
                       <Box
                         sx={{
                           display: "flex",
@@ -161,10 +165,10 @@ export default function ShowData(props) {
                           </span>
                         </Tooltip>
                       </Box>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
+              </TableBody>
             </Table>
           </TableContainer>
         </DialogContent>

@@ -28,11 +28,12 @@ import SaveIcon from "@mui/icons-material/Save";
 import { useApi } from "../../../hooks/useApi";
 import { toast } from "react-toastify";
 import layoutStyle from "../../../style/layoutStyle";
-import usePermissionUser from "../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../hooks/genaral/useUserPermissions";
 import { SearchIcon } from "lucide-react";
 import { typeDocument } from "../../../constants/arrayFuction";
 import CustomDatePicker from "../../../components/reusableComponent/CustomDatePicker";
 import dayjs from "dayjs";
+import useEntities from "../../../hooks/genaral/useEntities";
 
 const DocumentCount = () => {
   const { get, post, delete: del, loading } = useApi();
@@ -42,7 +43,7 @@ const DocumentCount = () => {
     document_type: "",
   });
 
-  const { Entities } = usePermissionUser();
+  const { Entities } = useEntities();
   const [allCounts, setAllCounts] = useState([]);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);

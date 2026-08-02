@@ -20,13 +20,13 @@ import { BackendUrl } from "../../../../../../redux/api/axios";
 import { toast } from "react-toastify";
 import { ButtonTheme } from "../../../../../../style/ButtomStyle";
 import { axiosInstance } from "../../../../../../redux/api/axiosConfig";
-import usePermissionUser from "../../../../../../hooks/usePermissionUser";
 import { FormControlLabel, Switch } from "@mui/material";
+import useStateMaterial from "../../../../../../hooks/genaral/useStatMaterila";
 
 function ModelEditImportData({ inventoryData, setRefreshButton }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { stateMaterial } = usePermissionUser();
+  const { stateMaterial } = useStateMaterial();
 
   /* ------------------------------
         FORM DATA FOR EDITING

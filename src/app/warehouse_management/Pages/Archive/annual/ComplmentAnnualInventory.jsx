@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -106,12 +106,12 @@ export default function AnnualInventoryModel({
       textAlign: "right",
     },
   };
-  const ConfirmationSection = () => (
+  const renderConfirmationSection = () => (
     <Stack
       direction="row"
       alignItems="flex-start"
       spacing={1}
-      sx={{ direction: "rtl", textAlign: "right" }} // جعل الاتجاه عربي
+      sx={{ direction: "rtl", textAlign: "right" }}
     >
       <WarningIcon color="error" sx={{ mt: 0.5 }} />
       <Box>
@@ -120,7 +120,7 @@ export default function AnnualInventoryModel({
           color="error.main"
           fontWeight="bold"
           gutterBottom
-          sx={{ fontFamily: "inherit" }} // حل مشكلة الخط
+          sx={{ fontFamily: "inherit" }}
         >
           تأكيد الأرشفة النهائية
         </Typography>
@@ -130,12 +130,8 @@ export default function AnnualInventoryModel({
           <strong>{endDate.format("DD/MM/YYYY")}</strong>.
         </DialogContentText>
         <List dense sx={{ direction: "rtl" }}>
-          {" "}
-          {/* جعل اللستة RTL */}
           <ListItem>
             <ListItemIcon sx={{ minWidth: "32px" }}>
-              {" "}
-              {/* تقليل المسافة بين الأيقونة والنص */}
               <CheckCircleIcon fontSize="small" color="success" />
             </ListItemIcon>
             <ListItemText
@@ -189,22 +185,16 @@ export default function AnnualInventoryModel({
     </Stack>
   );
 
-  const FormContent = () => (
+  const renderFormContent = () => (
     <Box>
       <Box sx={{ p: 2 }} dir={"rtl"}>
-        {" "}
-        {/* تقليص البادينغ */}
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
           <CalendarMonthIcon color="primary" />
           <Typography variant="subtitle1" color="primary.main">
-            {" "}
-            {/* حجم أصغر */}
             اختيار الفترة الزمنية للأرشفة
           </Typography>
         </Stack>
         <Grid container spacing={1}>
-          {" "}
-          {/* تقليل المسافات */}
           <Grid item xs={12} sm={6} dir={"ltr"}>
             <CustomDatePicker
               haswidth
@@ -239,20 +229,17 @@ export default function AnnualInventoryModel({
           <Stack direction="row" alignItems="center" spacing={1}>
             <DateRangeIcon fontSize="small" color="primary" />
             <Typography variant="caption" color="text.secondary">
-              {" "}
-              {/* حجم أصغر */}
               الفترة المحددة: <strong>{getPeriodText()}</strong>
             </Typography>
           </Stack>
         </Box>
-        <Box sx={{ mt: 2 }}>{ConfirmationSection()}</Box>
+        <Box sx={{ mt: 2 }}>{renderConfirmationSection()}</Box>
       </Box>
     </Box>
   );
-  const FormActions = () => (
+
+  const renderFormActions = () => (
     <Stack direction="row" spacing={1} justifyContent="flex-end">
-      {" "}
-      {/* تقليل spacing */}
       <Button
         onClick={handleClose}
         variant="outlined"
@@ -299,8 +286,8 @@ export default function AnnualInventoryModel({
         setOpen={setOpen}
         icon={<ArchiveIcon color="success" />}
         width="50%"
-        content={<FormContent />}
-        footer={<FormActions />}
+        content={renderFormContent()}
+        footer={renderFormActions()}
       />
     </div>
   );

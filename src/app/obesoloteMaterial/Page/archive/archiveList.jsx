@@ -10,13 +10,15 @@ import "../style.css";
 import ArchiveRecipient from "./Archivericever.jsx";
 import ArchiveSender from "./ArchiveSender.jsx";
 import { useApi } from "../../../../hooks/useApi";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
+import { getUserInformation } from "../../../../utils/handelCookie.jsx";
 const Archive = () => {
   // State management
   const [page, setPage] = useState(1); // Current page for pagination
   const [limit, setLimit] = useState(10); // Limit for items per page
   const { rtl } = useSelector((state) => state.language); // Language direction (RTL or LTR)
-  const { dataUserById, roles, applicationPermission } = usePermissionUser();
+  const { roles, applicationPermission } = useUserPermissions();
+  const dataUserById = getUserInformation();
   const dispatch = useDispatch();
   const [totalPages, setTotalPages] = useState(0); // Total number of pages from pagination
   const [totalItems, setTotalItems] = useState(0); // Total number of items

@@ -5,17 +5,16 @@ import { BackendUrl } from "../../../redux/api/axios";
 import { getToken } from "../../../utils/handelCookie";
 import { axiosInstance } from "../../../redux/api/axiosConfig";
 import { getDataDocumentById } from "../../../redux/documentState/documentsAction";
-import usePermissionUser from "../../usePermissionUser";
 import useGetfactoryInformationByUserId from "../../ManageWarehouseSetting/useGetfactoryInformationByUserId";
 import useWarehpuseDataById from "../../ManageWarehouseSetting/useWarehpuseDataById";
+import useUserData from "../../genaral/useUserData";
 
 export const useExportData = ({ searchParams }) => {
   // Redux state
   const { document } = useSelector((state) => state?.document);
   const dispatch = useDispatch();
-  const { dataUserById, dataUserLab } =
-    usePermissionUser();
   const token = getToken();
+  const { dataUserById, dataUserLab } = useUserData();
   const { dataUserFactory } = useGetfactoryInformationByUserId();
   const { warehouseDataBYId } = useWarehpuseDataById({ warehouseId: searchParams.get("warehouseId") });
   // Local state

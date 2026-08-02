@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { BackendUrl } from "../redux/api/axios";
-import { axiosInstance } from "../redux/api/axiosConfig";
+import { BackendUrl } from "../../redux/api/axios";
+import { axiosInstance } from "../../redux/api/axiosConfig";
 
 function useUnitMeasuring() {
   const [dataUnitMeasuring, setDataUnitMeasuring] = useState([]);

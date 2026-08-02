@@ -19,18 +19,11 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import Add from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
-import Email from "@mui/icons-material/Email";
-import Lock from "@mui/icons-material/Lock";
 import ModeEditOutlined from "@mui/icons-material/ModeEditOutlined";
-import Person from "@mui/icons-material/Person";
-import Phone from "@mui/icons-material/Phone";
-import Work from "@mui/icons-material/Work";
 import SaveIcon from "@mui/icons-material/Save";
 import { GridCloseIcon } from "@mui/x-data-grid";
 
 // Custom Components
-import CustomeSelectField from "../../../components/reusableComponent/CustomeSelectField";
-import CustomTextField from "../../../components/reusableComponent/CustomTextField";
 import Header from "../../../components/reusableComponent/HeaderComponent";
 import Loader from "../../../components/reusableComponent/Loader";
 
@@ -63,7 +56,7 @@ const INITIAL_FORM_STATE = {
   lab_id: "",
   factory_id: "",
   warehouseType: "",
-  isMainWarehouseUser: false,
+  isMainWarehouseUserPermissions: false,
   isEntityRegisterUser: true,
 };
 
@@ -118,7 +111,7 @@ function EntityCreateUser({
       lab_id: DataUsers.lab_id || "",
       factory_id: DataUsers.factory_id || "",
       warehouseType: DataUsers.warehouse_type,
-      isMainWarehouseUser: DataUsers.is_main_warehouse_user || false,
+      isMainWarehouseUserPermissions: DataUsers.is_main_warehouse_user || false,
       isEntityRegisterUser: true,
     };
 
@@ -176,13 +169,13 @@ function EntityCreateUser({
     data.append("isEntityRegisterUser", formData.isEntityRegisterUser);
 
     // Add lab_id if applicable
-    if (!formData.isMainWarehouseUser && has_lab && formData.lab_id) {
+    if (!formData.isMainWarehouseUserPermissions && has_lab && formData.lab_id) {
       data.append("lab_id", formData.lab_id);
     }
 
     // Add factory_id if applicable
     if (
-      !formData.isMainWarehouseUser &&
+      !formData.isMainWarehouseUserPermissions &&
       has_factory &&
       formData.factory_id
     ) {
@@ -459,7 +452,7 @@ function EntityCreateUser({
                 </TextField>
               ) : null}
 
-              {has_lab && !formData.isMainWarehouseUser ? (
+              {has_lab && !formData.isMainWarehouseUserPermissions ? (
                 <TextField
                   fullWidth
                   select
@@ -477,7 +470,7 @@ function EntityCreateUser({
                 </TextField>
               ) : null}
 
-              {has_factory && !formData.isMainWarehouseUser ? (
+              {has_factory && !formData.isMainWarehouseUserPermissions ? (
                 <TextField
                   fullWidth
                   select

@@ -6,17 +6,15 @@ import UseFullScreen from "../../../../../hooks/useFullScreen";
 import Loader from "../../../../../components/reusableComponent/Loader";
 import Header from "../../../../../components/reusableComponent/HeaderComponent";
 import PrintDialogInventory from "../../printInventory/printDialogInventory";
-import usePermissionUser from "../../../../../hooks/usePermissionUser";
-import {
-  Grid,
-  useTheme,
-} from "@mui/material";
+import Grid from "@mui/material/Grid";
+import { useTheme } from "@mui/material/styles";
 import layoutStyle from "../../../../../style/layoutStyle";
 import useWarehpuseDataById from "../../../../../hooks/ManageWarehouseSetting/useWarehpuseDataById";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getInventoryArchiveMonthly } from "../../../../../redux/InventiryArchive/InventoryArchiveAction";
 import ExportArchiveMonthly from "./salesDataArchive";
+import useUserData from "../../../../../hooks/genaral/useUserData";
 
 const InventoryExportArchiveMonthly = () => {
   const { InventoryArchiveDataMonthly, loading, pagination } =
@@ -24,8 +22,8 @@ const InventoryExportArchiveMonthly = () => {
 
   const theme = useTheme();
   const [refreshKey, setRefreshKey] = useState(false);
-  const { dataUserById, dataUserLab } = usePermissionUser();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { dataUserById, dataUserLab } = useUserData();
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
 
   // Get values from URL params

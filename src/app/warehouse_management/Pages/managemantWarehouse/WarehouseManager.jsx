@@ -19,7 +19,7 @@ import WarehouseModel from "./FormInsertWherHouse";
 
 import useGetAllWarehouse from "../../../../hooks/ManageWarehouseSetting/useGetAllWarehouse";
 import { useLabManagement } from "../../../../hooks/ManageWarehouseSetting/useLab";
-import usePermissionUser from "../../../../hooks/usePermissionUser";
+import useUserPermissions from "../../../../hooks/genaral/useUserPermissions";
 import {
   DeleteItem,
   renderMenuItem,
@@ -29,6 +29,7 @@ import { getToken } from "../../../../utils/handelCookie";
 import layoutStyle from "../../../../style/layoutStyle";
 import useGetfactoryInformationByUserId from "../../../../hooks/ManageWarehouseSetting/useGetfactoryInformationByUserId";
 import { usePermissionsStructure } from "../../../../hooks/useStructureCompany";
+import useUserData from "../../../../hooks/genaral/useUserData";
 
 const WarehouseMange = () => {
   // ===== HOOKS =====
@@ -40,10 +41,9 @@ const WarehouseMange = () => {
     roles,
     applicationPermission,
     permissionData,
-    dataUserById,
-    dataUserLab,
-  } = usePermissionUser();
 
+  } = useUserPermissions();
+  const { dataUserById, dataUserLab } = useUserData();
   const {
     wareHouseData,
     loading: loadingWarehouse,
@@ -222,7 +222,7 @@ const WarehouseMange = () => {
 
         {/* زر حذف كافة البيانات - متاح فقط لمالك النظام */}
         {/* {dataUserById?.group_name === "systemOwner" && ( */}
-          {/* <>
+        {/* <>
             <Divider sx={{ my: 1 }} />
             {renderMenuItem(
               "delete_all",
@@ -249,7 +249,7 @@ const WarehouseMange = () => {
         baseFields.push(
           { key: "Factories_name", label: "المصنع" },
           { key: "Laboratory_name", label: "المعمل" },
-          
+
         );
         break;
 
@@ -272,9 +272,9 @@ const WarehouseMange = () => {
         baseFields.push(
           { key: "warehouse_type", label: "نوع المخزن" },
           { key: "code", label: "رمز المخزن" }
-        
+
         );
-        
+
         break;
     }
 

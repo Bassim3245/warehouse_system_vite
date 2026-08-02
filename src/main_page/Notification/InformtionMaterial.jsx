@@ -5,22 +5,18 @@ import axios from "axios";
 import Loader from "../../components/reusableComponent/Loader";
 import { BackendUrl } from "../../redux/api/axios";
 import { getToken } from "../../utils/handelCookie";
-import { getDataUserById } from "../../redux/userSlice/authActions";
 import { useTranslation } from "react-i18next";
 import { formatDateYearsMonth } from "../../utils/formatData";
 import { getFileIcon } from "../../utils/Function";
 const InformationMaterial = ({ material_id }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const maintheme = useSelector((state) => state?.ThemeData?.maintheme);
   const token = getToken();
   const [dataProduct, setDataProduct] = useState({});
   const [loading, setLoading] = useState(false);
   const {t}=useTranslation()
-  useEffect(() => {
-    dispatch(getDataUserById(token));
-  }, [dispatch, token]);
-  const fetchMainClassData = async () => {
+
+  const fetchDataStagnantMaterial = async () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
@@ -38,7 +34,7 @@ const InformationMaterial = ({ material_id }) => {
     }
   };
   useEffect(() => {
-    fetchMainClassData();
+    fetchDataStagnantMaterial();
   }, [material_id]);
   const renderListItem = (label, value, weight = "") => (
     <li
